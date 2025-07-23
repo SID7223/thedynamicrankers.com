@@ -1,0 +1,67 @@
+import React from 'react';
+import { Award, Users, Clock, Zap } from 'lucide-react';
+
+const About = () => {
+  const stats = [
+    { icon: Award, number: "5+", label: "Years Experience" },
+    { icon: Users, number: "100+", label: "Happy Clients" },
+    { icon: Clock, number: "24/7", label: "Support Available" },
+    { icon: Zap, number: "99%", label: "Project Success Rate" }
+  ];
+
+  return (
+    <section id="about" className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6">
+              About The Dynamic Rankers
+            </h2>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+              We are a passionate team of digital marketing experts and web developers 
+              dedicated to helping businesses achieve their online goals. Our comprehensive 
+              approach combines cutting-edge technology with proven marketing strategies.
+            </p>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              From custom website development to advanced SEO techniques, we provide 
+              end-to-end solutions that drive real results. Our commitment to excellence 
+              and client satisfaction has made us a trusted partner for businesses 
+              looking to dominate their digital landscape.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                Get In Touch
+              </button>
+              <button className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 text-gray-700 dark:text-gray-300 hover:text-blue-600 px-6 sm:px-8 py-3 rounded-lg font-semibold transition-all duration-300">
+                View Portfolio
+              </button>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                {stats.map((stat, index) => (
+                  <div key={index} className="text-center bg-white dark:bg-gray-600 rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
+                    <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 mx-auto">
+                      <stat.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-2">{stat.number}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full opacity-20 animate-pulse delay-1000"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default About;
