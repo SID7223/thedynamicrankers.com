@@ -179,7 +179,7 @@ const Services = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {services.map((service, index) => (
             <div key={index} className="animated-border">
-              <div className="bg-white dark:bg-gray-700 animated-border-content rounded-xl shadow-md sm:shadow-lg hover:shadow-2xl transition-all duration-300 p-4 sm:p-8 group hover:transform hover:scale-105">
+              <div className="bg-gray-50 sm:bg-white dark:bg-gray-700 animated-border-content rounded-xl shadow-md sm:shadow-lg hover:shadow-2xl transition-all duration-300 p-4 sm:p-8 group hover:transform hover:scale-105 relative overflow-hidden">
               <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 sm:mb-6 group-hover:from-purple-600 group-hover:to-blue-500 transition-all duration-300">
                 <service.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
@@ -203,7 +203,7 @@ const Services = () => {
 
               <button 
                 onClick={() => openModal(service)}
-                className="mt-6 w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105"
+                className="mt-6 w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 relative z-10"
               >
                 Learn More
               </button>

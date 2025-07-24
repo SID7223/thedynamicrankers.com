@@ -43,6 +43,7 @@
   border-radius: 0.625rem;
   position: relative;
   z-index: 1;
+  isolation: isolate;
 }
 @keyframes drawLineEased {
   0% {
