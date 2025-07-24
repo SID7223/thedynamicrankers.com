@@ -15,7 +15,7 @@ export class GeminiService {
   constructor() {
     if (genAI) {
       this.model = genAI.getGenerativeModel({ 
-        model: 'gemini-1.0-pro',
+        model: 'gemini-pro',
         generationConfig: {
           temperature: 0.7,
           topK: 40,
