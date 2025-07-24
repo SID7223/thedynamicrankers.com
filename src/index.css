@@ -40,10 +40,11 @@
 
 .animated-border-content {
   background: white;
-  border-radius: 0.625rem;
+  border-radius: 0.75rem;
   position: relative;
   z-index: 1;
-  isolation: isolate;
+  width: 100%;
+  height: 100%;
 }
 @keyframes drawLineEased {
   0% {
