@@ -101,12 +101,13 @@ const BusinessGrowth = () => {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="3"
+                     strokeLinecap="round"
                       className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
                       style={{
                         filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
                         strokeDasharray: '1000',
                         strokeDashoffset: '1000',
-                        animation: 'drawLineEased 60s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
+                       animation: 'drawLineEased 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
                         animationDelay: '0s',
                         animationIterationCount: 'infinite',
                         animationDirection: 'normal',
