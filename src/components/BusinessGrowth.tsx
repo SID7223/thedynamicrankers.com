@@ -9,8 +9,7 @@ const BusinessGrowth = () => {
     { month: 'Month 4', value: 45 },
     { month: 'Month 5', value: 65 },
     { month: 'Month 6', value: 80 },
-    { month: 'Month 7', value: 85 },
-    { month: 'Month 8', value: 90 }
+    { month: 'Month 7', value: 85 }
   ];
 
   // Create SVG path for the line
@@ -126,7 +125,16 @@ const BusinessGrowth = () => {
                 
                 {/* X-axis labels */}
                 <div className="absolute bottom-0 left-0 right-0 flex justify-between pt-2">
-                  {growthData.map((data, index) => (
+                  {[
+                    { month: 'Month 1' },
+                    { month: 'Month 2' },
+                    { month: 'Month 3' },
+                    { month: 'Month 4' },
+                    { month: 'Month 5' },
+                    { month: 'Month 6' },
+                    { month: 'Month 7' },
+                    { month: 'Month 8' }
+                  ].map((data, index) => (
                     <span key={index} className="text-xs text-gray-600 dark:text-gray-400 text-center" style={{ fontSize: '10px' }}>
                       {data.month.replace('Month ', 'M')}
                     </span>
