@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Star, Quote } from 'lucide-react';
 
 const Testimonials = () => {
@@ -72,9 +73,12 @@ const Testimonials = () => {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-white text-blue-900 hover:bg-blue-50 px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105">
+          <Link 
+            to="/contact"
+            className="inline-block bg-white text-blue-900 hover:bg-blue-50 px-6 sm:px-8 py-3 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105"
+          >
             View More Reviews
-          </button>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, TrendingUp } from 'lucide-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,13 +15,17 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
-    }
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
+
+  const navItems = [
+    { name: 'home', path: '/' },
+    { name: 'services', path: '/services' },
+    { name: 'about', path: '/about' },
+    { name: 'testimonials', path: '/testimonials' },
+    { name: 'contact', path: '/contact' }
+  ];
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -27,7 +33,7 @@ const Header = () => {
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/the copy.png" 
               alt="The Dynamic Rankers Logo" 
@@ -42,19 +48,19 @@ const Header = () => {
             }`}>
               The Dynamic Rankers
             </span>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex space-x-8">
-            {['home', 'services', 'about', 'testimonials', 'contact'].map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item)}
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
                 className={`capitalize font-medium transition-colors duration-200 hover:text-blue-600 ${
                   isScrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white hover:text-blue-200'
-                }`}
+                } ${location.pathname === item.path ? 'text-blue-600' : ''}`}
               >
-                {item}
-              </button>
+                {item.name}
+              </Link>
             ))}
           </nav>
 
@@ -73,14 +79,17 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 py-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg mx-4">
             <nav className="flex flex-col space-y-4">
-              {['home', 'services', 'about', 'testimonials', 'contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => scrollToSection(item)}
-                  className="capitalize font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors duration-200 text-left px-4 py-2"
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  onClick={closeMenu}
+                  className={`capitalize font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors duration-200 text-left px-4 py-2 ${
+                    location.pathname === item.path ? 'text-blue-600' : ''
+                  }`}
                 >
-                  {item}
-                </button>
+                  {item.name}
+                </Link>
               ))}
             </nav>
           </div>

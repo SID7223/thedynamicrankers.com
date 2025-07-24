@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Award, Users, Clock, Zap } from 'lucide-react';
 
 const About = () => {
@@ -30,12 +31,18 @@ const About = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+              <Link 
+                to="/contact"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 text-center"
+              >
                 Get In Touch
-              </button>
-              <button className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 text-gray-700 dark:text-gray-300 hover:text-blue-600 px-6 sm:px-8 py-3 rounded-lg font-semibold transition-all duration-300">
+              </Link>
+              <Link 
+                to="/testimonials"
+                className="border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 text-gray-700 dark:text-gray-300 hover:text-blue-600 px-6 sm:px-8 py-3 rounded-lg font-semibold transition-all duration-300 text-center"
+              >
                 View Portfolio
-              </button>
+              </Link>
             </div>
           </div>
 

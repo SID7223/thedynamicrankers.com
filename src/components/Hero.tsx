@@ -1,21 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Play } from 'lucide-react';
 
 const Hero = () => {
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const scrollToServices = () => {
-    const element = document.getElementById('services');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 sm:pt-0">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900"></div>
@@ -42,21 +29,21 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4">
-            <button
-              onClick={scrollToContact}
+            <Link
+              to="/contact"
               className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 sm:px-8 py-4 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
             >
               <span>Get Started Today</span>
               <ArrowRight className="w-5 h-5" />
-            </button>
+            </Link>
             
-            <button 
-              onClick={scrollToServices}
+            <Link 
+              to="/services"
               className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-gray-800 px-6 sm:px-8 py-4 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 flex items-center justify-center space-x-2"
             >
               <Play className="w-5 h-5" />
               <span>View Our Services</span>
-            </button>
+            </Link>
           </div>
 
           <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center px-4">
