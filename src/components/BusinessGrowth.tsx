@@ -11,7 +11,7 @@ const BusinessGrowth = () => {
     { month: 'Month 6', value: 80 },
     { month: 'Month 7', value: 85 },
     { month: 'Month 8', value: 95 },
-    { month: 'Month 9', value: 100 }
+    { month: 'Month 9', value: 92 }
   ];
 
   // Create SVG path for the line
