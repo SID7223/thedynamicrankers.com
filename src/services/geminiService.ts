@@ -68,7 +68,7 @@ RESPONSE STYLE:
 - Be warm but brief
 - Ask one focused question to keep conversation moving
 
-Keep responses conversational, warm, and under 50 words unless detailed information is specifically requested.`;
+Keep responses conversational, warm, and ALWAYS under 25 words unless the user specifically asks for detailed information or says "tell me more".`;
   }
 
   async generateResponse(userMessage: string, isFirstMessage: boolean = false): Promise<string> {
@@ -123,22 +123,22 @@ Please respond as the emotionally intelligent AI assistant for The Dynamic Ranke
     
     // Emotional responses
     if (input.includes('good') || input.includes('great') || input.includes('fine')) {
-      return "That's wonderful to hear! 🌟 I'm excited to help you today. What brings you to The Dynamic Rankers? Are you looking to grow your business online?";
+      return "Great! 🌟 How can I help your business today?";
     }
     
     if (input.includes('struggling') || input.includes('difficult') || input.includes('hard')) {
-      return "I hear you, and I want you to know that struggling doesn't mean you're failing - it means you're fighting for something that matters to you. 💪 Many of our most successful clients came to us during their toughest moments. What's been the most challenging part of your journey lately?";
+      return "I hear you 💪 What's your biggest business challenge right now?";
     }
     
     if (input.includes('website') || input.includes('web')) {
-      return "Excellent! Website development is one of our core strengths! 🚀 We've helped businesses increase their website traffic by up to 300%. Are you looking to build a new website or improve your existing one?";
+      return "Great! 🚀 Need a new website or improve existing one?";
     }
     
     if (input.includes('seo') || input.includes('search')) {
-      return "Perfect! SEO is our specialty! 📈 We've helped clients achieve 200-400% revenue growth through our proven SEO strategies. Are you currently struggling with search rankings?";
+      return "Perfect! 📈 Struggling with search rankings?";
     }
     
-    return "Thanks for sharing that with me! 😊 I want to make sure I give you the most helpful information. Could you tell me a bit more about what you're looking for? Are you interested in website development, SEO, social media marketing, or something else?";
+    return "I didn't catch that 😊 What can I help you with today?";
   }
 
   clearHistory(): void {
