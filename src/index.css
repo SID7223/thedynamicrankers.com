@@ -24,10 +24,7 @@
   53.3% {
     stroke-dashoffset: 0;
   }
-  86.7% {
-    stroke-dashoffset: 0;
-  }
   100% {
-    stroke-dashoffset: 1000;
+    stroke-dashoffset: 0;
   }
 }
