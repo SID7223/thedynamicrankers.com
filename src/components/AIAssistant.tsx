@@ -134,7 +134,6 @@ const AIAssistant = () => {
     if (input.includes('skeptical') || input.includes('doubtful') || input.includes('not convinced')) {
       return "I really respect your skepticism - it shows you're a smart, thoughtful business owner who doesn't make hasty decisions. 🧠 That's exactly the kind of careful thinking that leads to success! Healthy skepticism protects you from bad choices. I'd love to earn your trust by showing you real results and being completely transparent. What would help address your concerns?";
     }
-    }
     
     // Business-related responses
     if (input.includes('website') || input.includes('web')) {
