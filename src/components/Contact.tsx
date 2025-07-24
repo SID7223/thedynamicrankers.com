@@ -17,11 +17,9 @@ const Contact = () => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission here
-    alert('Thank you for your message! We\'ll get back to you soon.');
-    setFormData({ name: '', email: '', service: '', message: '' });
+    // For Netlify Forms, we don't prevent default behavior
+    // The form will be submitted naturally to Netlify
+    console.log('Form being submitted to Netlify:', formData);
   };
 
   return (
@@ -83,7 +81,24 @@ const Contact = () => {
           </div>
 
           <div>
-            <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8">
+            <form 
+              name="contact" 
+              method="POST" 
+              data-netlify="true" 
+              data-netlify-honeypot="bot-field"
+              onSubmit={handleSubmit} 
+              className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8"
+            >
+              {/* Netlify form detection */}
+              <input type="hidden" name="form-name" value="contact" />
+              
+              {/* Honeypot field for spam protection */}
+              <div style={{ display: 'none' }}>
+                <label>
+                  Don't fill this out if you're human: <input name="bot-field" />
+                </label>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
