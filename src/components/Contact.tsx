@@ -57,7 +57,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Call Us</h4>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">+1 (555) 123-4567</p>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">+1 (346) 556-1173</p>
                 </div>
               </div>
 
@@ -67,7 +67,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Visit Us</h4>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">123 Digital Avenue, Tech City, TC 12345</p>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">1234 Westheimer Rd, Apartment 101<br />Houston, TX 77077</p>
                 </div>
               </div>
             </div>
