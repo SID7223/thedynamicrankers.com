@@ -29,33 +29,6 @@
   }
 }
 
-@keyframes morphToPointer {
-  0% {
-    r: 0;
-    opacity: 0;
-  }
-  50% {
-    r: 0;
-    opacity: 0;
-  }
-  52% {
-    r: 2;
-    opacity: 1;
-  }
-  55% {
-    r: 4;
-    opacity: 1;
-  }
-  95% {
-    r: 0;
-    opacity: 0;
-  }
-  100% {
-    r: 0;
-    opacity: 0;
-  }
-}
-
 @keyframes showPointer {
   0% {
     opacity: 0;
