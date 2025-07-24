@@ -334,8 +334,7 @@ const AIAssistant = () => {
                     key={index}
                     onClick={() => {
                       addUserMessage(reply);
-                      const response = analyzeUserResponse(reply);
-                      addBotMessage(response);
+                      generateGeminiResponse(reply);
                     }}
                     className="block w-full text-left text-xs bg-blue-50 dark:bg-gray-600 hover:bg-blue-100 dark:hover:bg-gray-500 text-blue-700 dark:text-blue-300 px-2 py-1 rounded transition-colors duration-200"
                   >
