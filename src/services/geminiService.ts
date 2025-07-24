@@ -61,7 +61,14 @@ CONVERSATION APPROACH:
 4. Offer relevant services based on their situation
 5. Always be supportive and encouraging
 
-Keep responses conversational, warm, and under 150 words. Use emojis appropriately to convey emotion and warmth.`;
+RESPONSE STYLE:
+- Keep responses SHORT and CONCISE (20-50 words typically)
+- Only give detailed answers when specifically asked for more information
+- Use emojis sparingly but effectively
+- Be warm but brief
+- Ask one focused question to keep conversation moving
+
+Keep responses conversational, warm, and under 50 words unless detailed information is specifically requested.`;
   }
 
   async generateResponse(userMessage: string, isFirstMessage: boolean = false): Promise<string> {
