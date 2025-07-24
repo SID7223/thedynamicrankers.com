@@ -16,7 +16,7 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Main Hero Content - Full Screen on Mobile */}
-        <div className="text-center max-w-4xl mx-auto min-h-screen sm:min-h-0 flex flex-col items-center justify-center sm:justify-start sm:pt-20">
+        <div className="text-center max-w-4xl mx-auto min-h-screen sm:min-h-0 flex flex-col items-center justify-start sm:justify-center sm:pt-20 pt-20">
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-tight sm:leading-normal">
             Elevate Your
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-4">
@@ -48,7 +48,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Stats Section - Appears on Scroll (Mobile Only) */}
       <div className="sm:hidden relative z-10 pb-20">
         <div className="container mx-auto px-4">
@@ -68,9 +68,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-
-      {/* Desktop Stats - Original Layout */}
-      <div className="hidden sm:block container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div className="mt-16 grid grid-cols-3 gap-8 text-center">
             <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-4 sm:p-8 hover:bg-opacity-20 transition-all duration-300">
@@ -92,4 +89,6 @@ const Hero = () => {
   );
 };
 
+      {/* Desktop Stats - Original Layout */}
+      <div className="hidden sm:block container mx-auto px-4 relative z-10">
 export default Hero;
