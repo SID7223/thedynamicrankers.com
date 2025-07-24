@@ -95,13 +95,31 @@ const BusinessGrowth = () => {
                 {/* Line Graph */}
                 <div className="absolute inset-0">
                   <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    {/* Define marker for mouse pointer */}
+                    <defs>
+                      <marker
+                        id="mousePointer"
+                        markerWidth="8"
+                        markerHeight="12"
+                        refX="1"
+                        refY="6"
+                        orient="auto"
+                        markerUnits="strokeWidth"
+                      >
+                        <path
+                          d="M0,0 L0,12 L3,9 L6,12 L8,10 L5,7 L8,6 Z"
+                          fill="currentColor"
+                          className="text-blue-500 dark:text-purple-400"
+                        />
+                      </marker>
+                    </defs>
                     {/* Line path */}
                     <path
                       d={createPath()}
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="3"
-                     strokeLinecap="round"
+                      markerEnd="url(#mousePointer)"
                       className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
                       style={{
                         filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
