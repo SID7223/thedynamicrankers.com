@@ -61,12 +61,13 @@ const Contact = () => {
           </div>
 
           <div>
-            <form 
+            <div className="animated-border">
+              <form 
               name="contact" 
               method="POST"
               data-netlify="true"
               action="/thank-you.html"
-              className="bg-gray-50 sm:bg-white dark:bg-gray-700 rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8 border border-gray-200 sm:border-transparent dark:border-transparent"
+              className="bg-gray-50 sm:bg-white dark:bg-gray-700 animated-border-content rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8"
             >
               <input type="hidden" name="form-name" value="contact" />
               <input type="hidden" name="form-name" value="contact" />
@@ -141,6 +142,7 @@ const Contact = () => {
                 <Send className="w-5 h-5" />
               </button>
             </form>
+            </div>
           </div>
         </div>
       </div>
