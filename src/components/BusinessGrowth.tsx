@@ -53,10 +53,10 @@ const BusinessGrowth = () => {
     <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">
             How We Help Grow Your Business
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
             Partner with us and watch your business transform. Our data-driven approach 
             delivers measurable results that accelerate your growth trajectory.
           </p>

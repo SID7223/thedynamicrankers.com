@@ -16,14 +16,14 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-tight sm:leading-normal">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-tight sm:leading-normal">
             Elevate Your
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-4">
               Digital Presence
             </span>
           </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-blue-100 mt-6 sm:mt-12 mb-8 leading-relaxed px-2">
+          <p className="text-base sm:text-xl md:text-2xl text-blue-100 mt-6 sm:mt-12 mb-8 leading-relaxed px-2">
             We specialize in website development, SEO, SEM, social media marketing, 
             and customer support to help your business dominate the digital landscape.
           </p>
@@ -48,15 +48,15 @@ const Hero = () => {
 
           <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center px-4">
             <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-8 hover:bg-opacity-20 transition-all duration-300">
-              <h3 className="text-3xl sm:text-4xl font-bold text-white mb-3">50+</h3>
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-3">50+</h3>
               <p className="text-blue-100 text-base sm:text-lg">Projects Completed</p>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-8 hover:bg-opacity-20 transition-all duration-300">
-              <h3 className="text-3xl sm:text-4xl font-bold text-white mb-3">24/7</h3>
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-3">24/7</h3>
               <p className="text-blue-100 text-base sm:text-lg">Customer Support</p>
             </div>
             <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-8 hover:bg-opacity-20 transition-all duration-300">
-              <h3 className="text-3xl sm:text-4xl font-bold text-white mb-3">100%</h3>
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-3">100%</h3>
               <p className="text-blue-100 text-base sm:text-lg">Client Satisfaction</p>
             </div>
           </div>

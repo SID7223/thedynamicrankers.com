@@ -39,10 +39,10 @@ const Testimonials = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 px-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4 px-2">
             What Our Clients Say
           </h2>
-          <p className="text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-xl text-blue-100 max-w-3xl mx-auto px-4">
             Don't just take our word for it. Here's what our satisfied clients have to say about our services.
           </p>
         </div>

@@ -168,10 +168,10 @@ const Services = () => {
     <section id="services" className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">
             Our Premium Services
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
             We offer comprehensive digital solutions to help your business thrive in the competitive online landscape
           </p>
         </div>
