@@ -103,7 +103,14 @@ const BusinessGrowth = () => {
                       strokeWidth="3"
                       className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
                       style={{
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                        strokeDasharray: '1000',
+                        strokeDashoffset: '1000',
+                        animation: 'drawLine 3s ease-in-out infinite',
+                        animationDelay: '0s',
+                        animationIterationCount: 'infinite',
+                        animationDirection: 'normal',
+                        animationFillMode: 'forwards'
                       }}
                     />
                     {/* Data points */}
