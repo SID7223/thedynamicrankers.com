@@ -77,41 +77,66 @@ Keep responses conversational, warm, and ALWAYS under 25 words unless the user s
       return this.getFallbackResponse(userMessage, isFirstMessage);
     }
 
-    try {
-      // Add user message to conversation history
-      this.conversationHistory.push({
-        role: 'user',
-        parts: userMessage
-      });
+    // Add user message to conversation history
+    this.conversationHistory.push({
+      role: 'user',
+      parts: userMessage
+    });
 
-      // Create the full prompt with context
-      const fullPrompt = `${this.getSystemPrompt()}
+    // Create the full prompt with context
+    const fullPrompt = `${this.getSystemPrompt()}
 
 CONVERSATION HISTORY:
 ${this.conversationHistory.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}
 
 Please respond as the emotionally intelligent AI assistant for The Dynamic Rankers. ${isFirstMessage ? 'This is the first interaction, so start with a warm greeting and ask how they\'re feeling today.' : ''}`;
 
-      const result = await this.model.generateContent(fullPrompt);
-      const response = result.response;
-      const text = response.text();
+    // Retry mechanism with exponential backoff
+    const maxRetries = 3;
+    let retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        const result = await this.model.generateContent(fullPrompt);
+        const response = result.response;
+        const text = response.text();
 
-      // Add assistant response to conversation history
-      this.conversationHistory.push({
-        role: 'assistant',
-        parts: text
-      });
+        // Add assistant response to conversation history
+        this.conversationHistory.push({
+          role: 'assistant',
+          parts: text
+        });
 
-      // Keep conversation history manageable (last 10 exchanges)
-      if (this.conversationHistory.length > 20) {
-        this.conversationHistory = this.conversationHistory.slice(-20);
+        // Keep conversation history manageable (last 10 exchanges)
+        if (this.conversationHistory.length > 20) {
+          this.conversationHistory = this.conversationHistory.slice(-20);
+        }
+
+        return text;
+      } catch (error: any) {
+        console.error(`Gemini API Error (attempt ${retryCount + 1}):`, error);
+        
+        // Check if it's a retryable error (503 or network issues)
+        const isRetryable = error?.message?.includes('503') || 
+                           error?.message?.includes('overloaded') ||
+                           error?.message?.includes('network') ||
+                           error?.message?.includes('timeout');
+        
+        if (isRetryable && retryCount < maxRetries - 1) {
+          retryCount++;
+          // Exponential backoff: wait 1s, then 2s, then 4s
+          const waitTime = Math.pow(2, retryCount - 1) * 1000;
+          console.log(`Retrying in ${waitTime}ms...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        } else {
+          // Max retries reached or non-retryable error, use fallback
+          return this.getFallbackResponse(userMessage, isFirstMessage);
+        }
       }
-
-      return text;
-    } catch (error) {
-      console.error('Gemini API Error:', error);
-      return this.getFallbackResponse(userMessage, isFirstMessage);
     }
+    
+    // This should never be reached, but just in case
+    return this.getFallbackResponse(userMessage, isFirstMessage);
   }
 
   private getFallbackResponse(userMessage: string, isFirstMessage: boolean): string {
