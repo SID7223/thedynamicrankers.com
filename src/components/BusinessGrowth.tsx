@@ -16,8 +16,9 @@ const BusinessGrowth = () => {
   const createPath = () => {
     const width = 100;
     const height = 100;
-    const points = growthData.map((data, index) => {
-      const x = (index / (growthData.length - 1)) * width;
+    // Only use first 7 data points (index 0-6) to stop at M7
+    const points = growthData.slice(0, 7).map((data, index) => {
+      const x = (index / 6) * (width * 0.875); // 7/8 of the width to stop at M7
       const y = height - data.value;
       return `${x},${y}`;
     });
@@ -106,8 +107,8 @@ const BusinessGrowth = () => {
                       }}
                     />
                     {/* Data points */}
-                    {growthData.map((data, index) => {
-                      const x = (index / (growthData.length - 1)) * 100;
+                    {growthData.slice(0, 7).map((data, index) => {
+                      const x = (index / 6) * 87.5; // Match the line positioning
                       const y = 100 - data.value;
                       return (
                         <circle
