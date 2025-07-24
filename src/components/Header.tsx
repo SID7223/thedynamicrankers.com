@@ -28,9 +28,11 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
+            <img 
+              src="/the.png" 
+              alt="The Dynamic Rankers Logo" 
+              className="w-8 h-8 object-contain"
+            />
             <span className={`text-xl font-bold ${
               isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
             }`}>

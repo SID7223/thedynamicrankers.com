@@ -10,9 +10,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-6">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
+              <img 
+                src="/the.png" 
+                alt="The Dynamic Rankers Logo" 
+                className="w-8 h-8 object-contain"
+              />
               <span className="text-xl font-bold">The Dynamic Rankers</span>
             </div>
             <p className="text-sm sm:text-base text-gray-400 leading-relaxed mb-6">
