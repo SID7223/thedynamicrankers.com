@@ -1,26 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    service: '',
-    message: ''
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    // Don't prevent default - let Netlify handle the submission
-    console.log('Form being submitted to Netlify:', formData);
-  };
-
   return (
     <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4">
@@ -83,21 +64,11 @@ const Contact = () => {
             <form 
               name="contact" 
               method="POST"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
-              action="/thankyou.html"
-              onSubmit={handleSubmit}
+              netlify
+              action="/thank-you.html"
               className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8"
             >
-              {/* Netlify form detection */}
               <input type="hidden" name="form-name" value="contact" />
-              
-              {/* Honeypot field for spam protection */}
-              <div style={{ display: 'none' }}>
-                <label>
-                  Don't fill this out if you're human: <input name="bot-field" />
-                </label>
-              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -108,8 +79,6 @@ const Contact = () => {
                     type="text"
                     id="name"
                     name="name"
-                    value={formData.name}
-                    onChange={handleChange}
                     required
                     className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
                   />
@@ -123,8 +92,6 @@ const Contact = () => {
                     type="email"
                     id="email"
                     name="email"
-                    value={formData.email}
-                    onChange={handleChange}
                     required
                     className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
                   />
@@ -138,8 +105,6 @@ const Contact = () => {
                 <select
                   id="service"
                   name="service"
-                  value={formData.service}
-                  onChange={handleChange}
                   required
                   className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
                 >
@@ -160,8 +125,6 @@ const Contact = () => {
                 <textarea
                   id="message"
                   name="message"
-                  value={formData.message}
-                  onChange={handleChange}
                   required
                   rows={4}
                   className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 resize-none"
