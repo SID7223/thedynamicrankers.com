@@ -114,6 +114,31 @@ const BusinessGrowth = () => {
                         animationFillMode: 'forwards'
                       }}
                     />
+                    
+                    {/* Morphing pointer at end of line */}
+                    <circle
+                      cx="87.5"
+                      cy="20"
+                      r="0"
+                      fill="currentColor"
+                      className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
+                      style={{
+                        animation: 'morphToPointer 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
+                        transformOrigin: '87.5px 20px'
+                      }}
+                    />
+                    
+                    {/* Arrow pointer that appears after morphing */}
+                    <polygon
+                      points="87.5,15 92.5,20 87.5,25 85,20"
+                      fill="currentColor"
+                      className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
+                      style={{
+                        opacity: 0,
+                        animation: 'showPointer 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
+                        transformOrigin: '87.5px 20px'
+                      }}
+                    />
                   </svg>
                 </div>
                 

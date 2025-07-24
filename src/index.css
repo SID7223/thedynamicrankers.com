@@ -28,3 +28,49 @@
     stroke-dashoffset: 0;
   }
 }
+
+@keyframes morphToPointer {
+  0% {
+    r: 0;
+    opacity: 0;
+  }
+  53.3% {
+    r: 0;
+    opacity: 0;
+  }
+  55% {
+    r: 2;
+    opacity: 1;
+  }
+  58% {
+    r: 4;
+    opacity: 1;
+  }
+  60% {
+    r: 0;
+    opacity: 0;
+  }
+  100% {
+    r: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes showPointer {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  53.3% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
