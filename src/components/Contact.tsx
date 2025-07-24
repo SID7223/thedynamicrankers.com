@@ -17,8 +17,7 @@ const Contact = () => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    // For Netlify Forms, we don't prevent default behavior
-    // The form will be submitted naturally to Netlify
+    // Let the form submit naturally to Netlify
     console.log('Form being submitted to Netlify:', formData);
   };
 
@@ -84,9 +83,10 @@ const Contact = () => {
             <form 
               name="contact" 
               method="POST" 
-              data-netlify="true" 
+             netlify
               data-netlify-honeypot="bot-field"
               onSubmit={handleSubmit} 
+             action="/thank-you"
               className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8"
             >
               {/* Netlify form detection */}
