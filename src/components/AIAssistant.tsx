@@ -325,7 +325,7 @@ const AIAssistant = () => {
             )}
             
             {/* Quick Replies */}
-            {messages.length >= 1 && !isTyping && (
+            {isOpen && !isTyping && (
               <div className="space-y-2">
                 <p className="text-xs text-gray-500 dark:text-gray-400">Quick replies:</p>
                 {quickReplies.map((reply, index) => (
