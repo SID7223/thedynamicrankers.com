@@ -20,8 +20,8 @@ const Contact = () => {
             
             <div className="space-y-6">
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                  <Mail className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 sm:p-3 rounded-full">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Email Us</h4>
@@ -30,8 +30,8 @@ const Contact = () => {
               </div>
 
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                  <Phone className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 sm:p-3 rounded-full">
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Call Us</h4>
@@ -40,8 +40,8 @@ const Contact = () => {
               </div>
 
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                  <MapPin className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 sm:p-3 rounded-full">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Visit Us</h4>
@@ -66,7 +66,7 @@ const Contact = () => {
               method="POST"
               data-netlify="true"
               action="/thank-you.html"
-              className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8"
+              className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-4 sm:p-8"
             >
               <input type="hidden" name="form-name" value="contact" />
               <input type="hidden" name="form-name" value="contact" />

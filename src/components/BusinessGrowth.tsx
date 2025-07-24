@@ -64,14 +64,14 @@ const BusinessGrowth = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Growth Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-8">
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
               Average Business Growth Timeline
             </h3>
             
-            <div className="relative h-64 sm:h-80 p-4">
+            <div className="relative h-48 sm:h-80 p-2 sm:p-4">
               {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs sm:text-sm text-gray-500 dark:text-gray-400 pr-2 sm:pr-4">
+              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 dark:text-gray-400 pr-2 sm:pr-4">
                 <span>100%</span>
                 <span>80%</span>
                 <span>60%</span>
@@ -81,7 +81,7 @@ const BusinessGrowth = () => {
               </div>
               
               {/* Chart area */}
-              <div className="ml-8 sm:ml-12 h-full relative">
+              <div className="ml-6 sm:ml-12 h-full relative">
                 {/* Grid lines */}
                 <div className="absolute inset-0">
                   {[0, 20, 40, 60, 80, 100].map((value) => (
@@ -147,7 +147,7 @@ const BusinessGrowth = () => {
 
           {/* Benefits */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 border-l-4 border-blue-500">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8 border-l-4 border-blue-500">
               <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6">
                 Transform Your Business Today
               </h3>
@@ -159,8 +159,8 @@ const BusinessGrowth = () => {
               <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-start space-x-3">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-lg flex-shrink-0">
-                      <benefit.icon className="w-5 h-5 text-white" />
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
+                      <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-800 dark:text-white mb-1">

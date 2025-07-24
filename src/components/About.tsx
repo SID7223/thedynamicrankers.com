@@ -47,12 +47,12 @@ const About = () => {
           </div>
 
           <div className="relative">
-            <div className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8">
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
+            <div className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-4 sm:p-8">
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 {stats.map((stat, index) => (
-                  <div key={index} className="text-center bg-white dark:bg-gray-600 rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
-                    <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4 mx-auto">
-                      <stat.icon className="w-6 h-6 text-white" />
+                  <div key={index} className="text-center bg-white dark:bg-gray-600 rounded-xl p-3 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
+                    <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-3 sm:mb-4 mx-auto">
+                      <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
                     <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-2">{stat.number}</h3>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{stat.label}</p>
@@ -62,8 +62,8 @@ const About = () => {
             </div>
             
             {/* Decorative elements */}
-            <div className="hidden md:block absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20 animate-pulse transform scale-100"></div>
-            <div className="hidden md:block absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full opacity-20 animate-pulse delay-1000 transform scale-100"></div>
+            <div className="hidden md:block absolute -top-4 -right-4 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20 animate-pulse transform scale-100"></div>
+            <div className="hidden md:block absolute -bottom-4 -left-4 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full opacity-20 animate-pulse delay-1000 transform scale-100"></div>
           </div>
         </div>
       </div>

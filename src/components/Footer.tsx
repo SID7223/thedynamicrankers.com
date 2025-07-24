@@ -13,7 +13,7 @@ const Footer = () => {
               <img 
                 src="/the copy.png" 
                 alt="The Dynamic Rankers Logo" 
-                className="w-8 h-8 object-contain"
+                className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
               />
               <span className="text-xl font-bold">The Dynamic Rankers</span>
             </div>
@@ -23,13 +23,13 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a href="#" className="bg-gray-800 dark:bg-gray-700 hover:bg-blue-600 p-2 rounded-full transition-colors duration-300">
-                <Facebook className="w-5 h-5" />
+                <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a href="#" className="bg-gray-800 hover:bg-blue-600 p-2 rounded-full transition-colors duration-300">
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a href="#" className="bg-gray-800 hover:bg-blue-600 p-2 rounded-full transition-colors duration-300">
-                <Instagram className="w-5 h-5" />
+                <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
             </div>
           </div>
@@ -60,15 +60,15 @@ const Footer = () => {
             <h3 className="text-base sm:text-lg font-semibold mb-6">Contact Info</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-blue-400" />
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 <span className="text-sm sm:text-base text-gray-400">eric@thedynamicrankers.com</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-blue-400" />
+                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 <span className="text-sm sm:text-base text-gray-400">+1 (346) 556-1173</span>
               </div>
               <div className="flex items-center space-x-3">
-                <MapPin className="w-5 h-5 text-blue-400" />
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                 <span className="text-sm sm:text-base text-gray-400">234 Westheimer Rd, Apt 101, Houston, TX 77077</span>
               </div>
             </div>

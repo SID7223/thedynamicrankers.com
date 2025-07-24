@@ -49,8 +49,8 @@ const Testimonials = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white bg-opacity-10 backdrop-blur-lg rounded-xl p-6 sm:p-8 hover:bg-opacity-20 transition-all duration-300">
-              <Quote className="w-8 h-8 text-blue-300 mb-4" />
+            <div key={index} className="bg-white bg-opacity-10 backdrop-blur-lg rounded-xl p-4 sm:p-8 hover:bg-opacity-20 transition-all duration-300">
+              <Quote className="w-6 h-6 sm:w-8 sm:h-8 text-blue-300 mb-3 sm:mb-4" />
               
               <p className="text-white text-base sm:text-lg mb-6 leading-relaxed">
                 "{testimonial.text}"
@@ -64,7 +64,7 @@ const Testimonials = () => {
                 
                 <div className="flex space-x-1">
                   {[...Array(testimonial.rating)].map((_, starIndex) => (
-                    <Star key={starIndex} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star key={starIndex} className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
               </div>
