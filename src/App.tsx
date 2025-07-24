@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import DarkModeToggle from './components/DarkModeToggle';
 import Hero from './components/Hero';
@@ -11,42 +11,66 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AIAssistant from './components/AIAssistant';
 
-// Page components that combine sections
-const HomePage = () => (
-  <>
-    <Hero />
-    <Services />
-    <BusinessGrowth />
-    <About />
-    <Testimonials />
-    <Contact />
-  </>
-);
+// Main page component that handles scrolling based on URL
+const MainPage = () => {
+  const location = useLocation();
 
-const ServicesPage = () => (
-  <div className="pt-20">
-    <Services />
-    <BusinessGrowth />
-  </div>
-);
+  useEffect(() => {
+    // Scroll to top first
+    window.scrollTo(0, 0);
+    
+    // Then scroll to specific section based on path
+    const scrollToSection = () => {
+      let sectionId = '';
+      
+      switch (location.pathname) {
+        case '/':
+          sectionId = 'home';
+          break;
+        case '/services':
+          sectionId = 'services';
+          break;
+        case '/about':
+          sectionId = 'about';
+          break;
+        case '/testimonials':
+          sectionId = 'testimonials';
+          break;
+        case '/contact':
+          sectionId = 'contact';
+          break;
+        default:
+          sectionId = 'home';
+      }
 
-const AboutPage = () => (
-  <div className="pt-20">
-    <About />
-  </div>
-);
+      if (sectionId) {
+        // Small delay to ensure the page has rendered
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }, 100);
+      }
+    };
 
-const TestimonialsPage = () => (
-  <div className="pt-20">
-    <Testimonials />
-  </div>
-);
+    scrollToSection();
+  }, [location.pathname]);
 
-const ContactPage = () => (
-  <div className="pt-20">
-    <Contact />
-  </div>
-);
+  return (
+    <>
+      <Hero />
+      <Services />
+      <BusinessGrowth />
+      <About />
+      <Testimonials />
+      <Contact />
+    </>
+  );
+};
 
 function App() {
   return (
@@ -56,11 +80,11 @@ function App() {
         <DarkModeToggle />
         
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/testimonials" element={<TestimonialsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/" element={<MainPage />} />
+          <Route path="/services" element={<MainPage />} />
+          <Route path="/about" element={<MainPage />} />
+          <Route path="/testimonials" element={<MainPage />} />
+          <Route path="/contact" element={<MainPage />} />
         </Routes>
         
         <Footer />
