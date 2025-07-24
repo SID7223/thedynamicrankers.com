@@ -32,8 +32,10 @@ const AIAssistant = () => {
       if (!geminiService) {
         setGeminiService(new GeminiService());
       }
-      // Generate greeting immediately without delay
-      generateGeminiResponse('', true);
+      // Generate greeting with slight delay for better UX
+      setTimeout(() => {
+        generateGeminiResponse('', true);
+      }, 100);
       setHasGreeted(true);
     }
   }, [isOpen, hasGreeted, geminiService]);
@@ -323,7 +325,7 @@ const AIAssistant = () => {
             )}
             
             {/* Quick Replies */}
-            {messages.length === 1 && !isTyping && (
+            {messages.length >= 1 && !isTyping && (
               <div className="space-y-2">
                 <p className="text-xs text-gray-500 dark:text-gray-400">Quick replies:</p>
                 {quickReplies.map((reply, index) => (
