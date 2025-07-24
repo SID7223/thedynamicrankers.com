@@ -27,7 +27,7 @@ const AIAssistant = () => {
   useEffect(() => {
     if (isOpen && !hasGreeted) {
       setTimeout(() => {
-        addBotMessage("Hi there! 👋 Welcome to The Dynamic Rankers! I'm here to help you with any questions about our digital marketing services. How are you doing today?");
+        addBotMessage("Hi there! 👋 Welcome to The Dynamic Rankers! I'm genuinely excited to meet you and learn about your journey. I'm here not just to help with digital marketing, but to truly understand what you're going through and support you however I can. How are you feeling today?");
         setHasGreeted(true);
       }, 500);
     }
@@ -60,17 +60,80 @@ const AIAssistant = () => {
   const analyzeUserResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
     
-    // Greeting responses
+    // Enhanced Emotional Intelligence & Empathy
+    
+    // Positive emotions
     if (input.includes('hi') || input.includes('hello') || input.includes('hey')) {
       return "Hello! Great to meet you! 😊 I'd love to learn more about your business. Are you looking to improve your online presence, or do you have a specific digital marketing challenge you're facing?";
     }
     
-    if (input.includes('good') || input.includes('great') || input.includes('fine') || input.includes('well')) {
+    if (input.includes('amazing') || input.includes('fantastic') || input.includes('excellent') || input.includes('wonderful')) {
+      return "That's absolutely fantastic! 🎉 Your positive energy is contagious! I can already tell you're someone who goes after success. Let's channel that energy into growing your business even more! What exciting goals do you have for your company?";
+    }
+    
+    if (input.includes('good') || input.includes('great') || input.includes('fine') || input.includes('well') || input.includes('okay') || input.includes('alright')) {
       return "That's wonderful to hear! 🌟 I'm excited to help you today. What brings you to The Dynamic Rankers? Are you looking to grow your business online?";
     }
     
-    if (input.includes('not good') || input.includes('bad') || input.includes('terrible') || input.includes('struggling')) {
-      return "I'm sorry to hear that! 😔 But you know what? You've come to the right place! We specialize in turning business challenges into success stories. What's been the biggest obstacle for your business lately?";
+    if (input.includes('excited') || input.includes('thrilled') || input.includes('pumped') || input.includes('motivated')) {
+      return "I love your enthusiasm! 🚀 That kind of positive energy is exactly what drives business success! I'm just as excited to help you achieve your goals. What's got you most excited about growing your business right now?";
+    }
+    
+    // Negative emotions - with deep empathy
+    if (input.includes('terrible') || input.includes('awful') || input.includes('horrible') || input.includes('worst')) {
+      return "I'm truly sorry you're going through such a tough time right now. 💙 That sounds really challenging, and I want you to know that your feelings are completely valid. Sometimes when everything feels overwhelming, that's actually when we're closest to a breakthrough. I'm here to listen and help however I can. Would you like to share what's been weighing on you most?";
+    }
+    
+    if (input.includes('struggling') || input.includes('difficult') || input.includes('hard') || input.includes('tough')) {
+      return "I hear you, and I want you to know that struggling doesn't mean you're failing - it means you're fighting for something that matters to you. 💪 That takes real courage. Many of our most successful clients came to us during their toughest moments. Sometimes the struggle is just before the breakthrough. What's been the most challenging part of your journey lately?";
+    }
+    
+    if (input.includes('frustrated') || input.includes('annoyed') || input.includes('irritated') || input.includes('fed up')) {
+      return "I completely understand that frustration - it's one of the most draining emotions, especially when you're working so hard and not seeing the results you deserve. 😤 Your frustration is valid, and honestly, it shows how much you care about your success. Let's turn that frustration into fuel for positive change. What's been the most frustrating part of your business journey?";
+    }
+    
+    if (input.includes('stressed') || input.includes('overwhelmed') || input.includes('anxious') || input.includes('worried')) {
+      return "I can really feel the weight you're carrying right now, and I want you to take a deep breath with me. 🌸 Stress and overwhelm are your mind's way of saying you care deeply about your success. That's actually a strength, even though it doesn't feel like it right now. You don't have to carry this burden alone. What's been causing you the most stress lately?";
+    }
+    
+    if (input.includes('sad') || input.includes('down') || input.includes('depressed') || input.includes('low')) {
+      return "I'm sending you a virtual hug right now. 🤗 Feeling down is part of the human experience, and it's okay to sit with these feelings for a moment. You're not alone in this. Sometimes our lowest moments teach us the most about our resilience. I'm here to support you, not just as a business assistant, but as someone who genuinely cares. What would help you feel a little lighter today?";
+    }
+    
+    if (input.includes('angry') || input.includes('mad') || input.includes('furious') || input.includes('pissed')) {
+      return "I can feel the intensity of your emotions right now, and that's completely okay. 🔥 Anger often comes from a place of caring deeply and feeling like things aren't fair or right. Your feelings are valid. Sometimes anger can be a powerful motivator for positive change. I'm here to listen without judgment. What's really got you fired up?";
+    }
+    
+    if (input.includes('confused') || input.includes('lost') || input.includes('don\'t know') || input.includes('unsure')) {
+      return "Feeling confused or uncertain is actually a sign of wisdom - it means you're thoughtful about your decisions and want to make the right choice. 🤔 That's admirable! Confusion often comes right before clarity. I'm here to help you sort through the fog and find a clear path forward. What's been the most confusing part of your business journey?";
+    }
+    
+    if (input.includes('tired') || input.includes('exhausted') || input.includes('drained') || input.includes('burnt out')) {
+      return "Oh, I can really hear the exhaustion in your words. 😴 You've been working so hard, and that kind of dedication is admirable, but you also deserve rest and support. Burnout is real, and it's your body and mind asking for care. You don't have to do everything alone. What if we could find ways to make your business work better for you, instead of you working so hard for it?";
+    }
+    
+    // Neutral but seeking emotions
+    if (input.includes('curious') || input.includes('interested') || input.includes('wondering')) {
+      return "I love your curiosity! 🤓 Curious minds are the ones that discover the best opportunities. That questioning spirit is exactly what leads to business breakthroughs. I'm excited to explore possibilities with you! What's sparked your curiosity about digital marketing?";
+    }
+    
+    if (input.includes('hopeful') || input.includes('optimistic') || input.includes('positive')) {
+      return "Your hope and optimism are beautiful qualities! ✨ Hope is the foundation of all great achievements. With that positive mindset, you're already ahead of the game. I believe in your vision, and I'm here to help make it a reality. What are you most hopeful about for your business?";
+    }
+    
+    if (input.includes('nervous') || input.includes('scared') || input.includes('afraid') || input.includes('worried')) {
+      return "It's completely natural to feel nervous about new ventures or changes - it shows you're stepping outside your comfort zone, which is where all growth happens! 🌱 Your nervousness is actually courage in disguise. I'm here to support you every step of the way and make this journey as smooth as possible. What's making you feel most nervous right now?";
+    }
+    
+    // Gratitude and appreciation
+    if (input.includes('thank') || input.includes('grateful') || input.includes('appreciate')) {
+      return "Aww, your gratitude just made my day! 🥰 Thank YOU for being so kind and open. It's an honor to help someone with such a positive spirit. Your appreciation means the world to me, and it motivates me to give you the best support possible!";
+    }
+    
+    // Skeptical but understanding
+    if (input.includes('skeptical') || input.includes('doubtful') || input.includes('not convinced')) {
+      return "I really respect your skepticism - it shows you're a smart, thoughtful business owner who doesn't make hasty decisions. 🧠 That's exactly the kind of careful thinking that leads to success! Healthy skepticism protects you from bad choices. I'd love to earn your trust by showing you real results and being completely transparent. What would help address your concerns?";
+    }
     }
     
     // Business-related responses
@@ -113,6 +176,15 @@ const AIAssistant = () => {
       return "I completely understand - it's smart to be thoughtful about these decisions! 🤔 How about I share a quick success story? We helped TechStart Solutions increase their website traffic by 300% in just 6 months. Would you like to hear more about how we did it?";
     }
     
+    // Emotional support for business challenges
+    if (input.includes('failing') || input.includes('failure') || input.includes('not working')) {
+      return "First, let me say this: you are NOT a failure. 💙 The fact that you're here, seeking solutions and not giving up, proves you're a fighter. Every successful business owner has faced moments that felt like failure - they're actually stepping stones to success. I've seen businesses turn around completely from exactly where you are now. You're closer to success than you think. What feels like it's not working right now?";
+    }
+    
+    if (input.includes('competitor') || input.includes('competition') || input.includes('behind')) {
+      return "I understand how disheartening it can feel to see competitors ahead of you. 😔 But here's what I know: you have something unique that they don't - your specific vision, passion, and story. We've helped many businesses not just catch up to their competition, but completely surpass them. Your time is coming! What do you think your competitors are doing that you'd like to do better?";
+    }
+    
     // Generic business inquiry
     if (input.includes('business') || input.includes('company') || input.includes('grow') || input.includes('increase')) {
       return "Excellent! Growing your business is exactly what we're here for! 📊 We've helped over 100 clients achieve significant growth. What aspect of your business would you most like to improve - visibility, traffic, leads, or sales?";
@@ -139,11 +211,11 @@ const AIAssistant = () => {
   };
 
   const quickReplies = [
-    "I need help with SEO",
-    "I want a new website",
-    "Tell me about your services",
-    "I'm interested in social media marketing",
-    "What are your prices?"
+    "I'm feeling overwhelmed with my business",
+    "I'm excited about growing my company",
+    "I'm struggling with online marketing",
+    "I'm curious about your services",
+    "I'm not sure where to start"
   ];
 
   return (
