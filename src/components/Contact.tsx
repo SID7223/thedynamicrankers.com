@@ -64,10 +64,11 @@ const Contact = () => {
             <form 
               name="contact" 
               method="POST"
-              netlify
+              data-netlify="true"
               action="/thank-you.html"
               className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8"
             >
+              <input type="hidden" name="form-name" value="contact" />
               <input type="hidden" name="form-name" value="contact" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
