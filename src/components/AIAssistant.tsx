@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { GeminiService } from '../services/geminiService';
 
 interface Message {
   id: string;
@@ -14,6 +15,7 @@ const AIAssistant = () => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
+  const [geminiService] = useState(() => new GeminiService());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -27,7 +29,7 @@ const AIAssistant = () => {
   useEffect(() => {
     if (isOpen && !hasGreeted) {
       setTimeout(() => {
-        addBotMessage("Hi there! 👋 Welcome to The Dynamic Rankers! I'm genuinely excited to meet you and learn about your journey. I'm here not just to help with digital marketing, but to truly understand what you're going through and support you however I can. How are you feeling today?");
+        generateGeminiResponse('', true);
         setHasGreeted(true);
       }, 500);
     }
@@ -55,6 +57,37 @@ const AIAssistant = () => {
       timestamp: new Date()
     };
     setMessages(prev => [...prev, newMessage]);
+  };
+
+  const generateGeminiResponse = async (userInput: string, isFirstMessage: boolean = false) => {
+    setIsTyping(true);
+    try {
+      const response = await geminiService.generateResponse(userInput, isFirstMessage);
+      setTimeout(() => {
+        const newMessage: Message = {
+          id: Date.now().toString(),
+          text: response,
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, newMessage]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 1000);
+    } catch (error) {
+      console.error('Error generating response:', error);
+      // Fallback to original response system
+      const fallbackResponse = analyzeUserResponse(userInput);
+      setTimeout(() => {
+        const newMessage: Message = {
+          id: Date.now().toString(),
+          text: fallbackResponse,
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, newMessage]);
+        setIsTyping(false);
+      }, 1000);
+    }
   };
 
   const analyzeUserResponse = (userInput: string): string => {
@@ -196,8 +229,7 @@ const AIAssistant = () => {
   const handleSendMessage = () => {
     if (inputValue.trim()) {
       addUserMessage(inputValue);
-      const response = analyzeUserResponse(inputValue);
-      addBotMessage(response);
+      generateGeminiResponse(inputValue);
       setInputValue('');
     }
   };
