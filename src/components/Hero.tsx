@@ -15,7 +15,8 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[80vh] sm:min-h-0">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="flex flex-col items-center justify-center min-h-[80vh] sm:min-h-screen">
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-tight sm:leading-normal">
             Elevate Your
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-4">
@@ -23,7 +24,7 @@ const Hero = () => {
             </span>
           </h1>
           
-          <p className="text-base sm:text-xl md:text-2xl text-blue-100 mt-6 sm:mt-12 mb-8 leading-relaxed px-2">
+          <p className="text-base sm:text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed px-2">
             We specialize in website development, SEO, SEM, social media marketing, 
             and customer support to help your business dominate the digital landscape.
           </p>
@@ -60,6 +61,7 @@ const Hero = () => {
               <p className="text-blue-100 text-base sm:text-lg">Client Satisfaction</p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>
