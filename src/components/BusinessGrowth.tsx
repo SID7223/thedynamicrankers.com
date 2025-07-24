@@ -3,13 +3,28 @@ import { TrendingUp, Users, DollarSign, Target } from 'lucide-react';
 
 const BusinessGrowth = () => {
   const growthData = [
-    { month: 'Month 1', value: 20 },
-    { month: 'Month 2', value: 35 },
-    { month: 'Month 3', value: 55 },
-    { month: 'Month 4', value: 75 },
-    { month: 'Month 5', value: 90 },
-    { month: 'Month 6', value: 100 }
+    { month: 'Month 1', value: 0 },
+    { month: 'Month 2', value: 15 },
+    { month: 'Month 3', value: 25 },
+    { month: 'Month 4', value: 45 },
+    { month: 'Month 5', value: 65 },
+    { month: 'Month 6', value: 80 },
+    { month: 'Month 7', value: 85 },
+    { month: 'Month 8', value: 95 },
+    { month: 'Month 9', value: 100 }
   ];
+
+  // Create SVG path for the line
+  const createPath = () => {
+    const width = 100;
+    const height = 100;
+    const points = growthData.map((data, index) => {
+      const x = (index / (growthData.length - 1)) * width;
+      const y = height - data.value;
+      return `${x},${y}`;
+    });
+    return `M ${points.join(' L ')}`;
+  };
 
   const benefits = [
     {
@@ -54,7 +69,7 @@ const BusinessGrowth = () => {
               Average Business Growth Timeline
             </h3>
             
-            <div className="relative h-64 sm:h-80">
+            <div className="relative h-64 sm:h-80 p-4">
               {/* Y-axis labels */}
               <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs sm:text-sm text-gray-500 dark:text-gray-400 pr-2 sm:pr-4">
                 <span>100%</span>
@@ -78,25 +93,44 @@ const BusinessGrowth = () => {
                   ))}
                 </div>
                 
-                {/* Bars */}
-                <div className="flex items-end justify-between h-full pt-4">
+                {/* Line Graph */}
+                <div className="absolute inset-0">
+                  <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    {/* Line path */}
+                    <path
+                      d={createPath()}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
+                      style={{
+                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                      }}
+                    />
+                    {/* Data points */}
+                    {growthData.map((data, index) => {
+                      const x = (index / (growthData.length - 1)) * 100;
+                      const y = 100 - data.value;
+                      return (
+                        <circle
+                          key={index}
+                          cx={x}
+                          cy={y}
+                          r="2"
+                          fill="currentColor"
+                          className="text-blue-600 dark:text-purple-500 hover:r-3 transition-all duration-200"
+                        />
+                      );
+                    })}
+                  </svg>
+                </div>
+                
+                {/* X-axis labels */}
+                <div className="absolute bottom-0 left-0 right-0 flex justify-between pt-2">
                   {growthData.map((data, index) => (
-                    <div key={index} className="flex flex-col items-center flex-1 mx-0.5 sm:mx-1">
-                      <div
-                        className="w-full bg-gradient-to-t from-blue-500 to-purple-600 rounded-t-lg transition-all duration-1000 ease-out hover:from-blue-600 hover:to-purple-700 relative group"
-                        style={{ 
-                          height: `${data.value}%`,
-                          animationDelay: `${index * 200}ms`
-                        }}
-                      >
-                        <div className="absolute -top-6 sm:-top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-1 sm:px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          {data.value}%
-                        </div>
-                      </div>
-                      <span className="text-xs text-gray-600 dark:text-gray-400 mt-2 text-center leading-tight">
-                        {data.month}
-                      </span>
-                    </div>
+                    <span key={index} className="text-xs text-gray-600 dark:text-gray-400 text-center" style={{ fontSize: '10px' }}>
+                      {data.month.replace('Month ', 'M')}
+                    </span>
                   ))}
                 </div>
               </div>
