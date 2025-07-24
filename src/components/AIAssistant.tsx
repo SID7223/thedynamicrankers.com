@@ -15,7 +15,7 @@ const AIAssistant = () => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
-  const [geminiService] = useState(() => new GeminiService());
+  const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -27,13 +27,16 @@ const AIAssistant = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen && !hasGreeted && messages.length === 0) {
-      setTimeout(() => {
-        generateGeminiResponse('', true);
-        setHasGreeted(true);
-      }, 100);
+    if (isOpen && !hasGreeted) {
+      // Initialize service only when chat is opened
+      if (!geminiService) {
+        setGeminiService(new GeminiService());
+      }
+      // Generate greeting immediately without delay
+      generateGeminiResponse('', true);
+      setHasGreeted(true);
     }
-  }, [isOpen, hasGreeted]);
+  }, [isOpen, hasGreeted, geminiService]);
 
   const addBotMessage = (text: string) => {
     const newMessage: Message = {
@@ -56,6 +59,8 @@ const AIAssistant = () => {
   };
 
   const generateGeminiResponse = async (userInput: string, isFirstMessage: boolean = false) => {
+    if (!geminiService) return;
+    
     setIsTyping(true);
     try {
       const response = await geminiService.generateResponse(userInput, isFirstMessage);

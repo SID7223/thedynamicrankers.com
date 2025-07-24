@@ -14,18 +14,25 @@ export class GeminiService {
 
   constructor() {
     if (genAI) {
+      // Lazy load the model only when needed
+      this.model = null;
+    }
+  }
+
+  private getModel() {
+    if (!this.model && genAI) {
       this.model = genAI.getGenerativeModel({ 
         model: 'gemini-1.5-flash',
         generationConfig: {
           temperature: 0.7,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 512, // Reduced for faster responses
         },
       });
     }
+    return this.model;
   }
-
   private getSystemPrompt(): string {
     return `You are an AI assistant for "The Dynamic Rankers", a digital marketing and web development company. You are emotionally intelligent, empathetic, and genuinely caring about users' feelings and business challenges.
 
@@ -73,7 +80,12 @@ Keep responses conversational, warm, and ALWAYS under 25 words unless the user s
 
   async generateResponse(userMessage: string, isFirstMessage: boolean = false): Promise<string> {
     // Fallback responses if no API key
-    if (!this.model || !API_KEY) {
+    if (!API_KEY) {
+      return this.getFallbackResponse(userMessage, isFirstMessage);
+    }
+
+    const model = this.getModel();
+    if (!model) {
       return this.getFallbackResponse(userMessage, isFirstMessage);
     }
 
@@ -99,7 +111,7 @@ Please respond as the emotionally intelligent AI assistant for The Dynamic Ranke
     
     while (retryCount < maxRetries) {
       try {
-        const result = await this.model.generateContent(fullPrompt);
+        const result = await model.generateContent(fullPrompt);
         const response = result.response;
         const text = response.text();
 
