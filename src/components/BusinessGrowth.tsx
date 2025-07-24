@@ -143,6 +143,7 @@ const BusinessGrowth = () => {
                 * Results based on average client performance over 6 months
               </p>
             </div>
+          </div>
 
           {/* Benefits */}
           <div className="space-y-6">
