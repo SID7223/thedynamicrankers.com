@@ -102,13 +102,13 @@ const BusinessGrowth = () => {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="3"
-                     strokeLinecap="round"
+                      strokeLinecap="round"
                       className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
                       style={{
                         filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
                         strokeDasharray: '1000',
                         strokeDashoffset: '1000',
-                       animation: 'drawLineEased 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
+                        animation: 'drawLineEased 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
                         animationDelay: '0s',
                         animationIterationCount: 'infinite',
                         animationDirection: 'normal',
@@ -147,7 +147,6 @@ const BusinessGrowth = () => {
 
           {/* Benefits */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8 border-l-4 border-blue-500">
             <div className="bg-gray-50 sm:bg-white dark:bg-gray-800 rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8 border-l-4 border-blue-500 border border-gray-200 sm:border-transparent dark:border-transparent">
               <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6">
                 Transform Your Business Today
