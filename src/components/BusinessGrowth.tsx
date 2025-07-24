@@ -124,7 +124,7 @@ const BusinessGrowth = () => {
                       className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
                       style={{
                         animation: 'morphToPointer 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
-                        animationDelay: '0s',
+                        animationDelay: '-8s',
                         transformOrigin: '87.5px 20px'
                       }}
                     />
@@ -137,7 +137,7 @@ const BusinessGrowth = () => {
                       style={{
                         opacity: 0,
                         animation: 'showPointer 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
-                        animationDelay: '0s',
+                        animationDelay: '-8s',
                         transformOrigin: '87.5px 20px'
                       }}
                     />
