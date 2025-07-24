@@ -31,7 +31,11 @@ const Header = () => {
             <img 
               src="/the copy.png" 
               alt="The Dynamic Rankers Logo" 
-              className="w-10 h-10 object-contain"
+              className={`w-10 h-10 object-contain transition-all duration-300 ${
+                isScrolled && !document.documentElement.classList.contains('dark') 
+                  ? 'brightness-0' 
+                  : ''
+              }`}
             />
             <span className={`text-xl font-bold ${
               isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
