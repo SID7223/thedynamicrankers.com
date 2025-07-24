@@ -114,13 +114,17 @@ Please respond as the emotionally intelligent AI assistant for The Dynamic Ranke
 
         return text;
       } catch (error: any) {
-        console.error(`Gemini API Error (attempt ${retryCount + 1}):`, error);
-        
         // Check if it's a retryable error (503 or network issues)
         const isRetryable = error?.message?.includes('503') || 
                            error?.message?.includes('overloaded') ||
                            error?.message?.includes('network') ||
                            error?.message?.includes('timeout');
+        
+        if (isRetryable) {
+          console.warn(`Gemini API temporarily unavailable (attempt ${retryCount + 1}):`, error?.message || error);
+        } else {
+          console.error(`Gemini API Error (attempt ${retryCount + 1}):`, error);
+        }
         
         if (isRetryable && retryCount < maxRetries - 1) {
           retryCount++;
