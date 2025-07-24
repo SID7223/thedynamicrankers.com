@@ -29,9 +29,9 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <img 
-              src="/the.png" 
+              src="/the copy.png" 
               alt="The Dynamic Rankers Logo" 
-             className="w-12 h-12 object-contain"
+              className="w-10 h-10 object-contain"
             />
             <span className={`text-xl font-bold ${
               isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'

@@ -11,9 +11,9 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-6">
               <img 
-                src="/the.png" 
+                src="/the copy.png" 
                 alt="The Dynamic Rankers Logo" 
-               className="w-10 h-10 object-contain"
+                className="w-8 h-8 object-contain"
               />
               <span className="text-xl font-bold">The Dynamic Rankers</span>
             </div>
