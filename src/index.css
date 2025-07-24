@@ -17,29 +17,149 @@
   }
 }
 
-@keyframes drawCircle {
+@keyframes showCircle1 {
   0% {
     opacity: 0;
-    transform: scale(0);
   }
-  15% {
+  5% {
     opacity: 0;
-    transform: scale(0);
   }
-  20% {
+  6% {
     opacity: 1;
-    transform: scale(1);
   }
   70% {
     opacity: 1;
-    transform: scale(1);
   }
   75% {
     opacity: 0;
-    transform: scale(0);
   }
   100% {
     opacity: 0;
-    transform: scale(0);
+  }
+}
+
+@keyframes showCircle2 {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0;
+  }
+  11% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes showCircle3 {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes showCircle4 {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+  }
+  21% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes showCircle5 {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0;
+  }
+  26% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes showCircle6 {
+  0% {
+    opacity: 0;
+  }
+  28% {
+    opacity: 0;
+  }
+  29% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes showCircle7 {
+  0% {
+    opacity: 0;
+  }
+  29% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
   }
 }
