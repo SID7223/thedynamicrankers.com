@@ -159,29 +159,50 @@ Please respond as the emotionally intelligent AI assistant for The Dynamic Ranke
 
   private getFallbackResponse(userMessage: string, isFirstMessage: boolean): string {
     if (isFirstMessage) {
-      return "Hi there! 👋 Welcome to The Dynamic Rankers! I'm genuinely excited to meet you and learn about your journey. I'm here not just to help with digital marketing, but to truly understand what you're going through and support you however I can. How are you feeling today?";
+      return "Hi there! 👋 Welcome to The Dynamic Rankers! I'm here to help grow your business with our proven digital marketing strategies. Your competitors are gaining ground every day - let's make sure you stay ahead! How can I help you dominate your market today?";
     }
 
     const input = userMessage.toLowerCase();
     
-    // Emotional responses
+    // Sales-focused emotional responses
     if (input.includes('good') || input.includes('great') || input.includes('fine')) {
-      return "Great! 🌟 How can I help your business today?";
+      return "Fantastic! 🚀 Let's channel that positive energy into explosive business growth! Ready to schedule a free consultation?";
     }
     
     if (input.includes('struggling') || input.includes('difficult') || input.includes('hard')) {
-      return "I hear you 💪 What's your biggest business challenge right now?";
+      return "I hear you 💪 Every day you wait, competitors gain more ground. Let's turn this around fast! Ready for a free strategy session?";
     }
     
+    // Service-specific sales responses
     if (input.includes('website') || input.includes('web')) {
-      return "Great! 🚀 Need a new website or improve existing one?";
+      return "Perfect! 🚀 A high-converting website can 3x your leads. Your competitors are already ahead - let's get you a free quote today!";
     }
     
     if (input.includes('seo') || input.includes('search')) {
-      return "Perfect! 📈 Struggling with search rankings?";
+      return "Excellent! 📈 Every day you're not on page 1, you're losing customers to competitors. Ready for a free SEO audit?";
     }
     
-    return "I didn't catch that 😊 What can I help you with today?";
+    if (input.includes('social media') || input.includes('facebook') || input.includes('instagram')) {
+      return "Smart choice! 📱 Social media can double your engagement. Your competitors are posting daily - let's get you ahead! Free consultation?";
+    }
+    
+    if (input.includes('competitor') || input.includes('competition')) {
+      return "That's the right mindset! 🎯 We've helped 100+ businesses outrank their competition. Ready to dominate your market? Free strategy call?";
+    }
+    
+    if (input.includes('price') || input.includes('cost') || input.includes('budget')) {
+      return "Great question! 💰 Our clients see 4-6x ROI typically. Every day you wait costs you more than our services. Free quote?";
+    }
+    
+    if (input.includes('consultation') || input.includes('quote') || input.includes('call')) {
+      return "Perfect! 🎉 Let's schedule your free consultation right now. I'll connect you with our strategy team immediately!";
+    }
+    
+    if (input.includes('yes') || input.includes('interested') || input.includes('sure')) {
+      return "Excellent decision! 🌟 You're taking the right step while competitors hesitate. Let me get you scheduled for a free consultation!";
+    }
+    
+    return "I want to help you succeed! 🚀 Every moment counts in business. Ready for a free consultation to discuss your growth strategy?";
   }
 
   clearHistory(): void {

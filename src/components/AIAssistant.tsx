@@ -16,6 +16,7 @@ const AIAssistant = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [hasGreeted, setHasGreeted] = useState(false);
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
+  const [currentFunnelStage, setCurrentFunnelStage] = useState<string>('initial');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -58,6 +59,167 @@ const AIAssistant = () => {
       timestamp: new Date()
     };
     setMessages(prev => [...prev, newMessage]);
+    
+    // Update funnel stage based on user selection
+    updateFunnelStage(text);
+  };
+
+  const updateFunnelStage = (userMessage: string) => {
+    const message = userMessage.toLowerCase();
+    
+    // Initial stage transitions
+    if (currentFunnelStage === 'initial') {
+      if (message.includes('seo')) {
+        setCurrentFunnelStage('seo-interest');
+      } else if (message.includes('website')) {
+        setCurrentFunnelStage('website-interest');
+      } else if (message.includes('social media')) {
+        setCurrentFunnelStage('social-interest');
+      } else if (message.includes('services')) {
+        setCurrentFunnelStage('services-overview');
+      } else if (message.includes('prices')) {
+        setCurrentFunnelStage('pricing-interest');
+      }
+    }
+    // SEO funnel
+    else if (currentFunnelStage === 'seo-interest') {
+      if (message.includes('local seo') || message.includes('rankings')) {
+        setCurrentFunnelStage('seo-local');
+      } else if (message.includes('competitor') || message.includes('analysis')) {
+        setCurrentFunnelStage('seo-competitive');
+      } else if (message.includes('audit') || message.includes('current')) {
+        setCurrentFunnelStage('seo-audit');
+      }
+    }
+    // Website funnel
+    else if (currentFunnelStage === 'website-interest') {
+      if (message.includes('redesign') || message.includes('existing')) {
+        setCurrentFunnelStage('website-redesign');
+      } else if (message.includes('new') || message.includes('from scratch')) {
+        setCurrentFunnelStage('website-new');
+      } else if (message.includes('e-commerce') || message.includes('online store')) {
+        setCurrentFunnelStage('website-ecommerce');
+      }
+    }
+    // Social media funnel
+    else if (currentFunnelStage === 'social-interest') {
+      if (message.includes('facebook') || message.includes('instagram')) {
+        setCurrentFunnelStage('social-platforms');
+      } else if (message.includes('content') || message.includes('posts')) {
+        setCurrentFunnelStage('social-content');
+      } else if (message.includes('ads') || message.includes('advertising')) {
+        setCurrentFunnelStage('social-ads');
+      }
+    }
+    // End stages - reset to allow free chat
+    else if (['seo-local', 'seo-competitive', 'seo-audit', 'website-redesign', 'website-new', 'website-ecommerce', 'social-platforms', 'social-content', 'social-ads', 'pricing-consultation'].includes(currentFunnelStage)) {
+      setCurrentFunnelStage('free-chat');
+    }
+  };
+
+  const getQuickRepliesForStage = () => {
+    switch (currentFunnelStage) {
+      case 'initial':
+        return [
+          "I need help with SEO",
+          "I want a new website", 
+          "Tell me about your services",
+          "I'm interested in social media marketing",
+          "What are your prices?"
+        ];
+      
+      case 'seo-interest':
+        return [
+          "I need local SEO help",
+          "My competitors outrank me",
+          "Can you audit my current SEO?",
+          "How much does SEO cost?",
+          "When will I see results?"
+        ];
+      
+      case 'website-interest':
+        return [
+          "I need a website redesign",
+          "I want a brand new website",
+          "I need an e-commerce store",
+          "How long does it take?",
+          "What's included in the price?"
+        ];
+      
+      case 'social-interest':
+        return [
+          "Focus on Facebook & Instagram",
+          "I need content creation help",
+          "I want to run social media ads",
+          "How do you measure success?",
+          "What's your monthly rate?"
+        ];
+      
+      case 'services-overview':
+        return [
+          "Tell me about SEO services",
+          "What website packages do you offer?",
+          "How does social media marketing work?",
+          "Do you offer package deals?",
+          "Can I get a free consultation?"
+        ];
+      
+      case 'pricing-interest':
+        return [
+          "SEO pricing options",
+          "Website development costs",
+          "Social media management rates",
+          "Do you offer payment plans?",
+          "Can I get a custom quote?"
+        ];
+      
+      case 'seo-local':
+      case 'seo-competitive':
+      case 'seo-audit':
+        return [
+          "Schedule a free SEO consultation",
+          "Get a custom SEO quote",
+          "Start with SEO audit",
+          "Ask more questions in chat"
+        ];
+      
+      case 'website-redesign':
+      case 'website-new':
+      case 'website-ecommerce':
+        return [
+          "Get a free website consultation",
+          "Request a custom quote",
+          "See our portfolio",
+          "Ask more questions in chat"
+        ];
+      
+      case 'social-platforms':
+      case 'social-content':
+      case 'social-ads':
+        return [
+          "Schedule social media consultation",
+          "Get a custom social media quote",
+          "See our success stories",
+          "Ask more questions in chat"
+        ];
+      
+      case 'free-chat':
+        return [
+          "Schedule a consultation",
+          "Get a custom quote",
+          "Learn about other services",
+          "Speak with a specialist"
+        ];
+      
+      default:
+        return [
+          "I need help with SEO",
+          "I want a new website",
+          "Tell me about your services",
+          "I'm interested in social media marketing",
+          "What are your prices?"
+        ];
+    }
   };
 
   const generateGeminiResponse = async (userInput: string, isFirstMessage: boolean = false) => {
@@ -240,13 +402,7 @@ const AIAssistant = () => {
     }
   };
 
-  const quickReplies = [
-    "I need help with SEO",
-    "I want a new website",
-    "Tell me about your services",
-    "I'm interested in social media marketing",
-    "What are your prices?"
-  ];
+  const quickReplies = getQuickRepliesForStage();
 
   return (
     <>
