@@ -115,7 +115,7 @@ const BusinessGrowth = () => {
                           key={index}
                           cx={x}
                           cy={y}
-                          r="4"
+                          r="2.5"
                           fill="currentColor"
                           className="text-blue-600 dark:text-purple-500 transition-all duration-200 hover:scale-125"
                           style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
