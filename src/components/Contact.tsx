@@ -82,10 +82,11 @@ const Contact = () => {
           <div>
             <form 
               name="contact" 
-              method="POST" 
-              netlify
+              method="POST"
+              data-netlify="true"
               data-netlify-honeypot="bot-field"
-              action="/thank-you"
+              action="/thankyou.html"
+              onSubmit={handleSubmit}
               className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8"
             >
               {/* Netlify form detection */}
