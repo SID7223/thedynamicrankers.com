@@ -104,9 +104,6 @@ const BusinessGrowth = () => {
                       className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
                       style={{
                         filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-                        strokeDasharray: '1000',
-                        strokeDashoffset: '1000',
-                        animation: 'drawLine 3s ease-out forwards'
                       }}
                     />
                     {/* Data points */}
@@ -123,8 +120,6 @@ const BusinessGrowth = () => {
                           className="text-blue-600 dark:text-purple-500 transition-all duration-200 hover:scale-125"
                           style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
                         />
-                            opacity: 0,
-                            animation: `fadeInCircle 0.5s ease-out ${0.5 + index * 0.4}s forwards`
                       );
                     })}
                   </svg>
@@ -195,20 +190,6 @@ const BusinessGrowth = () => {
           </div>
         </div>
       </div>
-      
-      <style jsx>{`
-        @keyframes drawLine {
-          to {
-            stroke-dashoffset: 0;
-          }
-        }
-        
-        @keyframes fadeInCircle {
-          to {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </section>
   );
 };
