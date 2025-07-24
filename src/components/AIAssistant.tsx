@@ -210,11 +210,11 @@ const AIAssistant = () => {
   };
 
   const quickReplies = [
-    "I'm feeling overwhelmed with my business",
-    "I'm excited about growing my company",
-    "I'm struggling with online marketing",
-    "I'm curious about your services",
-    "I'm not sure where to start"
+    "I need help with SEO",
+    "I want a new website",
+    "Tell me about your services",
+    "I'm interested in social media marketing",
+    "What are your prices?"
   ];
 
   return (
