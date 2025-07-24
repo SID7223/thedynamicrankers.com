@@ -8,6 +8,7 @@ import About from './components/About';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import AIAssistant from './components/AIAssistant';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Testimonials />
       <Contact />
       <Footer />
+      <AIAssistant />
     </div>
   );
 }
