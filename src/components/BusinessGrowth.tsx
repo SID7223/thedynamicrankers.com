@@ -64,7 +64,7 @@ const BusinessGrowth = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Growth Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-8">
+          <div className="bg-gray-50 sm:bg-white dark:bg-gray-800 rounded-2xl shadow-lg sm:shadow-xl p-4 sm:p-8 border border-gray-200 sm:border-transparent dark:border-transparent">
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
               Average Business Growth Timeline
             </h3>
@@ -148,6 +148,7 @@ const BusinessGrowth = () => {
           {/* Benefits */}
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8 border-l-4 border-blue-500">
+            <div className="bg-gray-50 sm:bg-white dark:bg-gray-800 rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8 border-l-4 border-blue-500 border border-gray-200 sm:border-transparent dark:border-transparent">
               <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6">
                 Transform Your Business Today
               </h3>

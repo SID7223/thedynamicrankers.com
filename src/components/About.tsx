@@ -50,7 +50,7 @@ const About = () => {
             <div className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-4 sm:p-8">
               <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 {stats.map((stat, index) => (
-                  <div key={index} className="text-center bg-white dark:bg-gray-600 rounded-xl p-3 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105">
+                  <div key={index} className="text-center bg-gray-50 sm:bg-white dark:bg-gray-600 rounded-xl p-3 sm:p-6 shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105 border border-gray-200 sm:border-transparent dark:border-transparent">
                     <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-3 sm:mb-4 mx-auto">
                       <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
