@@ -27,26 +27,22 @@ const AIAssistant = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen && !hasGreeted) {
+    if (isOpen && !hasGreeted && messages.length === 0) {
       setTimeout(() => {
         generateGeminiResponse('', true);
         setHasGreeted(true);
-      }, 500);
+      }, 100);
     }
   }, [isOpen, hasGreeted]);
 
   const addBotMessage = (text: string) => {
-    setIsTyping(true);
-    setTimeout(() => {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        text,
-        sender: 'bot',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, newMessage]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 1000); // Random delay for more natural feel
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      text,
+      sender: 'bot',
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, newMessage]);
   };
 
   const addUserMessage = (text: string) => {
@@ -63,30 +59,26 @@ const AIAssistant = () => {
     setIsTyping(true);
     try {
       const response = await geminiService.generateResponse(userInput, isFirstMessage);
-      setTimeout(() => {
-        const newMessage: Message = {
-          id: Date.now().toString(),
-          text: response,
-          sender: 'bot',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, newMessage]);
-        setIsTyping(false);
-      }, 1000 + Math.random() * 1000);
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        text: response,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, newMessage]);
+      setIsTyping(false);
     } catch (error) {
       console.error('Error generating response:', error);
       // Fallback to original response system
       const fallbackResponse = analyzeUserResponse(userInput);
-      setTimeout(() => {
-        const newMessage: Message = {
-          id: Date.now().toString(),
-          text: fallbackResponse,
-          sender: 'bot',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, newMessage]);
-        setIsTyping(false);
-      }, 1000);
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        text: fallbackResponse,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, newMessage]);
+      setIsTyping(false);
     }
   };
 

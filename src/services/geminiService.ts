@@ -78,10 +78,12 @@ Keep responses conversational, warm, and ALWAYS under 25 words unless the user s
     }
 
     // Add user message to conversation history
-    this.conversationHistory.push({
-      role: 'user',
-      parts: userMessage
-    });
+    if (userMessage.trim()) {
+      this.conversationHistory.push({
+        role: 'user',
+        parts: userMessage
+      });
+    }
 
     // Create the full prompt with context
     const fullPrompt = `${this.getSystemPrompt()}
@@ -91,8 +93,8 @@ ${this.conversationHistory.map(msg => `${msg.role}: ${msg.parts}`).join('\n')}
 
 Please respond as the emotionally intelligent AI assistant for The Dynamic Rankers. ${isFirstMessage ? 'This is the first interaction, so start with a warm greeting and ask how they\'re feeling today.' : ''}`;
 
-    // Retry mechanism with exponential backoff
-    const maxRetries = 3;
+    // Reduced retry mechanism for faster response
+    const maxRetries = 2;
     let retryCount = 0;
     
     while (retryCount < maxRetries) {
@@ -107,9 +109,9 @@ Please respond as the emotionally intelligent AI assistant for The Dynamic Ranke
           parts: text
         });
 
-        // Keep conversation history manageable (last 10 exchanges)
-        if (this.conversationHistory.length > 20) {
-          this.conversationHistory = this.conversationHistory.slice(-20);
+        // Keep conversation history manageable (last 6 exchanges)
+        if (this.conversationHistory.length > 12) {
+          this.conversationHistory = this.conversationHistory.slice(-12);
         }
 
         return text;
@@ -128,8 +130,8 @@ Please respond as the emotionally intelligent AI assistant for The Dynamic Ranke
         
         if (isRetryable && retryCount < maxRetries - 1) {
           retryCount++;
-          // Exponential backoff: wait 1s, then 2s, then 4s
-          const waitTime = Math.pow(2, retryCount - 1) * 1000;
+          // Faster backoff: wait 500ms, then 1s
+          const waitTime = Math.pow(2, retryCount - 1) * 500;
           console.log(`Retrying in ${waitTime}ms...`);
           await new Promise(resolve => setTimeout(resolve, waitTime));
         } else {
