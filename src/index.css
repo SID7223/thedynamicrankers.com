@@ -17,7 +17,7 @@
   }
 }
 
-@keyframes colorfulBorder {
+@keyframes cyanBlueBorder {
   0% {
     background-position: 0% 50%;
   }
@@ -31,15 +31,15 @@
 
 .animated-border {
   position: relative;
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #10b981, #f59e0b, #ef4444, #ec4899, #3b82f6);
+  background: linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4);
   background-size: 400% 400%;
-  animation: colorfulBorder 4s ease-in-out infinite;
+  animation: cyanBlueBorder 3s ease-in-out infinite;
   border-radius: 0.75rem;
   padding: 2px;
 }
 
 .animated-border-content {
-  background: inherit;
+  background: white;
   border-radius: 0.625rem;
   position: relative;
   z-index: 1;
