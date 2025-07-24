@@ -125,7 +125,11 @@ const BusinessGrowth = () => {
                           r="2.5"
                           fill="currentColor"
                           className="text-blue-600 dark:text-purple-500"
-                          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
+                          style={{ 
+                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+                            animation: `drawCircle 10s ease-in-out infinite`,
+                            animationDelay: `${index * 0.5}s`
+                          }}
                         />
                       );
                     })}
