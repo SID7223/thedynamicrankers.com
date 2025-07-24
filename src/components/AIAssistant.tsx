@@ -271,7 +271,7 @@ const AIAssistant = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 sm:w-96 h-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 flex flex-col border border-gray-200 dark:border-gray-600">
+        <div className="fixed bottom-24 right-6 w-80 sm:w-96 h-96 bg-white bg-opacity-70 dark:bg-gray-800 dark:bg-opacity-70 backdrop-blur-md rounded-lg shadow-2xl z-50 flex flex-col border border-gray-200 dark:border-gray-600">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-t-lg">
             <div className="flex items-center space-x-2">
