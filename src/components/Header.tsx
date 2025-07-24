@@ -29,7 +29,9 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white dark:bg-gray-900 shadow-lg py-4' : 'bg-transparent py-6'
+      isScrolled 
+        ? 'bg-white dark:bg-gray-900 shadow-lg py-3 sm:py-4' 
+        : 'bg-gradient-to-b from-black/20 via-black/10 to-transparent sm:bg-transparent py-4 sm:py-6'
     }`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
@@ -37,7 +39,7 @@ const Header = () => {
             <img 
               src="/the copy.png" 
               alt="The Dynamic Rankers Logo" 
-              className={`w-10 h-10 object-contain transition-all duration-300 ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
                 isScrolled && !document.documentElement.classList.contains('dark') 
                   ? 'brightness-0' 
                   : ''
@@ -46,7 +48,7 @@ const Header = () => {
             <span className={`text-xl font-bold ${
               isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
             }`}>
-              The Dynamic Rankers
+              <span className="text-base sm:text-xl">The Dynamic Rankers</span>
             </span>
           </Link>
 
@@ -55,7 +57,7 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`capitalize font-medium transition-colors duration-200 hover:text-blue-600 ${
+                className={`capitalize font-medium text-sm sm:text-base transition-colors duration-200 hover:text-blue-600 ${
                   isScrolled ? 'text-gray-700 dark:text-gray-300' : 'text-white hover:text-blue-200'
                 } ${location.pathname === item.path ? 'text-blue-600' : ''}`}
               >
@@ -69,22 +71,22 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className={`w-6 h-6 ${isScrolled ? 'text-gray-800' : 'text-white'}`} />
+              <X className={`w-5 h-5 sm:w-6 sm:h-6 ${isScrolled ? 'text-gray-800' : 'text-white'}`} />
             ) : (
-              <Menu className={`w-6 h-6 ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} />
+              <Menu className={`w-5 h-5 sm:w-6 sm:h-6 ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} />
             )}
           </button>
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden mt-4 py-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg mx-4">
+          <div className="md:hidden mt-3 sm:mt-4 py-3 sm:py-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg mx-4">
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
                   onClick={closeMenu}
-                  className={`capitalize font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors duration-200 text-left px-4 py-2 ${
+                  className={`capitalize font-medium text-sm sm:text-base text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors duration-200 text-left px-3 sm:px-4 py-2 ${
                     location.pathname === item.path ? 'text-blue-600' : ''
                   }`}
                 >
