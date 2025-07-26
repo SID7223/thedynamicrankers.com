@@ -413,7 +413,7 @@ const AIAssistant = () => {
           className={`w-14 h-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 ${
             isOpen 
               ? 'bg-red-500 hover:bg-red-600' 
-              : 'bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700'
+              : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
           }`}
         >
           {isOpen ? (
@@ -428,12 +428,12 @@ const AIAssistant = () => {
       {isOpen && (
         <div className="fixed bottom-24 right-6 w-80 sm:w-96 h-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 flex flex-col border border-gray-200 dark:border-gray-600">
           {/* Header */}
-          <div className="bg-gradient-to-r from-green-500 to-teal-600 text-white p-4 rounded-t-lg">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-t-lg">
             <div className="flex items-center space-x-2">
               <Bot className="w-6 h-6" />
               <div>
                 <h3 className="font-semibold">Dynamic Rankers Assistant</h3>
-                <p className="text-xs text-green-100">Online • Ready to help!</p>
+                <p className="text-xs text-blue-100">Online • Ready to help!</p>
               </div>
             </div>
           </div>
@@ -448,13 +448,13 @@ const AIAssistant = () => {
                 <div
                   className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
                     message.sender === 'user'
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-blue-500 text-white'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white'
                   }`}
                 >
                   <div className="flex items-start space-x-2">
                     {message.sender === 'bot' && (
-                      <Bot className="w-4 h-4 mt-0.5 text-green-500" />
+                      <Bot className="w-4 h-4 mt-0.5 text-blue-500" />
                     )}
                     {message.sender === 'user' && (
                       <User className="w-4 h-4 mt-0.5 text-white" />
@@ -469,7 +469,7 @@ const AIAssistant = () => {
               <div className="flex justify-start">
                 <div className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
                   <div className="flex items-center space-x-1">
-                    <Bot className="w-4 h-4 text-green-500" />
+                    <Bot className="w-4 h-4 text-blue-500" />
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
@@ -491,7 +491,7 @@ const AIAssistant = () => {
                       addUserMessage(reply);
                       generateGeminiResponse(reply);
                     }}
-                    className="block w-full text-left text-xs bg-green-50 dark:bg-gray-600 hover:bg-green-100 dark:hover:bg-gray-500 text-green-700 dark:text-green-300 px-2 py-1 rounded transition-colors duration-200"
+                    className="block w-full text-left text-xs bg-blue-50 dark:bg-gray-600 hover:bg-blue-100 dark:hover:bg-gray-500 text-blue-700 dark:text-blue-300 px-2 py-1 rounded transition-colors duration-200"
                   >
                     {reply}
                   </button>
@@ -511,12 +511,12 @@ const AIAssistant = () => {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-white"
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm dark:bg-gray-700 dark:text-white"
               />
               <button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim()}
-                className="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white p-2 rounded-lg transition-colors duration-200"
+                className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white p-2 rounded-lg transition-colors duration-200"
               >
                 <Send className="w-4 h-4" />
               </button>
