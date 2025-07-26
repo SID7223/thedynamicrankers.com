@@ -14,10 +14,13 @@ const WhatIsDigitalMarketing: React.FC = () => {
         <div className="max-w-4xl mx-auto px-6">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
             <img 
-              src="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=800" 
+              src="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp" 
               alt="The Dynamic Rankers – What is Digital Marketing"
               title="What is Digital Marketing | The Dynamic Rankers"
               className="w-full h-64 object-cover rounded-lg mb-8"
+              loading="lazy"
+              width="800"
+              height="400"
             />
             
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">

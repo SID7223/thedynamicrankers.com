@@ -18,12 +18,26 @@ const SocialPostDesign = () => {
           </h1>
           
           <div className="mb-8">
-            <img 
-              src="https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop"
-              alt="The Dynamic Rankers – Social Post Design"
-              title="Social Post Design | The Dynamic Rankers"
-              className="w-full h-64 object-cover rounded-lg shadow-lg"
-            />
+            <picture>
+              <source
+                srcSet="
+                  https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop&fm=webp 400w,
+                  https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop&fm=webp 800w,
+                  https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop&fm=webp 1200w
+                "
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px"
+                type="image/webp"
+              />
+              <img 
+                src="https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop&fm=webp"
+                alt="The Dynamic Rankers – Social Post Design"
+                title="Social Post Design | The Dynamic Rankers"
+                className="w-full h-64 object-cover rounded-lg shadow-lg"
+                loading="lazy"
+                width="1200"
+                height="600"
+              />
+            </picture>
           </div>
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
