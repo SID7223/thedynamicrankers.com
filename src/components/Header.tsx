@@ -29,8 +29,11 @@ const Header = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
         ? 'bg-white dark:bg-gray-900 shadow-lg py-3 sm:py-4' 
-        : 'bg-gradient-to-b from-black/20 via-black/10 to-transparent sm:bg-transparent py-4 sm:py-6'
-    }`}>
+        : 'bg-gradient-to-b from-black/20 via-black/10 to-transparent sm:bg-transparent py-4 sm:py-6 -translate-y-full opacity-0 pointer-events-none'
+    }`} style={{
+      transform: isScrolled ? 'translateY(0)' : 'translateY(-100%)',
+      opacity: isScrolled ? 1 : 0
+    }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
