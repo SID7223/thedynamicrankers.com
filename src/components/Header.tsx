@@ -70,14 +70,14 @@ const Header = () => {
             
             {/* Menu Button */}
             <div className="hidden md:flex">
-              <button>
-                <span className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+              <button
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 border-2 ${
                   isScrolled 
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white' 
-                    : 'bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white hover:text-white'
-                } gradient-border-button-inner`}>
-                  Menu
-                </span>
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-blue-500' 
+                    : 'bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm text-white hover:text-white border-white border-opacity-50'
+                }`}
+              >
+                Menu
               </button>
             </div>
           </div>
