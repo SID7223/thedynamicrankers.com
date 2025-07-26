@@ -6,12 +6,17 @@ const Contact = () => {
     <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">
-            Get In Touch
-          </h2>
-          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
-            Ready to take your business to the next level? Contact us today for a free consultation.
-          </p>
+          {/* Only show heading if not on contact page (to avoid duplicate H1/H2) */}
+          {window.location.pathname !== '/contact' && (
+            <>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">
+                Get In Touch
+              </h2>
+              <p className="text-base sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-4">
+                Ready to take your business to the next level? Contact us today for a free consultation.
+              </p>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
