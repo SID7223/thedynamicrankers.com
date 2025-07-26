@@ -32,10 +32,10 @@
 .animated-border {
   position: relative;
   background: linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4);
-  background-size: 400% 400%;
+  animation: slowGradientShift 18s ease-in-out infinite;
   animation: cyanBlueBorder 3s ease-in-out infinite;
   border-radius: 0.75rem;
-  padding: 2px;
+  padding: 5px;
 }
 
 .animated-border-content {
