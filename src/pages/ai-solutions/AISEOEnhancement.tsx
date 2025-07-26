@@ -40,7 +40,7 @@ const AISEOEnhancement = () => {
             </picture>
           </div>
           
-          <div className="prose prose-lg dark:prose-invert max-w-none">
+          <div className='prose prose-lg dark:prose-invert max-w-none'>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
               Dynamic Rankers revolutionizes SEO with Google-level AI technology and Apple's attention to detail. 
               Our automated systems enhance keyword rankings, optimize content scoring, and boost your digital 
