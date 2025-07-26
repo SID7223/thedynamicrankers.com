@@ -25,7 +25,12 @@ const Footer = () => {
               <a href="#" className="bg-gray-800 dark:bg-gray-700 hover:bg-blue-600 p-2 rounded-full transition-colors duration-300">
                 <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
-              <a href="#" className="bg-gray-800 hover:bg-blue-600 p-2 rounded-full transition-colors duration-300">
+              <a 
+                href="https://www.linkedin.com/company/the-dynamic-rankers/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-gray-800 hover:bg-blue-600 p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95"
+              >
                 <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
               </a>
               <a 
