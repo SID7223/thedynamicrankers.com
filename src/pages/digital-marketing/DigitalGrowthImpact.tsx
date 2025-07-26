@@ -43,7 +43,7 @@ const DigitalGrowthImpact: React.FC = () => {
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Revenue Acceleration:</strong> Digital marketing strategies consistently deliver 4-7x ROI by focusing on high-intent keywords and precise <Link to="/definitions/audience-targeting" className=\"text-green-600 hover:text-green-700 font-semibold underline">audience targeting</Link>.</span>
+                    <span><strong>Revenue Acceleration:</strong> Digital marketing strategies consistently deliver 4-7x ROI by focusing on high-intent keywords and precise <Link to="/definitions/audience-targeting" className="text-green-600 hover:text-green-700 font-semibold underline">audience targeting</Link>.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
