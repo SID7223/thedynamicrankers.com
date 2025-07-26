@@ -21,8 +21,10 @@ const Header = () => {
 
   const navItems = [
     { name: 'home', path: '/' },
-    { name: 'services', path: '/services' },
-    { name: 'contact', path: '/contact' }
+    { name: 'digital marketing', path: '/digital-marketing' },
+    { name: 'ai solutions', path: '/ai-solutions' },
+    { name: 'create website', path: '/create-website' },
+    { name: 'content creation', path: '/content-creation' }
   ];
 
   return (
