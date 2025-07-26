@@ -1,10 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Outlet, useLocation } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import DarkModeToggle from '../components/DarkModeToggle';
-import AIAssistant from '../components/AIAssistant';
 import SidebarNav from '../components/SidebarNav';
 
 const CreateWebsitePage = () => {
@@ -43,9 +39,6 @@ const CreateWebsitePage = () => {
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-        <Header />
-        <DarkModeToggle />
-        
         <main className="pt-20">
           {isMainPage ? (
             <>
@@ -125,9 +118,6 @@ const CreateWebsitePage = () => {
             </div>
           )}
         </main>
-        
-        <Footer />
-        <AIAssistant />
       </div>
     </>
   );
