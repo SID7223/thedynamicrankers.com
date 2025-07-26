@@ -65,19 +65,19 @@ const OnlineEngagement: React.FC = () => {
               <ul className="space-y-3 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Algorithm Boost:</strong> Google and social media platforms prioritize content with high engagement, giving you better organic reach and visibility.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Algorithm Boost:</strong> Google and social media platforms prioritize content with high engagement, giving you better organic reach and visibility.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Trust Building:</strong> When people actively engage with your content, they develop stronger emotional connections to your brand, leading to higher conversion rates.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Trust Building:</strong> When people actively engage with your content, they develop stronger emotional connections to your brand, leading to higher conversion rates.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Valuable Feedback:</strong> Comments, shares, and interactions provide real-time insights into what your audience wants, helping you refine your digital marketing strategy.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Valuable Feedback:</strong> Comments, shares, and interactions provide real-time insights into what your audience wants, helping you refine your digital marketing strategy.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Viral Potential:</strong> Highly engaging content gets shared organically, expanding your reach exponentially without additional advertising costs.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Viral Potential:</strong> Highly engaging content gets shared organically, expanding your reach exponentially without additional advertising costs.</span>
                 </li>
               </ul>
             </div>

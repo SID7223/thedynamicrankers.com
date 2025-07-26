@@ -82,26 +82,26 @@ const VideoEditingServices = () => {
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Professional <Link to="/definitions/motion-graphics" className="text-orange-600 hover:text-orange-800 underline">Motion Graphics</Link>:</strong> 
-                  Add dynamic animations and visual effects that enhance your digital marketing message across Google and social media platforms
+                  <span className="text-gray-600 dark:text-white">Add dynamic animations and visual effects that enhance your digital marketing message across Google and social media platforms</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Expert <Link to="/definitions/color-grading" className="text-orange-600 hover:text-orange-800 underline">Color Grading</Link>:</strong> 
-                  Achieve cinematic quality with Rankers-level color correction that makes your content stand out on every platform
+                  <span className="text-gray-600 dark:text-white">Achieve cinematic quality with Rankers-level color correction that makes your content stand out on every platform</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Audio Enhancement:</strong> Crystal-clear sound design and music integration that keeps viewers engaged throughout your marketing content
+                  <strong>Audio Enhancement:</strong> <span className="text-gray-600 dark:text-white">Crystal-clear sound design and music integration that keeps viewers engaged throughout your marketing content</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Multi-Platform Optimization:</strong> AI-powered formatting for optimal performance across YouTube, Instagram, TikTok, and other social channels
+                  <strong>Multi-Platform Optimization:</strong> <span className="text-gray-600 dark:text-white">AI-powered formatting for optimal performance across YouTube, Instagram, TikTok, and other social channels</span>
                 </div>
               </li>
             </ul>

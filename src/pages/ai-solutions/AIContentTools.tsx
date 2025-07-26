@@ -82,26 +82,26 @@ const AIContentTools = () => {
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Automated <Link to="/definitions/content-automation" className="text-purple-600 hover:text-purple-800 underline">Content Automation</Link>:</strong> 
-                  Generate hundreds of unique articles, social media posts, and marketing copy with AI efficiency
+                  <span className="text-gray-600 dark:text-white">Generate hundreds of unique articles, social media posts, and marketing copy with AI efficiency</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/natural-language-generation" className="text-purple-600 hover:text-purple-800 underline">Natural Language Generation</Link>:</strong> 
-                  Create human-like content that engages readers and drives conversions across all digital channels
+                  <span className="text-gray-600 dark:text-white">Create human-like content that engages readers and drives conversions across all digital channels</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>SEO Integration:</strong> Every piece of content is optimized for search engines while maintaining readability and engagement
+                  <strong>SEO Integration:</strong> <span className="text-gray-600 dark:text-white">Every piece of content is optimized for search engines while maintaining readability and engagement</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Multi-Platform Optimization:</strong> Content automatically adapts for websites, social media, and email marketing campaigns
+                  <strong>Multi-Platform Optimization:</strong> <span className="text-gray-600 dark:text-white">Content automatically adapts for websites, social media, and email marketing campaigns</span>
                 </div>
               </li>
             </ul>

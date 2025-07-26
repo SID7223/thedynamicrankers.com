@@ -82,26 +82,26 @@ const AIMarketingInsights = () => {
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Deep <Link to="/definitions/behavioral-data" className="text-purple-600 hover:text-purple-800 underline">Behavioral Data</Link> Analysis:</strong> 
-                  Understand how users interact with your content across Google, social media, and other digital touchpoints
+                  <span className="text-gray-600 dark:text-white">Understand how users interact with your content across Google, social media, and other digital touchpoints</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/predictive-analytics" className="text-purple-600 hover:text-purple-800 underline">Predictive Analytics</Link>:</strong> 
-                  Forecast trends and optimize campaigns with AI-powered insights that rival Apple's data science capabilities
+                  <span className="text-gray-600 dark:text-white">Forecast trends and optimize campaigns with AI-powered insights that rival Apple's data science capabilities</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Competitive Intelligence:</strong> Monitor competitor strategies across all digital marketing channels with Rankers-level precision
+                  <strong>Competitive Intelligence:</strong> <span className="text-gray-600 dark:text-white">Monitor competitor strategies across all digital marketing channels with Rankers-level precision</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>ROI Optimization:</strong> Maximize returns on every marketing dollar with AI-driven budget allocation recommendations
+                  <strong>ROI Optimization:</strong> <span className="text-gray-600 dark:text-white">Maximize returns on every marketing dollar with AI-driven budget allocation recommendations</span>
                 </div>
               </li>
             </ul>

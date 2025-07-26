@@ -82,26 +82,26 @@ const SEOFoundationSetup = () => {
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/structured-data" className="text-blue-600 hover:text-blue-800 underline">Structured Data</Link> Implementation:</strong> 
-                  Rich snippets and schema markup that help Google understand your content and boost social media sharing
+                  <span className="text-gray-600 dark:text-white">Rich snippets and schema markup that help Google understand your content and boost social media sharing</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Comprehensive <Link to="/definitions/technical-seo-audit" className="text-blue-600 hover:text-blue-800 underline">Technical SEO Audit</Link>:</strong> 
-                  Identify and fix issues that prevent your digital marketing content from ranking at Rankers level
+                  <span className="text-gray-600 dark:text-white">Identify and fix issues that prevent your digital marketing content from ranking at Rankers level</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Mobile-First Indexing:</strong> Ensure your website performs flawlessly on mobile devices with AI-optimized responsive design
+                  <strong>Mobile-First Indexing:</strong> <span className="text-gray-600 dark:text-white">Ensure your website performs flawlessly on mobile devices with AI-optimized responsive design</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Site Architecture:</strong> Build logical URL structures and navigation that both users and search engines love
+                  <strong>Site Architecture:</strong> <span className="text-gray-600 dark:text-white">Build logical URL structures and navigation that both users and search engines love</span>
                 </div>
               </li>
             </ul>

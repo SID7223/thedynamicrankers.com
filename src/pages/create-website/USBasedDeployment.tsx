@@ -82,26 +82,26 @@ const USBasedDeployment = () => {
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Global <Link to="/definitions/cdn" className="text-blue-600 hover:text-blue-800 underline">CDN</Link> Network:</strong> 
-                  Distribute content across multiple US locations for optimal speed and Google Core Web Vitals scores
+                  <span className="text-gray-600 dark:text-white">Distribute content across multiple US locations for optimal speed and Google Core Web Vitals scores</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Optimized <Link to="/definitions/server-response-time" className="text-blue-600 hover:text-blue-800 underline">Server Response Time</Link>:</strong> 
-                  Sub-200ms response times that enhance SEO rankings and support high-traffic digital marketing campaigns
+                  <span className="text-gray-600 dark:text-white">Sub-200ms response times that enhance SEO rankings and support high-traffic digital marketing campaigns</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>SSL Security:</strong> Enterprise-level encryption that protects user data and boosts Google search rankings with Rankers-level security
+                  <strong>SSL Security:</strong> <span className="text-gray-600 dark:text-white">Enterprise-level encryption that protects user data and boosts Google search rankings with Rankers-level security</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Scalable Architecture:</strong> AI-powered auto-scaling handles traffic spikes from successful social media campaigns and viral content
+                  <strong>Scalable Architecture:</strong> <span className="text-gray-600 dark:text-white">AI-powered auto-scaling handles traffic spikes from successful social media campaigns and viral content</span>
                 </div>
               </li>
             </ul>

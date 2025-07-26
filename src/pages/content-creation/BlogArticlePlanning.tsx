@@ -82,26 +82,26 @@ const BlogArticlePlanning = () => {
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Strategic <Link to="/definitions/content-pillars" className="text-orange-600 hover:text-orange-800 underline">Content Pillars</Link>:</strong> 
-                  Build authority with focused topic clusters that dominate Google search results and social media discovery
+                  <span className="text-gray-600 dark:text-white">Build authority with focused topic clusters that dominate Google search results and social media discovery</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/editorial-seo" className="text-orange-600 hover:text-orange-800 underline">Editorial SEO</Link>:</strong> 
-                  Optimize every article for maximum visibility with Rankers-level SEO integration and AI-powered content analysis
+                  <span className="text-gray-600 dark:text-white">Optimize every article for maximum visibility with Rankers-level SEO integration and AI-powered content analysis</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Audience Research:</strong> Deep dive into reader preferences and search behavior to create content that converts visitors into customers
+                  <strong>Audience Research:</strong> <span className="text-gray-600 dark:text-white">Deep dive into reader preferences and search behavior to create content that converts visitors into customers</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Performance Tracking:</strong> Monitor article success across Google Analytics and social media metrics to refine your digital marketing strategy
+                  <strong>Performance Tracking:</strong> <span className="text-gray-600 dark:text-white">Monitor article success across Google Analytics and social media metrics to refine your digital marketing strategy</span>
                 </div>
               </li>
             </ul>

@@ -82,26 +82,26 @@ const SocialPostDesign = () => {
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Strategic <Link to="/definitions/visual-hierarchy" className="text-orange-600 hover:text-orange-800 underline">Visual Hierarchy</Link>:</strong> 
-                  Guide viewer attention with Google-approved design principles that maximize engagement across all social media platforms
+                  <span className="text-gray-600 dark:text-white">Guide viewer attention with Google-approved design principles that maximize engagement across all social media platforms</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Consistent <Link to="/definitions/brand-consistency" className="text-orange-600 hover:text-orange-800 underline">Brand Consistency</Link>:</strong> 
-                  Maintain Rankers-level brand recognition with cohesive visual elements that strengthen your digital marketing identity
+                  <span className="text-gray-600 dark:text-white">Maintain Rankers-level brand recognition with cohesive visual elements that strengthen your digital marketing identity</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Platform Optimization:</strong> Tailor designs for optimal performance on Instagram, Facebook, LinkedIn, TikTok, and other social channels
+                  <strong>Platform Optimization:</strong> <span className="text-gray-600 dark:text-white">Tailor designs for optimal performance on Instagram, Facebook, LinkedIn, TikTok, and other social channels</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>AI-Enhanced Graphics:</strong> Leverage artificial intelligence to create stunning visuals that outperform competitors and drive engagement
+                  <strong>AI-Enhanced Graphics:</strong> <span className="text-gray-600 dark:text-white">Leverage artificial intelligence to create stunning visuals that outperform competitors and drive engagement</span>
                 </div>
               </li>
             </ul>

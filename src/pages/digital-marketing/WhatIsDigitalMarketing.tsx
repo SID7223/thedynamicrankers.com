@@ -78,23 +78,23 @@ const WhatIsDigitalMarketing: React.FC = () => {
                 <ul className="space-y-4 text-gray-600 dark:text-gray-300">
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong><Link to="/definitions/search-engine-optimization" className="text-green-600 hover:text-green-700 font-semibold underline">Search Engine Optimization</Link> (SEO):</strong> Making your website visible when customers search for your services on Google and other search engines.</span>
+                    <span className="text-gray-600 dark:text-white"><strong><Link to="/definitions/search-engine-optimization" className="text-green-600 hover:text-green-700 font-semibold underline">Search Engine Optimization</Link> (SEO):</strong> Making your website visible when customers search for your services on Google and other search engines.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Social Media Marketing:</strong> Building relationships and driving traffic through strategic content on platforms where your audience spends time.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Social Media Marketing:</strong> Building relationships and driving traffic through strategic content on platforms where your audience spends time.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Content Marketing:</strong> Creating valuable, relevant content that attracts and engages your target audience while establishing your expertise.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Content Marketing:</strong> Creating valuable, relevant content that attracts and engages your target audience while establishing your expertise.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Email Marketing:</strong> Nurturing leads and maintaining customer relationships through personalized, automated email campaigns.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Email Marketing:</strong> Nurturing leads and maintaining customer relationships through personalized, automated email campaigns.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Paid Advertising:</strong> Strategic ad placement on Google, social media, and other platforms to reach high-intent customers quickly.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Paid Advertising:</strong> Strategic ad placement on Google, social media, and other platforms to reach high-intent customers quickly.</span>
                   </li>
                 </ul>
               </section>

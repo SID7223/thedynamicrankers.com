@@ -65,19 +65,19 @@ const ConversionRate: React.FC = () => {
               <ul className="space-y-3 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Maximize ROI:</strong> Instead of spending more on ads to get more traffic, improving conversion rate multiplies the value of your existing visitors.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Maximize ROI:</strong> Instead of spending more on ads to get more traffic, improving conversion rate multiplies the value of your existing visitors.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Competitive Edge:</strong> While competitors focus on getting more traffic, you'll generate more revenue from the same number of visitors through superior optimization.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Competitive Edge:</strong> While competitors focus on getting more traffic, you'll generate more revenue from the same number of visitors through superior optimization.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Compound Growth:</strong> Higher conversion rates mean more customers, more revenue, and more budget for marketing—creating a powerful growth cycle.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Compound Growth:</strong> Higher conversion rates mean more customers, more revenue, and more budget for marketing—creating a powerful growth cycle.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Data-Driven Insights:</strong> Tracking conversions reveals exactly what motivates your audience, helping you refine your entire digital marketing strategy across all social media platforms.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Data-Driven Insights:</strong> Tracking conversions reveals exactly what motivates your audience, helping you refine your entire digital marketing strategy across all social media platforms.</span>
                 </li>
               </ul>
             </div>

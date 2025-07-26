@@ -82,26 +82,26 @@ const CustomCodingOptions = () => {
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/javascript-automation" className="text-blue-600 hover:text-blue-800 underline">JavaScript Automation</Link>:</strong> 
-                  Streamline workflows with custom scripts that integrate Google services, social media APIs, and AI marketing tools
+                  <span className="text-gray-600 dark:text-white">Streamline workflows with custom scripts that integrate Google services, social media APIs, and AI marketing tools</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Premium <Link to="/definitions/interactive-ux" className="text-blue-600 hover:text-blue-800 underline">Interactive UX</Link>:</strong> 
-                  Create Apple-inspired user experiences that keep visitors engaged and boost digital marketing performance
+                  <span className="text-gray-600 dark:text-white">Create Apple-inspired user experiences that keep visitors engaged and boost digital marketing performance</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>API Integration:</strong> Connect your website to powerful third-party services, from Google Workspace to social media management platforms
+                  <strong>API Integration:</strong> <span className="text-gray-600 dark:text-white">Connect your website to powerful third-party services, from Google Workspace to social media management platforms</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Performance Optimization:</strong> Rankers-level code optimization ensures lightning-fast loading times and superior user experience
+                  <strong>Performance Optimization:</strong> <span className="text-gray-600 dark:text-white">Rankers-level code optimization ensures lightning-fast loading times and superior user experience</span>
                 </div>
               </li>
             </ul>

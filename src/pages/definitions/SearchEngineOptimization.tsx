@@ -65,19 +65,19 @@ const SearchEngineOptimization: React.FC = () => {
               <ul className="space-y-3 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Free, High-Quality Traffic:</strong> Unlike paid ads, SEO brings you customers without ongoing costs. Once you rank, you get consistent traffic 24/7.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Free, High-Quality Traffic:</strong> Unlike paid ads, SEO brings you customers without ongoing costs. Once you rank, you get consistent traffic 24/7.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Trust and Credibility:</strong> People trust Google's organic results more than ads. High rankings signal authority and expertise in your industry.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Trust and Credibility:</strong> People trust Google's organic results more than ads. High rankings signal authority and expertise in your industry.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Long-term ROI:</strong> While SEO takes time to build, the results compound. A well-optimized page can bring you customers for years.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Long-term ROI:</strong> While SEO takes time to build, the results compound. A well-optimized page can bring you customers for years.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Competitive Advantage:</strong> If you're not on page 1 of Google, your competitors are getting your potential customers. SEO levels the playing field.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Competitive Advantage:</strong> If you're not on page 1 of Google, your competitors are getting your potential customers. SEO levels the playing field.</span>
                 </li>
               </ul>
             </div>

@@ -39,15 +39,15 @@ const DigitalGrowthImpact: React.FC = () => {
                 <ul className="space-y-4 text-gray-600 dark:text-gray-300">
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Traffic Amplification:</strong> Our clients typically see 300-500% increases in qualified website traffic within 6 months through strategic SEO and social media campaigns.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Traffic Amplification:</strong> Our clients typically see 300-500% increases in qualified website traffic within 6 months through strategic SEO and social media campaigns.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Revenue Acceleration:</strong> Digital marketing strategies consistently deliver 4-7x ROI by focusing on high-intent keywords and precise <Link to="/definitions/audience-targeting" className=\"text-green-600 hover:text-green-700 font-semibold underline">audience targeting</Link>.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Revenue Acceleration:</strong> Digital marketing strategies consistently deliver 4-7x ROI by focusing on high-intent keywords and precise <Link to="/definitions/audience-targeting" className="text-green-600 hover:text-green-700 font-semibold underline">audience targeting</Link>.</span>
                   </li>
                   <li className="flex items-start">
                     <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span><strong>Brand Authority:</strong> Consistent content marketing and social media presence establishes your business as the go-to expert in your industry.</span>
+                    <span className="text-gray-600 dark:text-white"><strong>Brand Authority:</strong> Consistent content marketing and social media presence establishes your business as the go-to expert in your industry.</span>
                   </li>
                 </ul>
               </section>
@@ -85,15 +85,15 @@ const DigitalGrowthImpact: React.FC = () => {
                 <ul className="space-y-3 text-gray-600 dark:text-gray-300">
                   <li className="flex items-center">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-3"></span>
-                    Landing page optimization increases conversions by 35-60%
+                    <span className="text-gray-600 dark:text-white">Landing page optimization increases conversions by 35-60%</span>
                   </li>
                   <li className="flex items-center">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-3"></span>
-                    Personalized email campaigns achieve 29% higher open rates
+                    <span className="text-gray-600 dark:text-white">Personalized email campaigns achieve 29% higher open rates</span>
                   </li>
                   <li className="flex items-center">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-3"></span>
-                    AI-powered chatbots capture 40% more qualified leads
+                    <span className="text-gray-600 dark:text-white">AI-powered chatbots capture 40% more qualified leads</span>
                   </li>
                 </ul>
               </section>

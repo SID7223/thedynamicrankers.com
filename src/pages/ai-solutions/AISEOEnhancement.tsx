@@ -82,26 +82,26 @@ const AISEOEnhancement = () => {
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/semantic-search" className="text-purple-600 hover:text-purple-800 underline">Semantic Search</Link> Optimization:</strong> 
-                  AI understands search intent and optimizes content for Google's latest algorithms and social media discovery
+                  <span className="text-gray-600 dark:text-white">AI understands search intent and optimizes content for Google's latest algorithms and social media discovery</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Comprehensive <Link to="/definitions/on-page-optimization" className="text-purple-600 hover:text-purple-800 underline">On-Page Optimization</Link>:</strong> 
-                  Automated technical SEO improvements that rival Apple's attention to detail and Google\'s best practices
+                  <span className="text-gray-600 dark:text-white">Automated technical SEO improvements that rival Apple's attention to detail and Google's best practices</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Real-Time Ranking Monitoring:</strong> Track keyword positions across all digital marketing channels with Rankers-level precision
+                  <strong>Real-Time Ranking Monitoring:</strong> <span className="text-gray-600 dark:text-white">Track keyword positions across all digital marketing channels with Rankers-level precision</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Competitor Analysis:</strong> AI monitors competitor SEO strategies and identifies opportunities for improved rankings
+                  <strong>Competitor Analysis:</strong> <span className="text-gray-600 dark:text-white">AI monitors competitor SEO strategies and identifies opportunities for improved rankings</span>
                 </div>
               </li>
             </ul>

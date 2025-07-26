@@ -65,19 +65,19 @@ const AudienceTargeting: React.FC = () => {
               <ul className="space-y-3 text-gray-600 dark:text-gray-300">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Higher ROI:</strong> Targeted campaigns typically deliver 3-5x better return on investment than broad, untargeted advertising.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Higher ROI:</strong> Targeted campaigns typically deliver 3-5x better return on investment than broad, untargeted advertising.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Reduced Waste:</strong> Stop spending money on people who will never buy. Focus your budget on high-intent prospects.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Reduced Waste:</strong> Stop spending money on people who will never buy. Focus your budget on high-intent prospects.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Better Messaging:</strong> When you know your audience, you can craft messages that resonate deeply and drive action.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Better Messaging:</strong> When you know your audience, you can craft messages that resonate deeply and drive action.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  <span><strong>Competitive Edge:</strong> While competitors spray and pray, you'll dominate with surgical precision across every social media platform.</span>
+                  <span className="text-gray-600 dark:text-white"><strong>Competitive Edge:</strong> While competitors spray and pray, you'll dominate with surgical precision across every social media platform.</span>
                 </li>
               </ul>
             </div>
