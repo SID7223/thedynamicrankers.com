@@ -22,8 +22,6 @@ const Header = () => {
   const navItems = [
     { name: 'home', path: '/' },
     { name: 'services', path: '/services' },
-    { name: 'about', path: '/about' },
-    { name: 'testimonials', path: '/testimonials' },
     { name: 'contact', path: '/contact' }
   ];
 
@@ -52,7 +50,8 @@ const Header = () => {
             </span>
           </Link>
 
-          <nav className="hidden md:flex space-x-8">
+          <div className="flex items-center space-x-8">
+            <nav className="hidden md:flex space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -64,7 +63,21 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-          </nav>
+            </nav>
+            
+            {/* Menu Button */}
+            <div className="hidden md:flex">
+              <button
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+                  isScrolled 
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white' 
+                    : 'bg-white bg-opacity-20 hover:bg-opacity-30 backdrop-blur-sm border border-white border-opacity-50 text-white hover:text-white'
+                }`}
+              >
+                Menu
+              </button>
+            </div>
+          </div>
 
           <button
             className="md:hidden"

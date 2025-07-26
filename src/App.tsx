@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
 import DarkModeToggle from './components/DarkModeToggle';
 import Hero from './components/Hero';
 import Services from './components/Services';
 import BusinessGrowth from './components/BusinessGrowth';
-import About from './components/About';
-import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AIAssistant from './components/AIAssistant';
+import ServicesPage from './pages/ServicesPage';
+import ContactPage from './pages/ContactPage';
 
 // Main page component that handles scrolling based on URL
 const MainPage = () => {
@@ -29,12 +30,6 @@ const MainPage = () => {
           break;
         case '/services':
           sectionId = 'services';
-          break;
-        case '/about':
-          sectionId = 'about';
-          break;
-        case '/testimonials':
-          sectionId = 'testimonials';
           break;
         case '/contact':
           sectionId = 'contact';
@@ -62,17 +57,38 @@ const MainPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>The Dynamic Rankers - Digital Marketing & Web Development</title>
+        <meta name="description" content="Professional digital marketing and SEO services to boost your online presence. Get higher rankings and more traffic with The Dynamic Rankers." />
+      </Helmet>
       <Hero />
       <Services />
       <BusinessGrowth />
-      <About />
-      <Testimonials />
       <Contact />
     </>
   );
 };
 
+// Hook to detect desktop screen size
+const useIsDesktop = () => {
+  const [isDesktop, setIsDesktop] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  return isDesktop;
+};
 function App() {
+  const isDesktop = useIsDesktop();
+
   return (
     <Router>
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -81,10 +97,17 @@ function App() {
         
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/services" element={<MainPage />} />
-          <Route path="/about" element={<MainPage />} />
-          <Route path="/testimonials" element={<MainPage />} />
-          <Route path="/contact" element={<MainPage />} />
+          {isDesktop ? (
+            <>
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+            </>
+          ) : (
+            <>
+              <Route path="/services" element={<MainPage />} />
+              <Route path="/contact" element={<MainPage />} />
+            </>
+          )}
         </Routes>
         
         <Footer />
