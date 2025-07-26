@@ -40,7 +40,7 @@ const Header = () => {
             <img 
               src="/the copy.png" 
               alt="The Dynamic Rankers Logo" 
-              className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
+              className={`w-10 h-10 object-contain transition-all duration-300 ${
                 isScrolled && !document.documentElement.classList.contains('dark') 
                   ? 'brightness-0' 
                   : ''
@@ -49,11 +49,11 @@ const Header = () => {
             <span className={`text-xl font-bold ${
               isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
             }`}>
-              <span className="text-base sm:text-xl">The Dynamic Rankers</span>
+              <span className="text-lg sm:text-xl">The Dynamic Rankers</span>
             </span>
           </Link>
 
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4 sm:space-x-8">
             <nav className="hidden md:flex space-x-8">
             {navItems.map((item) => (
               <Link
@@ -69,7 +69,7 @@ const Header = () => {
             </nav>
             
             {/* Menu Button */}
-            <div className="hidden md:flex">
+            <div className="hidden sm:flex">
               <button
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 border-2 ${
                   isScrolled 
@@ -83,7 +83,7 @@ const Header = () => {
           </div>
 
           <button
-            className="md:hidden"
+            className="sm:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
@@ -95,7 +95,7 @@ const Header = () => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden mt-3 sm:mt-4 py-3 sm:py-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg mx-4">
+          <div className="sm:hidden mt-4 py-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
             <nav className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
