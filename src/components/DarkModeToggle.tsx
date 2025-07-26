@@ -84,37 +84,3 @@ const DarkModeToggle = () => {
 };
 
 export default DarkModeToggle;
-      }`}
-    >
-      <button
-        onClick={toggleDarkMode}
-        className={`
-          relative w-12 h-6 sm:w-16 sm:h-8 rounded-full p-1 transition-all duration-300 ease-out
-          ${isDark 
-            ? 'bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-500/25' 
-            : 'bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/25'
-          }
-          hover:scale-110 hover:shadow-xl active:scale-95
-          backdrop-blur-lg border border-white/20
-        `}
-        aria-label="Toggle dark mode"
-      >
-        <div
-          className={`
-            absolute top-1 w-4 h-4 sm:w-6 sm:h-6 bg-white rounded-full shadow-md
-            flex items-center justify-center transition-all duration-300 ease-out
-            ${isDark ? 'translate-x-6 sm:translate-x-8' : 'translate-x-0'}
-          `}
-        >
-          {isDark ? (
-            <Moon className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
-          ) : (
-            <Sun className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
-          )}
-        </div>
-      </button>
-    </div>
-  );
-};
-
-export default DarkModeToggle;
