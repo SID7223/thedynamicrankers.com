@@ -71,8 +71,6 @@ const Header = () => {
             {/* Menu Button */}
             <div className="hidden md:flex">
               <button
-                className="gradient-border-button hover:scale-105 active:scale-95"
-              >
                 <span className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
                   isScrolled 
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white' 
