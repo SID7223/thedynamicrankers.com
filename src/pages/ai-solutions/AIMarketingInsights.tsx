@@ -81,7 +81,7 @@ const AIMarketingInsights = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Deep <Link to="/definitions/behavioral-data" className="text-purple-600 hover:text-purple-800 underline">Behavioral Data</Link> Analysis:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Deep <Link to="/definitions/behavioral-data" className="text-purple-600 hover:text-purple-800 underline">Behavioral Data</Link> Analysis:</strong> 
                   <span className="text-gray-600 dark:text-white">Understand how users interact with your content across Google, social media, and other digital touchpoints</span>
                 </div>
               </li>
