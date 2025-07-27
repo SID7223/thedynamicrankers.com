@@ -88,7 +88,7 @@ const AIMarketingInsights = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Advanced <Link to="/definitions/predictive-analytics" className="text-purple-600 hover:text-purple-800 underline">Predictive Analytics</Link>:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Advanced <Link to="/definitions/predictive-analytics" className="text-purple-600 hover:text-purple-800 underline">Predictive Analytics</Link>:</strong> 
                   <span className="text-gray-600 dark:text-white">Forecast trends and optimize campaigns with AI-powered insights that rival Apple's data science capabilities</span>
                 </div>
               </li>
