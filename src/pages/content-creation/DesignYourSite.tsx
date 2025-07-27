@@ -81,14 +81,14 @@ const DesignYourSite = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                   <strong className="text-gray-900 dark:text-white">Strategic <Link to="/definitions/brand-identity" className="text-blue-600 hover:text-blue-800 underline">Brand Identity</Link> Development:</strong> 
+                  <strong>Strategic <Link to="/definitions/brand-identity" className="text-blue-600 hover:text-blue-800 underline">Brand Identity</Link> Development:</strong> 
                   <span className="text-gray-700 dark:text-white"> Build distinctive visual identities that stand out in competitive digital marketing landscapes</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                   <strong className="text-gray-900 dark:text-white">Adaptive <Link to="/definitions/visual-storytelling" className="text-blue-600 hover:text-blue-800 underline">Visual Storytelling</Link>:</strong> 
+                  <strong>Adaptive <Link to="/definitions/visual-storytelling" className="text-blue-600 hover:text-blue-800 underline">Visual Storytelling</Link>:</strong> 
                   <span className="text-gray-700 dark:text-white"> Craft compelling narratives through design that engage visitors across all social media touchpoints</span>
                 </div>
               </li>
