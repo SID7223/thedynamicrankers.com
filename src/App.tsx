@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
@@ -8,40 +8,51 @@ import BusinessGrowth from './components/BusinessGrowth';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AIAssistant from './components/AIAssistant';
-import DigitalMarketingPage from './pages/DigitalMarketingPage';
-import AISolutionsPage from './pages/AISolutionsPage';
-import CreateWebsitePage from './pages/CreateWebsitePage';
-import ContentCreationPage from './pages/ContentCreationPage';
 
-// Import sub-pages
-import DigitalMarketingSolution from './pages/digital-marketing/DigitalMarketingSolution';
-import ScopeOfDigitalMarketing from './pages/digital-marketing/ScopeOfDigitalMarketing';
-import WhatIsDigitalMarketing from './pages/digital-marketing/WhatIsDigitalMarketing';
-import DigitalGrowthImpact from './pages/digital-marketing/DigitalGrowthImpact';
+// Lazy load page components for better performance
+const DigitalMarketingPage = React.lazy(() => import('./pages/DigitalMarketingPage'));
+const AISolutionsPage = React.lazy(() => import('./pages/AISolutionsPage'));
+const CreateWebsitePage = React.lazy(() => import('./pages/CreateWebsitePage'));
+const ContentCreationPage = React.lazy(() => import('./pages/ContentCreationPage'));
+
+// Lazy load sub-pages
+const DigitalMarketingSolution = React.lazy(() => import('./pages/digital-marketing/DigitalMarketingSolution'));
+const ScopeOfDigitalMarketing = React.lazy(() => import('./pages/digital-marketing/ScopeOfDigitalMarketing'));
+const WhatIsDigitalMarketing = React.lazy(() => import('./pages/digital-marketing/WhatIsDigitalMarketing'));
+const DigitalGrowthImpact = React.lazy(() => import('./pages/digital-marketing/DigitalGrowthImpact'));
 
 // AI Solutions sub-pages
-import AIContentTools from './pages/ai-solutions/AIContentTools';
-import AIMarketingInsights from './pages/ai-solutions/AIMarketingInsights';
-import AISEOEnhancement from './pages/ai-solutions/AISEOEnhancement';
+const AIContentTools = React.lazy(() => import('./pages/ai-solutions/AIContentTools'));
+const AIMarketingInsights = React.lazy(() => import('./pages/ai-solutions/AIMarketingInsights'));
+const AISEOEnhancement = React.lazy(() => import('./pages/ai-solutions/AISEOEnhancement'));
 
 // Create Website sub-pages
-import CustomCodingOptions from './pages/create-website/CustomCodingOptions';
-import SEOFoundationSetup from './pages/create-website/SEOFoundationSetup';
-import USBasedDeployment from './pages/create-website/USBasedDeployment';
+const CustomCodingOptions = React.lazy(() => import('./pages/create-website/CustomCodingOptions'));
+const SEOFoundationSetup = React.lazy(() => import('./pages/create-website/SEOFoundationSetup'));
+const USBasedDeployment = React.lazy(() => import('./pages/create-website/USBasedDeployment'));
 
 // Content Creation sub-pages
-import VideoEditingServices from './pages/content-creation/VideoEditingServices';
-import BlogArticlePlanning from './pages/content-creation/BlogArticlePlanning';
-import SocialPostDesign from './pages/content-creation/SocialPostDesign';
+const VideoEditingServices = React.lazy(() => import('./pages/content-creation/VideoEditingServices'));
+const BlogArticlePlanning = React.lazy(() => import('./pages/content-creation/BlogArticlePlanning'));
+const SocialPostDesign = React.lazy(() => import('./pages/content-creation/SocialPostDesign'));
 
 // Definition pages
-import SearchEngineOptimization from './pages/definitions/SearchEngineOptimization';
-import OnlineEngagement from './pages/definitions/OnlineEngagement';
-import ConversionRate from './pages/definitions/ConversionRate';
-import AudienceTargeting from './pages/definitions/AudienceTargeting';
-import ContentAutomation from './pages/definitions/ContentAutomation';
-import NaturalLanguageGeneration from './pages/definitions/NaturalLanguageGeneration';
+const SearchEngineOptimization = React.lazy(() => import('./pages/definitions/SearchEngineOptimization'));
+const OnlineEngagement = React.lazy(() => import('./pages/definitions/OnlineEngagement'));
+const ConversionRate = React.lazy(() => import('./pages/definitions/ConversionRate'));
+const AudienceTargeting = React.lazy(() => import('./pages/definitions/AudienceTargeting'));
+const ContentAutomation = React.lazy(() => import('./pages/definitions/ContentAutomation'));
+const NaturalLanguageGeneration = React.lazy(() => import('./pages/definitions/NaturalLanguageGeneration'));
 
+// Loading component for lazy-loaded routes
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+    <div className="flex flex-col items-center space-y-4">
+      <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+    </div>
+  </div>
+);
 // Main page component that handles scrolling based on URL
 const MainPage = () => {
   const location = useLocation();
@@ -132,46 +143,48 @@ function App() {
         <Header />
         <DarkModeToggle />
         
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          
-          {/* Digital Marketing Routes */}
-          <Route path="/digital-marketing" element={<DigitalMarketingPage />}>
-            <Route path="digital-marketing-solution" element={<DigitalMarketingSolution />} />
-            <Route path="scope-of-digital-marketing" element={<ScopeOfDigitalMarketing />} />
-            <Route path="what-is-digital-marketing" element={<WhatIsDigitalMarketing />} />
-            <Route path="digital-growth-impact" element={<DigitalGrowthImpact />} />
-          </Route>
-          
-          {/* AI Solutions Routes */}
-          <Route path="/ai-solutions" element={<AISolutionsPage />}>
-            <Route path="ai-content-tools" element={<AIContentTools />} />
-            <Route path="ai-marketing-insights" element={<AIMarketingInsights />} />
-            <Route path="ai-seo-enhancement" element={<AISEOEnhancement />} />
-          </Route>
-          
-          {/* Create Website Routes */}
-          <Route path="/create-website" element={<CreateWebsitePage />}>
-            <Route path="custom-coding-options" element={<CustomCodingOptions />} />
-            <Route path="seo-foundation-setup" element={<SEOFoundationSetup />} />
-            <Route path="us-based-deployment" element={<USBasedDeployment />} />
-          </Route>
-          
-          {/* Content Creation Routes */}
-          <Route path="/content-creation" element={<ContentCreationPage />}>
-            <Route path="video-editing-services" element={<VideoEditingServices />} />
-            <Route path="blog-article-planning" element={<BlogArticlePlanning />} />
-            <Route path="social-post-design" element={<SocialPostDesign />} />
-          </Route>
-          
-          {/* Definition Pages */}
-          <Route path="/definitions/search-engine-optimization" element={<SearchEngineOptimization />} />
-          <Route path="/definitions/online-engagement" element={<OnlineEngagement />} />
-          <Route path="/definitions/conversion-rate" element={<ConversionRate />} />
-          <Route path="/definitions/audience-targeting" element={<AudienceTargeting />} />
-          <Route path="/definitions/content-automation" element={<ContentAutomation />} />
-          <Route path="/definitions/natural-language-generation" element={<NaturalLanguageGeneration />} />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            
+            {/* Digital Marketing Routes */}
+            <Route path="/digital-marketing" element={<DigitalMarketingPage />}>
+              <Route path="digital-marketing-solution" element={<DigitalMarketingSolution />} />
+              <Route path="scope-of-digital-marketing" element={<ScopeOfDigitalMarketing />} />
+              <Route path="what-is-digital-marketing" element={<WhatIsDigitalMarketing />} />
+              <Route path="digital-growth-impact" element={<DigitalGrowthImpact />} />
+            </Route>
+            
+            {/* AI Solutions Routes */}
+            <Route path="/ai-solutions" element={<AISolutionsPage />}>
+              <Route path="ai-content-tools" element={<AIContentTools />} />
+              <Route path="ai-marketing-insights" element={<AIMarketingInsights />} />
+              <Route path="ai-seo-enhancement" element={<AISEOEnhancement />} />
+            </Route>
+            
+            {/* Create Website Routes */}
+            <Route path="/create-website" element={<CreateWebsitePage />}>
+              <Route path="custom-coding-options" element={<CustomCodingOptions />} />
+              <Route path="seo-foundation-setup" element={<SEOFoundationSetup />} />
+              <Route path="us-based-deployment" element={<USBasedDeployment />} />
+            </Route>
+            
+            {/* Content Creation Routes */}
+            <Route path="/content-creation" element={<ContentCreationPage />}>
+              <Route path="video-editing-services" element={<VideoEditingServices />} />
+              <Route path="blog-article-planning" element={<BlogArticlePlanning />} />
+              <Route path="social-post-design" element={<SocialPostDesign />} />
+            </Route>
+            
+            {/* Definition Pages */}
+            <Route path="/definitions/search-engine-optimization" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/online-engagement" element={<OnlineEngagement />} />
+            <Route path="/definitions/conversion-rate" element={<ConversionRate />} />
+            <Route path="/definitions/audience-targeting" element={<AudienceTargeting />} />
+            <Route path="/definitions/content-automation" element={<ContentAutomation />} />
+            <Route path="/definitions/natural-language-generation" element={<NaturalLanguageGeneration />} />
+          </Routes>
+        </Suspense>
         
         <Footer />
         <AIAssistant />
