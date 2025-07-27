@@ -81,7 +81,7 @@ const AISEOEnhancement = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Advanced <Link to="/definitions/semantic-search" className="text-purple-600 hover:text-purple-800 underline">Semantic Search</Link> Optimization:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Advanced <Link to="/definitions/semantic-search" className="text-purple-600 hover:text-purple-800 underline">Semantic Search</Link> Optimization:</strong> 
                   <span className="text-gray-600 dark:text-white">AI understands search intent and optimizes content for Google's latest algorithms and social media discovery</span>
                 </div>
               </li>
