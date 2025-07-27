@@ -1,126 +1,126 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Outlet, useLocation } from 'react-router-dom';
-import SidebarNav from '../components/SidebarNav';
+import { Link } from 'react-router-dom';
 
-const AISolutionsPage = () => {
-  const location = useLocation();
-  const isMainPage = location.pathname === '/ai-solutions';
-
-  const subPages = [
-    {
-      path: '/ai-web-automation',
-      title: 'AI Web Automation',
-      description: 'Automate your website processes with cutting-edge AI technology'
-    },
-    {
-      path: '/ai-content-tools',
-      title: 'AI Content Tools',
-      description: 'Create engaging content faster with AI-powered writing tools'
-    },
-    {
-      path: '/ai-marketing-insights',
-      title: 'AI Marketing Insights',
-      description: 'Data-driven marketing decisions with AI analytics and insights'
-    },
-    {
-      path: '/ai-seo-enhancement',
-      title: 'AI SEO Enhancement',
-      description: 'Boost your search rankings with AI-optimized SEO strategies'
-    }
-  ];
-
+const AIWebAutomation = () => {
   return (
     <>
       <Helmet>
-        <title>AI Solutions for Business - The Dynamic Rankers USA</title>
-        <meta name="description" content="Revolutionary AI solutions for businesses in USA. Automate processes, enhance content creation, and boost marketing with AI technology from The Dynamic Rankers." />
-        <meta name="keywords" content="AI solutions, artificial intelligence, USA, automation, AI marketing, The Dynamic Rankers" />
+        <title>AI Web Automation | The Dynamic Rankers</title>
+        <meta name="description" content="Explore The Dynamic Rankers' expert approach to AI Web Automation with clear visuals and smart automation." />
+        <meta name="keywords" content="AI web automation, workflow automation, process optimization, The Dynamic Rankers" />
       </Helmet>
       
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-        <main className="pt-20">
-          {isMainPage ? (
-            <>
-              {/* Hero Section */}
-              <section className="py-20 bg-gradient-to-br from-purple-600 to-indigo-700">
-                <div className="container mx-auto px-4 text-center">
-                  <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
-                    AI Solutions for Business
-                  </h1>
-                  <p className="text-lg sm:text-xl text-purple-100 max-w-3xl mx-auto mb-8">
-                    Harness the power of artificial intelligence to transform your business operations. 
-                    The Dynamic Rankers brings cutting-edge AI solutions to USA businesses.
-                  </p>
-                </div>
-              </section>
-
-              {/* Main Content with Sidebar */}
-              <div className="flex flex-col lg:flex-row">
-                <SidebarNav 
-                  title="AI Solutions"
-                  basePath="/ai-solutions"
-                  links={subPages}
-                />
-                
-                <div className="flex-1 p-8">
-                  <div className="max-w-4xl mx-auto">
-                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">
-                      The Future is AI-Powered
-                    </h2>
-                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                      Artificial Intelligence is revolutionizing how businesses operate. The Dynamic Rankers 
-                      specializes in implementing AI solutions that streamline processes, enhance productivity, 
-                      and drive growth for companies across the USA.
-                    </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                          Intelligent Automation
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-300">
-                          Our AI solutions automate repetitive tasks, allowing your team to focus 
-                          on strategic initiatives that drive business growth.
-                        </p>
-                      </div>
-                      
-                      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                          Data-Driven Insights
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-300">
-                          Leverage AI analytics to gain deeper insights into your customers, 
-                          market trends, and business performance.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <p className="text-gray-600 dark:text-gray-300 mb-4">
-                        Discover how AI can transform your business. Explore our AI solutions from the sidebar.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col lg:flex-row">
-              <SidebarNav 
-                title="AI Solutions"
-                basePath="/ai-solutions"
-                links={subPages}
+      <div className="p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+            AI Web Automation
+          </h1>
+          
+          <div className="mb-8">
+            <picture>
+              <source
+                srcSet="
+                  https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop&fm=webp 400w,
+                  https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop&fm=webp 800w,
+                  https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop&fm=webp 1200w
+                "
+                sizes="(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px"
+                type="image/webp"
               />
-              <div className="flex-1">
-                <Outlet />
+              <img 
+                src="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop&fm=webp"
+                alt="The Dynamic Rankers – AI Web Automation"
+                title="AI Web Automation | The Dynamic Rankers"
+                className="w-full h-64 object-cover rounded-lg shadow-lg"
+                loading="lazy"
+                width="1200"
+                height="600"
+              />
+            </picture>
+          </div>
+          
+          <div className="prose prose-lg dark:prose-invert max-w-none">
+            <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
+              Dynamic Rankers transforms your digital operations with AI-powered web automation that rivals
+              Apple's efficiency and Google's intelligence. Our cutting-edge solutions streamline workflows, 
+              eliminate manual tasks, and boost productivity across all your marketing channels and social media platforms.
+            </p>
+            
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Intelligent Automation Solutions
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  Smart Workflow Systems
+                </h3>
+                <p className="text-gray-700 dark:text-white">
+                  Automate repetitive tasks with AI precision, from lead generation to customer 
+                  onboarding, ensuring consistent quality across all digital marketing touchpoints.
+                </p>
+              </div>
+              
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  Dynamic Process Optimization
+                </h3>
+                <p className="text-gray-700 dark:text-white">
+                  Continuously improve your operations with machine learning algorithms that 
+                  adapt and optimize workflows based on performance data and user behavior patterns.
+                </p>
               </div>
             </div>
-          )}
-        </main>
+            
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              Advanced Automation Features
+            </h2>
+            
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start space-x-3">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                <div>
+                  <strong className="text-gray-900 dark:text-white">Intelligent <Link to="/definitions/workflow-automation" className="text-blue-600 hover:text-blue-800 underline">Workflow Automation</Link>:</strong> 
+                  <span className="text-gray-700 dark:text-white"> Streamline complex processes with AI-driven automation that learns and adapts to your business needs</span>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                <div>
+                  <strong className="text-gray-900 dark:text-white">Advanced <Link to="/definitions/process-optimization" className="text-blue-600 hover:text-blue-800 underline">Process Optimization</Link>:</strong> 
+                  <span className="text-gray-700 dark:text-white"> Eliminate bottlenecks and maximize efficiency with Rankers-level precision in every automated task</span>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                <div>
+                  <strong className="text-gray-900 dark:text-white">Real-Time Integration:</strong> <span className="text-gray-700 dark:text-white">Connect all your digital marketing tools and social media platforms for seamless data flow</span>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                <div>
+                  <strong className="text-gray-900 dark:text-white">Smart Analytics:</strong> <span className="text-gray-700 dark:text-white">Monitor automation performance with Google-powered insights and Apple-inspired dashboards</span>
+                </div>
+              </li>
+            </ul>
+            
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg">
+              <h3 className="text-xl font-bold mb-2">Automate Your Success</h3>
+              <p className="mb-4">
+                Experience the power of AI web automation that transforms your business operations 
+                while you focus on growth and innovation. Let Dynamic intelligence handle the routine.
+              </p>
+              <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Start Automation
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
 };
 
-export default AISolutionsPage;
+export default AIWebAutomation;
