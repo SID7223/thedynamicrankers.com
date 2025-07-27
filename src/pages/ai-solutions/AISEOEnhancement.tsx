@@ -88,7 +88,7 @@ const AISEOEnhancement = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Comprehensive <Link to="/definitions/on-page-optimization" className="text-purple-600 hover:text-purple-800 underline">On-Page Optimization</Link>:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Comprehensive <Link to="/definitions/on-page-optimization" className="text-purple-600 hover:text-purple-800 underline">On-Page Optimization</Link>:</strong> 
                   <span className="text-gray-600 dark:text-white">Automated technical SEO improvements that rival Apple's attention to detail and Google's best practices</span>
                 </div>
               </li>
