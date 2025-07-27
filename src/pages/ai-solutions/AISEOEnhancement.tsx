@@ -101,7 +101,7 @@ const AISEOEnhancement = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Competitor Analysis:</strong> <span className="text-gray-600 dark:text-white">AI monitors competitor SEO strategies and identifies opportunities for improved rankings</span>
+                   <strong className="text-gray-900 dark:text-white">Competitor Analysis:</strong> <span className="text-gray-600 dark:text-white">AI monitors competitor SEO strategies and identifies opportunities for improved rankings</span>
                 </div>
               </li>
             </ul>
