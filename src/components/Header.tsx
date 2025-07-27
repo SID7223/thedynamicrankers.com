@@ -96,7 +96,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2" onClick={closeMenu}>
             <img 
-              src="/the copy.png" 
+              src="/the copy copy.png" 
               alt="The Dynamic Rankers Logo" 
               className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
                 isScrolled && !document.documentElement.classList.contains('dark') 
