@@ -1,8 +1,27 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { TrendingUp, Mail, Phone, MapPin, Facebook, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const location = useLocation();
+
+  // Helper function to check if link is active
+  const isActiveLink = (path: string) => location.pathname === path;
+
+  // Link component with active state styling
+  const FooterLink = ({ to, children }: { to: string; children: React.ReactNode }) => (
+    <Link 
+      to={to}
+      className={`text-sm sm:text-base transition-colors duration-300 ${
+        isActiveLink(to)
+          ? 'text-blue-400 font-semibold' 
+          : 'text-gray-400 hover:text-white'
+      }`}
+    >
+      {children}
+    </Link>
+  );
 
   return (
     <footer className="bg-gray-900 dark:bg-black text-white pt-16 pb-8 transition-colors duration-300">
@@ -47,22 +66,23 @@ const Footer = () => {
           <div>
             <h3 className="text-base sm:text-lg font-semibold mb-6">Our Services</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 dark:text-gray-300 hover:text-white transition-colors duration-300">Website Development</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">SEO Services</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Search Engine Marketing</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Social Media Marketing</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Customer Support</a></li>
+              <li><FooterLink to="/website-development">Website Development</FooterLink></li>
+              <li><FooterLink to="/seo-services">SEO Services</FooterLink></li>
+              <li><FooterLink to="/search-engine-marketing">Search Engine Marketing</FooterLink></li>
+              <li><FooterLink to="/social-media-marketing">Social Media Marketing</FooterLink></li>
+              <li><FooterLink to="/customer-support">Customer Support</FooterLink></li>
+              <li><FooterLink to="/our-services">Our Services</FooterLink></li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-base sm:text-lg font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">About Us</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Portfolio</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Blog</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Career</a></li>
-              <li><a href="#" className="text-sm sm:text-base text-gray-400 hover:text-white transition-colors duration-300">Privacy Policy</a></li>
+              <li><FooterLink to="/about-us">About Us</FooterLink></li>
+              <li><FooterLink to="/portfolio">Portfolio</FooterLink></li>
+              <li><FooterLink to="/blog">Blog</FooterLink></li>
+              <li><FooterLink to="/career">Career</FooterLink></li>
+              <li><FooterLink to="/privacy-policy">Privacy Policy</FooterLink></li>
             </ul>
           </div>
 
@@ -87,7 +107,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center">
           <p className="text-sm sm:text-base text-gray-400">
-            © {2023} The Dynamic Rankers. All rights reserved.
+            © {currentYear} The Dynamic Rankers. All rights reserved.
           </p>
         </div>
       </div>
