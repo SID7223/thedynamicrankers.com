@@ -2,6 +2,7 @@ import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
+import ScrollToTop from './components/ScrollToTop';
 import DarkModeToggle from './components/DarkModeToggle';
 import Hero from './components/Hero';
 import BusinessGrowth from './components/BusinessGrowth';
@@ -66,10 +67,7 @@ const MainPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Scroll to top first
-    window.scrollTo(0, 0);
-    
-    // Then scroll to specific section based on path
+    // Handle smooth scrolling to specific sections for home page
     const scrollToSection = () => {
       let sectionId = '';
       
@@ -84,7 +82,7 @@ const MainPage = () => {
           sectionId = 'contact';
           break;
         default:
-          sectionId = 'home';
+          return; // Don't scroll to sections for other pages
       }
 
       if (sectionId) {
@@ -147,6 +145,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <Header />
         <DarkModeToggle />
