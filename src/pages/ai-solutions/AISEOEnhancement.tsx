@@ -93,7 +93,7 @@ const AISEOEnhancement = () => {
                 </div>
               </li>
               <li className="flex items-start space-x-3">
-                <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
+                <span className="w-2 h-2 bgd-purple-500 rounded-full mt-2"></span>
                 <div>
                    <strong className="text-gray-900 dark:text-white">Real-Time Ranking Monitoring:</strong> <span className="text-gray-600 dark:text-white">Track keyword positions across all digital marketing channels with Rankers-level precision</span>
                 </div>
