@@ -88,7 +88,7 @@ const AIWebAutomation = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Advanced <Link to="/definitions/process-optimization" className="text-blue-600 hover:text-blue-800 underline">Process Optimization</Link>:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Advanced <Link to="/definitions/process-optimization" className="text-blue-600 hover:text-blue-800 underline">Process Optimization</Link>:</strong> 
                   <span className="text-gray-700 dark:text-white"> Eliminate bottlenecks and maximize efficiency with Rankers-level precision in every automated task</span>
                 </div>
               </li>
