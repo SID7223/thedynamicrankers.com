@@ -81,7 +81,7 @@ const BlogArticlePlanning = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Strategic <Link to="/definitions/content-pillars" className="text-orange-600 hover:text-orange-800 underline">Content Pillars</Link>:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Strategic <Link to="/definitions/content-pillars" className="text-orange-600 hover:text-orange-800 underline">Content Pillars</Link>:</strong> 
                   <span className="text-gray-600 dark:text-white">Build authority with focused topic clusters that dominate Google search results and social media discovery</span>
                 </div>
               </li>
