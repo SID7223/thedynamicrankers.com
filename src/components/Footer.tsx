@@ -11,7 +11,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-6">
               <img 
-                src="/the copy.png" 
+                src="/the copy copy.png" 
                 alt="The Dynamic Rankers Logo" 
                 className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
               />
