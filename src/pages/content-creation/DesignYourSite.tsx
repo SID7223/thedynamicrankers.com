@@ -95,13 +95,12 @@ const DesignYourSite = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                   <strong className="text-gray-900 dark:text-white">Mobile-First Approach:</strong> <span className="text-gray-700 dark:text-white">Design with Rankers-level attention to mobile user experience and cross-device consistency</span>
+                  <strong>Mobile-First Approach:</strong> <span className="text-gray-700 dark:text-white">Design with Rankers-level attention to mobile user experience and cross-device consistency</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  
                   <strong>Performance Optimization:</strong> <span className="text-gray-700 dark:text-white">Balance stunning visuals with lightning-fast loading speeds for optimal Google rankings</span>
                 </div>
               </li>
