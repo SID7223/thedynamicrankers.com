@@ -88,20 +88,20 @@ const AIContentTools = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Advanced <Link to="/definitions/natural-language-generation" className="text-purple-600 hover:text-purple-800 underline">Natural Language Generation</Link>:</strong> 
+                   <strong className="text-gray-900 dark:text-white">Advanced <Link to="/definitions/natural-language-generation" className="text-purple-600 hover:text-purple-800 underline">Natural Language Generation</Link>:</strong> 
                   <span className="text-gray-600 dark:text-white">Create human-like content that engages readers and drives conversions across all digital channels</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>SEO Integration:</strong> <span className="text-gray-600 dark:text-white">Every piece of content is optimized for search engines while maintaining readability and engagement</span>
+                   <strong className="text-gray-900 dark:text-white">SEO Integration:</strong> <span className="text-gray-600 dark:text-white">Every piece of content is optimized for search engines while maintaining readability and engagement</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Multi-Platform Optimization:</strong> <span className="text-gray-600 dark:text-white">Content automatically adapts for websites, social media, and email marketing campaigns</span>
+                   <strong className="text-gray-900 dark:text-white">Multi-Platform Optimization:</strong> <span className="text-gray-600 dark:text-white">Content automatically adapts for websites, social media, and email marketing campaigns</span>
                 </div>
               </li>
             </ul>
