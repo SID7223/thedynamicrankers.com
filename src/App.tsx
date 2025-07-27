@@ -32,16 +32,19 @@ const DigitalGrowthImpact = React.lazy(() => import('./pages/digital-marketing/D
 const AIContentTools = React.lazy(() => import('./pages/ai-solutions/AIContentTools'));
 const AIMarketingInsights = React.lazy(() => import('./pages/ai-solutions/AIMarketingInsights'));
 const AISEOEnhancement = React.lazy(() => import('./pages/ai-solutions/AISEOEnhancement'));
+const AIWebAutomation = React.lazy(() => import('./pages/ai-solutions/AIWebAutomation'));
 
 // Create Website sub-pages
 const CustomCodingOptions = React.lazy(() => import('./pages/create-website/CustomCodingOptions'));
 const SEOFoundationSetup = React.lazy(() => import('./pages/create-website/SEOFoundationSetup'));
 const USBasedDeployment = React.lazy(() => import('./pages/create-website/USBasedDeployment'));
+const DesignYourSite = React.lazy(() => import('./pages/create-website/DesignYourSite'));
 
 // Content Creation sub-pages
 const VideoEditingServices = React.lazy(() => import('./pages/content-creation/VideoEditingServices'));
 const BlogArticlePlanning = React.lazy(() => import('./pages/content-creation/BlogArticlePlanning'));
 const SocialPostDesign = React.lazy(() => import('./pages/content-creation/SocialPostDesign'));
+const CopywritingServices = React.lazy(() => import('./pages/content-creation/CopywritingServices'));
 
 // Definition pages
 const SearchEngineOptimization = React.lazy(() => import('./pages/definitions/SearchEngineOptimization'));
@@ -52,6 +55,12 @@ const ContentAutomation = React.lazy(() => import('./pages/definitions/ContentAu
 const NaturalLanguageGeneration = React.lazy(() => import('./pages/definitions/NaturalLanguageGeneration'));
 const DigitalTransformation = React.lazy(() => import('./pages/definitions/DigitalTransformation'));
 const MultiChannelStrategy = React.lazy(() => import('./pages/definitions/MultiChannelStrategy'));
+const WorkflowAutomation = React.lazy(() => import('./pages/definitions/WorkflowAutomation'));
+const ProcessOptimization = React.lazy(() => import('./pages/definitions/ProcessOptimization'));
+const BrandIdentity = React.lazy(() => import('./pages/definitions/BrandIdentity'));
+const VisualStorytelling = React.lazy(() => import('./pages/definitions/VisualStorytelling'));
+const SalesPsychology = React.lazy(() => import('./pages/definitions/SalesPsychology'));
+const ContentOptimization = React.lazy(() => import('./pages/definitions/ContentOptimization'));
 
 // Loading component for lazy-loaded routes
 const LoadingSpinner = () => (
@@ -172,6 +181,7 @@ function App() {
             
             {/* AI Solutions Routes */}
             <Route path="/ai-solutions" element={<AISolutionsPage />}>
+              <Route path="ai-web-automation" element={<AIWebAutomation />} />
               <Route path="ai-content-tools" element={<AIContentTools />} />
               <Route path="ai-marketing-insights" element={<AIMarketingInsights />} />
               <Route path="ai-seo-enhancement" element={<AISEOEnhancement />} />
@@ -179,6 +189,7 @@ function App() {
             
             {/* Create Website Routes */}
             <Route path="/create-website" element={<CreateWebsitePage />}>
+              <Route path="design-your-site" element={<DesignYourSite />} />
               <Route path="custom-coding-options" element={<CustomCodingOptions />} />
               <Route path="seo-foundation-setup" element={<SEOFoundationSetup />} />
               <Route path="us-based-deployment" element={<USBasedDeployment />} />
@@ -186,6 +197,7 @@ function App() {
             
             {/* Content Creation Routes */}
             <Route path="/content-creation" element={<ContentCreationPage />}>
+              <Route path="copywriting-services" element={<CopywritingServices />} />
               <Route path="video-editing-services" element={<VideoEditingServices />} />
               <Route path="blog-article-planning" element={<BlogArticlePlanning />} />
               <Route path="social-post-design" element={<SocialPostDesign />} />
@@ -200,6 +212,12 @@ function App() {
             <Route path="/definitions/natural-language-generation" element={<NaturalLanguageGeneration />} />
             <Route path="/definitions/digital-transformation" element={<DigitalTransformation />} />
             <Route path="/definitions/multi-channel-strategy" element={<MultiChannelStrategy />} />
+            <Route path="/definitions/workflow-automation" element={<WorkflowAutomation />} />
+            <Route path="/definitions/process-optimization" element={<ProcessOptimization />} />
+            <Route path="/definitions/brand-identity" element={<BrandIdentity />} />
+            <Route path="/definitions/visual-storytelling" element={<VisualStorytelling />} />
+            <Route path="/definitions/sales-psychology" element={<SalesPsychology />} />
+            <Route path="/definitions/content-optimization" element={<ContentOptimization />} />
           </Routes>
         </Suspense>
         
