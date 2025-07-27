@@ -41,7 +41,7 @@ const ContentOptimization = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Content optimization involves refining written and visual content to improve 
+              Content optimization involves refining written and visual content to improve
               search engine rankings, user engagement, and conversion rates. The Dynamic 
               Rankers employs advanced optimization techniques that balance Google's ranking 
               factors with human readability across all digital marketing channels.
@@ -56,7 +56,7 @@ const ContentOptimization = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Keyword Integration & Density
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Strategic placement of target keywords while maintaining natural flow 
                   and readability for both search engines and human readers.
                 </p>
@@ -66,7 +66,7 @@ const ContentOptimization = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Readability & Structure
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Optimize content structure with headers, bullet points, and short paragraphs 
                   to improve user experience and search engine understanding.
                 </p>
@@ -76,7 +76,7 @@ const ContentOptimization = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Meta Data & Schema Markup
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Enhance content with optimized meta descriptions, title tags, and structured 
                   data to improve search visibility and click-through rates.
                 </p>
@@ -88,7 +88,7 @@ const ContentOptimization = () => {
             </h2>
             
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Content optimization is essential for digital marketing success because it ensures 
+              Content optimization is essential for digital marketing success because it ensures
               your content serves both search engines and human audiences effectively. The Dynamic 
               Rankers understands that well-optimized content ranks higher on Google, engages 
               readers more effectively, and drives better conversion rates across social media 

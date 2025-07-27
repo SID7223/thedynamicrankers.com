@@ -41,7 +41,7 @@ const WorkflowAutomation = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Workflow automation uses technology to streamline repetitive business processes, 
+              Workflow automation uses technology to streamline repetitive business processes,
               reducing manual effort and increasing efficiency. The Dynamic Rankers implements 
               intelligent automation systems that transform how businesses operate across 
               digital marketing channels and social media platforms.
@@ -56,7 +56,7 @@ const WorkflowAutomation = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Email Marketing Automation
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Automatically send personalized email sequences based on user behavior, 
                   nurturing leads through the sales funnel without manual intervention.
                 </p>
@@ -66,7 +66,7 @@ const WorkflowAutomation = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Social Media Scheduling
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Automated posting schedules ensure consistent social media presence 
                   across multiple platforms at optimal engagement times.
                 </p>
@@ -76,7 +76,7 @@ const WorkflowAutomation = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Lead Processing System
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Automatically route, score, and assign leads to appropriate team members 
                   based on predefined criteria and behavioral triggers.
                 </p>
@@ -88,7 +88,7 @@ const WorkflowAutomation = () => {
             </h2>
             
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Workflow automation is essential for modern digital marketing because it enables 
+              Workflow automation is essential for modern digital marketing because it enables
               businesses to scale their operations while maintaining quality and consistency. 
               The Dynamic Rankers uses automation to help clients maximize efficiency, reduce 
               errors, and focus human resources on strategic activities that drive growth. 

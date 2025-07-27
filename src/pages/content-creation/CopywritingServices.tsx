@@ -42,7 +42,7 @@ const CopywritingServices = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Dynamic Rankers delivers persuasive copywriting that converts readers into customers with Apple-level 
+              Dynamic Rankers delivers persuasive copywriting that converts readers into customers with Apple-level
               precision and Google-optimized content strategy. Our AI-enhanced writing transforms your brand message 
               into compelling narratives that drive action across all digital marketing channels and social media platforms.
             </p>
@@ -56,7 +56,7 @@ const CopywritingServices = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   Strategic Sales Copy
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Craft compelling sales pages, product descriptions, and email campaigns 
                   that drive conversions with psychologically-proven persuasion techniques.
                 </p>
@@ -66,7 +66,7 @@ const CopywritingServices = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   Brand Voice Development
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Establish consistent brand voice across all platforms with Dynamic 
                   messaging that resonates with your target audience and builds trust.
                 </p>
@@ -82,26 +82,26 @@ const CopywritingServices = () => {
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Persuasive <Link to="/definitions/sales-psychology" className="text-orange-600 hover:text-orange-800 underline">Sales Psychology</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-gray-300"> Apply proven psychological triggers that motivate action and increase conversion rates across all marketing materials</span>
+                  <span className="text-gray-700 dark:text-white"> Apply proven psychological triggers that motivate action and increase conversion rates across all marketing materials</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/content-optimization" className="text-orange-600 hover:text-orange-800 underline">Content Optimization</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-gray-300"> Optimize every word for both human engagement and Google search rankings with Rankers-level precision</span>
+                  <span className="text-gray-700 dark:text-white"> Optimize every word for both human engagement and Google search rankings with Rankers-level precision</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Multi-Channel Messaging:</strong> <span className="text-gray-700 dark:text-gray-300">Adapt your message for different platforms while maintaining brand consistency across social media and digital channels</span>
+                  <strong>Multi-Channel Messaging:</strong> <span className="text-gray-700 dark:text-white">Adapt your message for different platforms while maintaining brand consistency across social media and digital channels</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>AI-Enhanced Writing:</strong> <span className="text-gray-700 dark:text-gray-300">Leverage artificial intelligence tools to refine and optimize copy for maximum impact and engagement</span>
+                  <strong>AI-Enhanced Writing:</strong> <span className="text-gray-700 dark:text-white">Leverage artificial intelligence tools to refine and optimize copy for maximum impact and engagement</span>
                 </div>
               </li>
             </ul>

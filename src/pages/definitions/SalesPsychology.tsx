@@ -41,7 +41,7 @@ const SalesPsychology = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Sales psychology applies behavioral science principles to understand and influence 
+              Sales psychology applies behavioral science principles to understand and influence
               consumer decision-making processes. The Dynamic Rankers uses these proven 
               psychological triggers to create compelling marketing messages that drive conversions 
               across digital channels and social media platforms.
@@ -56,7 +56,7 @@ const SalesPsychology = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Social Proof & Authority
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Leverage testimonials, reviews, and expert endorsements to build trust 
                   and credibility that motivates purchasing decisions.
                 </p>
@@ -66,7 +66,7 @@ const SalesPsychology = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Scarcity & Urgency
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Create compelling reasons for immediate action through limited-time 
                   offers and exclusive availability messaging.
                 </p>
@@ -76,7 +76,7 @@ const SalesPsychology = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Loss Aversion & Risk Reduction
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Address customer fears and objections by emphasizing what they stand 
                   to lose and offering guarantees to minimize perceived risk.
                 </p>
@@ -88,7 +88,7 @@ const SalesPsychology = () => {
             </h2>
             
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Sales psychology is fundamental to digital marketing success because it helps 
+              Sales psychology is fundamental to digital marketing success because it helps
               marketers understand the "why" behind consumer behavior. The Dynamic Rankers 
               applies these principles across Google ads, social media campaigns, and website 
               optimization to create messages that resonate emotionally and drive action. 

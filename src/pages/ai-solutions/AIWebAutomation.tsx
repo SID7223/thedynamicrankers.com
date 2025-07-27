@@ -42,7 +42,7 @@ const AIWebAutomation = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Dynamic Rankers transforms your digital operations with AI-powered web automation that rivals 
+              Dynamic Rankers transforms your digital operations with AI-powered web automation that rivals
               Apple's efficiency and Google's intelligence. Our cutting-edge solutions streamline workflows, 
               eliminate manual tasks, and boost productivity across all your marketing channels and social media platforms.
             </p>
@@ -56,7 +56,7 @@ const AIWebAutomation = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   Smart Workflow Systems
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Automate repetitive tasks with AI precision, from lead generation to customer 
                   onboarding, ensuring consistent quality across all digital marketing touchpoints.
                 </p>
@@ -66,7 +66,7 @@ const AIWebAutomation = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   Dynamic Process Optimization
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Continuously improve your operations with machine learning algorithms that 
                   adapt and optimize workflows based on performance data and user behavior patterns.
                 </p>
@@ -82,26 +82,26 @@ const AIWebAutomation = () => {
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Intelligent <Link to="/definitions/workflow-automation" className="text-blue-600 hover:text-blue-800 underline">Workflow Automation</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-gray-300"> Streamline complex processes with AI-driven automation that learns and adapts to your business needs</span>
+                  <span className="text-gray-700 dark:text-white"> Streamline complex processes with AI-driven automation that learns and adapts to your business needs</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Advanced <Link to="/definitions/process-optimization" className="text-blue-600 hover:text-blue-800 underline">Process Optimization</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-gray-300"> Eliminate bottlenecks and maximize efficiency with Rankers-level precision in every automated task</span>
+                  <span className="text-gray-700 dark:text-white"> Eliminate bottlenecks and maximize efficiency with Rankers-level precision in every automated task</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Real-Time Integration:</strong> <span className="text-gray-700 dark:text-gray-300">Connect all your digital marketing tools and social media platforms for seamless data flow</span>
+                  <strong>Real-Time Integration:</strong> <span className="text-gray-700 dark:text-white">Connect all your digital marketing tools and social media platforms for seamless data flow</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Smart Analytics:</strong> <span className="text-gray-700 dark:text-gray-300">Monitor automation performance with Google-powered insights and Apple-inspired dashboards</span>
+                  <strong>Smart Analytics:</strong> <span className="text-gray-700 dark:text-white">Monitor automation performance with Google-powered insights and Apple-inspired dashboards</span>
                 </div>
               </li>
             </ul>

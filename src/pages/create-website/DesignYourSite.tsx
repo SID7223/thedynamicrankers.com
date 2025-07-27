@@ -42,7 +42,7 @@ const DesignYourSite = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Dynamic Rankers crafts stunning websites with Apple-inspired aesthetics and Google-optimized performance. 
+              Dynamic Rankers crafts stunning websites with Apple-inspired aesthetics and Google-optimized performance.
               Our custom design approach transforms your brand vision into digital reality through strategic 
               visual storytelling that captivates audiences across all marketing channels and social media platforms.
             </p>
@@ -56,7 +56,7 @@ const DesignYourSite = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   Brand Identity Integration
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Seamlessly weave your brand story into every design element, creating 
                   cohesive visual experiences that resonate with your target audience.
                 </p>
@@ -66,7 +66,7 @@ const DesignYourSite = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                   User-Centered Design
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Create intuitive interfaces that guide users effortlessly through your 
                   digital marketing funnel with AI-powered user experience optimization.
                 </p>
@@ -82,26 +82,26 @@ const DesignYourSite = () => {
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Strategic <Link to="/definitions/brand-identity" className="text-blue-600 hover:text-blue-800 underline">Brand Identity</Link> Development:</strong> 
-                  <span className="text-gray-700 dark:text-gray-300"> Build distinctive visual identities that stand out in competitive digital marketing landscapes</span>
+                  <span className="text-gray-700 dark:text-white"> Build distinctive visual identities that stand out in competitive digital marketing landscapes</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
                   <strong>Adaptive <Link to="/definitions/visual-storytelling" className="text-blue-600 hover:text-blue-800 underline">Visual Storytelling</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-gray-300"> Craft compelling narratives through design that engage visitors across all social media touchpoints</span>
+                  <span className="text-gray-700 dark:text-white"> Craft compelling narratives through design that engage visitors across all social media touchpoints</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Mobile-First Approach:</strong> <span className="text-gray-700 dark:text-gray-300">Design with Rankers-level attention to mobile user experience and cross-device consistency</span>
+                  <strong>Mobile-First Approach:</strong> <span className="text-gray-700 dark:text-white">Design with Rankers-level attention to mobile user experience and cross-device consistency</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Performance Optimization:</strong> <span className="text-gray-700 dark:text-gray-300">Balance stunning visuals with lightning-fast loading speeds for optimal Google rankings</span>
+                  <strong>Performance Optimization:</strong> <span className="text-gray-700 dark:text-white">Balance stunning visuals with lightning-fast loading speeds for optimal Google rankings</span>
                 </div>
               </li>
             </ul>

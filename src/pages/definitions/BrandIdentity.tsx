@@ -41,7 +41,7 @@ const BrandIdentity = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Brand identity encompasses the visual and conceptual elements that distinguish 
+              Brand identity encompasses the visual and conceptual elements that distinguish
               your business from competitors and create memorable customer experiences. 
               The Dynamic Rankers develops comprehensive brand identities that resonate 
               across all digital marketing channels and social media platforms.
@@ -56,7 +56,7 @@ const BrandIdentity = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Visual Identity System
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Logo design, color palettes, typography, and imagery that create 
                   consistent visual recognition across all touchpoints.
                 </p>
@@ -66,7 +66,7 @@ const BrandIdentity = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Brand Voice & Messaging
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Consistent tone, personality, and communication style that reflects 
                   your brand values and connects with your target audience.
                 </p>
@@ -76,7 +76,7 @@ const BrandIdentity = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Brand Guidelines & Standards
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Comprehensive documentation ensuring consistent brand application 
                   across all marketing materials and digital platforms.
                 </p>
@@ -88,7 +88,7 @@ const BrandIdentity = () => {
             </h2>
             
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              A strong brand identity is essential for digital marketing success because it 
+              A strong brand identity is essential for digital marketing success because it
               creates instant recognition and builds trust with your audience. The Dynamic 
               Rankers understands that consistent brand identity across Google search results, 
               social media platforms, and all digital touchpoints reinforces credibility and 

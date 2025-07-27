@@ -41,7 +41,7 @@ const VisualStorytelling = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Visual storytelling combines compelling narratives with powerful imagery to 
+              Visual storytelling combines compelling narratives with powerful imagery to
               create emotional connections and convey complex messages instantly. The Dynamic 
               Rankers harnesses this technique to create memorable brand experiences across 
               digital marketing channels and social media platforms.
@@ -56,7 +56,7 @@ const VisualStorytelling = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Infographic Narratives
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Transform complex data into compelling visual stories that educate 
                   and engage audiences while reinforcing brand messaging.
                 </p>
@@ -66,7 +66,7 @@ const VisualStorytelling = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Sequential Visual Content
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Create multi-part visual series that guide viewers through a complete 
                   story arc, building anticipation and deeper engagement.
                 </p>
@@ -76,7 +76,7 @@ const VisualStorytelling = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Emotional Visual Triggers
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Use color psychology, composition, and imagery to evoke specific 
                   emotions that align with your brand message and campaign goals.
                 </p>
@@ -88,7 +88,7 @@ const VisualStorytelling = () => {
             </h2>
             
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Visual storytelling is crucial for digital marketing because humans process 
+              Visual storytelling is crucial for digital marketing because humans process
               visual information 60,000 times faster than text. The Dynamic Rankers leverages 
               this psychological advantage to create content that stops scroll, captures 
               attention, and drives action across Google ads, social media feeds, and all 

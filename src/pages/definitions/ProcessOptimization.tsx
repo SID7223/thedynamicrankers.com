@@ -41,7 +41,7 @@ const ProcessOptimization = () => {
           
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-              Process optimization involves analyzing and improving business workflows to 
+              Process optimization involves analyzing and improving business workflows to
               maximize efficiency, reduce costs, and enhance quality. The Dynamic Rankers 
               applies systematic optimization methodologies to transform how businesses 
               operate across digital marketing channels and social media platforms.
@@ -56,7 +56,7 @@ const ProcessOptimization = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Content Creation Pipeline
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Streamlining the content creation process from ideation to publication, 
                   reducing production time by 60% while maintaining quality standards.
                 </p>
@@ -66,7 +66,7 @@ const ProcessOptimization = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Customer Support Workflow
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Optimizing ticket routing and response procedures to reduce resolution 
                   time and improve customer satisfaction scores.
                 </p>
@@ -76,7 +76,7 @@ const ProcessOptimization = () => {
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                   Campaign Launch Process
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-700 dark:text-white">
                   Refining the marketing campaign launch sequence to eliminate bottlenecks 
                   and ensure faster time-to-market for promotional initiatives.
                 </p>
@@ -88,7 +88,7 @@ const ProcessOptimization = () => {
             </h2>
             
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Process optimization is crucial for digital marketing success because it enables 
+              Process optimization is crucial for digital marketing success because it enables
               businesses to deliver consistent results while scaling operations efficiently. 
               The Dynamic Rankers uses data-driven optimization techniques to identify 
               improvement opportunities and implement solutions that drive measurable ROI. 
