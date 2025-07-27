@@ -95,7 +95,7 @@ const AIWebAutomation = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Real-Time Integration:</strong> <span className="text-gray-700 dark:text-white">Connect all your digital marketing tools and social media platforms for seamless data flow</span>
+                   <strong className="text-gray-900 dark:text-white">Real-Time Integration:</strong> <span className="text-gray-700 dark:text-white">Connect all your digital marketing tools and social media platforms for seamless data flow</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
