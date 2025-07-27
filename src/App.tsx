@@ -14,6 +14,12 @@ const DigitalMarketingPage = React.lazy(() => import('./pages/DigitalMarketingPa
 const AISolutionsPage = React.lazy(() => import('./pages/AISolutionsPage'));
 const CreateWebsitePage = React.lazy(() => import('./pages/CreateWebsitePage'));
 const ContentCreationPage = React.lazy(() => import('./pages/ContentCreationPage'));
+const OurServicesPage = React.lazy(() => import('./pages/OurServicesPage'));
+const WebsiteDevelopmentPage = React.lazy(() => import('./pages/WebsiteDevelopmentPage'));
+const SEOServicesPage = React.lazy(() => import('./pages/SEOServicesPage'));
+const SearchEngineMarketingPage = React.lazy(() => import('./pages/SearchEngineMarketingPage'));
+const SocialMediaMarketingPage = React.lazy(() => import('./pages/SocialMediaMarketingPage'));
+const CustomerSupportPage = React.lazy(() => import('./pages/CustomerSupportPage'));
 
 // Lazy load sub-pages
 const DigitalMarketingSolution = React.lazy(() => import('./pages/digital-marketing/DigitalMarketingSolution'));
@@ -43,6 +49,8 @@ const ConversionRate = React.lazy(() => import('./pages/definitions/ConversionRa
 const AudienceTargeting = React.lazy(() => import('./pages/definitions/AudienceTargeting'));
 const ContentAutomation = React.lazy(() => import('./pages/definitions/ContentAutomation'));
 const NaturalLanguageGeneration = React.lazy(() => import('./pages/definitions/NaturalLanguageGeneration'));
+const DigitalTransformation = React.lazy(() => import('./pages/definitions/DigitalTransformation'));
+const MultiChannelStrategy = React.lazy(() => import('./pages/definitions/MultiChannelStrategy'));
 
 // Loading component for lazy-loaded routes
 const LoadingSpinner = () => (
@@ -147,6 +155,14 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             
+            {/* Service Pages */}
+            <Route path="/our-services" element={<OurServicesPage />} />
+            <Route path="/website-development" element={<WebsiteDevelopmentPage />} />
+            <Route path="/seo-services" element={<SEOServicesPage />} />
+            <Route path="/search-engine-marketing" element={<SearchEngineMarketingPage />} />
+            <Route path="/social-media-marketing" element={<SocialMediaMarketingPage />} />
+            <Route path="/customer-support" element={<CustomerSupportPage />} />
+            
             {/* Digital Marketing Routes */}
             <Route path="/digital-marketing" element={<DigitalMarketingPage />}>
               <Route path="digital-marketing-solution" element={<DigitalMarketingSolution />} />
@@ -183,6 +199,8 @@ function App() {
             <Route path="/definitions/audience-targeting" element={<AudienceTargeting />} />
             <Route path="/definitions/content-automation" element={<ContentAutomation />} />
             <Route path="/definitions/natural-language-generation" element={<NaturalLanguageGeneration />} />
+            <Route path="/definitions/digital-transformation" element={<DigitalTransformation />} />
+            <Route path="/definitions/multi-channel-strategy" element={<MultiChannelStrategy />} />
           </Routes>
         </Suspense>
         
