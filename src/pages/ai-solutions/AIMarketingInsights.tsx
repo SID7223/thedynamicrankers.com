@@ -101,7 +101,7 @@ const AIMarketingInsights = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-purple-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>ROI Optimization:</strong> <span className="text-gray-600 dark:text-white">Maximize returns on every marketing dollar with AI-driven budget allocation recommendations</span>
+                  <strong className="text-gray-900 dark:text-white"ROI Optimization:</strong> <span className="text-gray-600 dark:text-white">Maximize returns on every marketing dollar with AI-driven budget allocation recommendations</span>
                 </div>
               </li>
             </ul>
