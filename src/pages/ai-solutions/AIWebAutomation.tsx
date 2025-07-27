@@ -81,7 +81,7 @@ const AIWebAutomation = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Intelligent <Link to="/definitions/workflow-automation" className="text-blue-600 hover:text-blue-800 underline">Workflow Automation</Link>:</strong> 
+                  <strong className="text-gray-900 dark:text-white">Intelligent</strong><Link to="/definitions/workflow-automation" className="text-blue-600 hover:text-blue-800 underline">Workflow Automation</Link>:</strong> 
                   <span className="text-gray-700 dark:text-white"> Streamline complex processes with AI-driven automation that learns and adapts to your business needs</span>
                 </div>
               </li>
