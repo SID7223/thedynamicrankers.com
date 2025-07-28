@@ -27,7 +27,7 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Netlify Forms - Hidden form for detection -->
+    <!-- Netlify Forms - Hidden form for detection (Contact Form) -->
     <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
       <input type="email" name="email" />
@@ -41,5 +41,26 @@
       </select>
       <textarea name="message"></textarea>
     </form>
+    
+        <!-- Netlify Forms - Hidden form for detection (Book a Call Form) -->
+    <form name="book-a-call" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <select name="serviceOfInterest">
+        <option value="ai-solutions">AI Solutions</option>
+        <option value="content-creation">Content Creation</option>
+        <option value="create-website">Create Website</option>
+        <option value="customer-support">Customer Support</option>
+        <option value="digital-marketing">Digital Marketing</option>
+        <option value="our-services">Our Services</option>
+        <option value="seo-services">SEO Services</option>
+        <option value="search-engine-marketing">Search Engine Marketing</option>
+        <option value="social-media-marketing">Social Media Marketing</option>
+        <option value="website-development">Website Development</option>
+      </select>
+      <textarea name="message"></textarea>
+    </form>
+
   </body>
 </html>
