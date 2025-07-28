@@ -21,6 +21,7 @@ const SEOServicesPage = React.lazy(() => import('./pages/SEOServicesPage'));
 const SearchEngineMarketingPage = React.lazy(() => import('./pages/SearchEngineMarketingPage'));
 const SocialMediaMarketingPage = React.lazy(() => import('./pages/SocialMediaMarketingPage'));
 const CustomerSupportPage = React.lazy(() => import('./pages/CustomerSupportPage'));
+const BookACall = React.lazy(() => import('./pages/BookACall'));
 
 // Lazy load sub-pages
 const DigitalMarketingSolution = React.lazy(() => import('./pages/digital-marketing/DigitalMarketingSolution'));
@@ -218,6 +219,7 @@ function App() {
             <Route path="/definitions/visual-storytelling" element={<VisualStorytelling />} />
             <Route path="/definitions/sales-psychology" element={<SalesPsychology />} />
             <Route path="/definitions/content-optimization" element={<ContentOptimization />} />
+            <Route path="/book-a-call" element={<BookACall />} />
           </Routes>
         </Suspense>
         
