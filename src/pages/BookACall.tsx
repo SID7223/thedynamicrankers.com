@@ -7,7 +7,7 @@ const BookACall: React.FC = () => {
       <p className="text-gray-600 dark:text-white mb-8">
         Interested in learning more about how we can help your business grow? Fill out the form below to schedule a free consultation call.
       </p>
-      <form name="book-a-call" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <form name="book-a-call" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you.html">
         <input type="hidden" name="form-name" value="book-a-call" />
         <div hidden>
           <label>
