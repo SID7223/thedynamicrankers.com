@@ -57,7 +57,7 @@ const BookACall: React.FC = () => {
               name="book-a-call" 
               method="POST"
               data-netlify="true"
-              action="/thank-you.html"
+              action="/pages/thank-you"
               className="space-y-6"
             >
               <input type="hidden" name="form-name" value="book-a-call" />
