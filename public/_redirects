@@ -1,2 +1,4 @@
+# public/_redirects
 # Handle client-side routing
-/*    /index.html   200
+GET /*    /index.html   200
+POST /new.html /new.html 200
