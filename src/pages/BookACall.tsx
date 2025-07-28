@@ -57,7 +57,6 @@ const BookACall: React.FC = () => {
               name="book-a-call" 
               method="POST"
               data-netlify="true"
-              netlify-honeypot="bot-field"
               action="/thank-you.html"
               className="space-y-6"
             >
