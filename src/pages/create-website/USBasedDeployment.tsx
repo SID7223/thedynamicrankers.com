@@ -112,9 +112,12 @@ const USBasedDeployment = () => {
                 Launch your website on premium US infrastructure that supports your digital marketing 
                 goals with enterprise-grade performance and reliability.
               </p>
-              <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link
+                to="/book-a-call"
+                className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Deploy in USA
-              </button>
+              </Link>
             </div>
           </div>
         </div>
