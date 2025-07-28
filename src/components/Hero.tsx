@@ -39,7 +39,7 @@ const Hero = () => {
             </Link>
             
             <Link 
-              to="/services"
+              to="/our-services"
               className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-gray-800 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center justify-center space-x-2"
             >
               <Play className="w-5 h-5" />
