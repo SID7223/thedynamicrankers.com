@@ -61,7 +61,7 @@ const BookACall: React.FC = () => {
               className="space-y-6"
             >
               <input type="hidden" name="form-name" value="book-a-call" />
-              <input type="hidden" name="form-name" value="book-a-call" />
+              <input type="hidden" name="form-name" value="/new.html" />
               <div hidden>
                 <label>
                   Don't fill this out if you're human: <input name="bot-field" />
