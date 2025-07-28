@@ -112,9 +112,12 @@ const AISEOEnhancement = () => {
                 Let AI handle your SEO optimization while you focus on growing your business. 
                 Experience the power of automated ranking improvements with Dynamic precision.
               </p>
-              <button className="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link
+                to="/book-a-call"
+                className="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Boost SEO Now
-              </button>
+              </Link>
             </div>
           </div>
         </div>
