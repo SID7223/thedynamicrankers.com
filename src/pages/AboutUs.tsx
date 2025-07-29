@@ -49,7 +49,7 @@ const AboutUs: React.FC = () => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 pt-32 pb-16">
         <motion.h1 
           className="text-4xl font-bold text-center mb-8"
           initial={{ opacity: 0, y: -20 }}
