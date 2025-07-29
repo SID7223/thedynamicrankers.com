@@ -22,6 +22,12 @@ const SearchEngineMarketingPage = React.lazy(() => import('./pages/SearchEngineM
 const SocialMediaMarketingPage = React.lazy(() => import('./pages/SocialMediaMarketingPage'));
 const CustomerSupportPage = React.lazy(() => import('./pages/CustomerSupportPage'));
 const BookACall = React.lazy(() => import('./pages/BookACall'));
+const AboutUs = React.lazy(() => import('./pages/AboutUs'));
+const Blog = React.lazy(() => import('./pages/Blog'));
+const Portfolio = React.lazy(() => import('./pages/Portfolio'));
+const Careers = React.lazy(() => import('./pages/Careers'));
+const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
+
 
 // Lazy load sub-pages
 const DigitalMarketingSolution = React.lazy(() => import('./pages/digital-marketing/DigitalMarketingSolution'));
@@ -173,6 +179,13 @@ function App() {
             <Route path="/search-engine-marketing" element={<SearchEngineMarketingPage />} />
             <Route path="/social-media-marketing" element={<SocialMediaMarketingPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
+                        
+            {/* Quick Link Pages */}
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/career" element={<Careers />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             
             {/* Digital Marketing Routes */}
             <Route path="/digital-marketing" element={<DigitalMarketingPage />}>
