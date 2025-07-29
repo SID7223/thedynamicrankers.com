@@ -154,7 +154,8 @@ function App() {
   const isDesktop = useIsDesktop();
 
   return (
-    <ScrollToTop />
+    <>
+      <ScrollToTop />
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <Header />
         <DarkModeToggle />
@@ -225,6 +226,7 @@ function App() {
         <Footer />
         <AIAssistant />
       </div>
+    </>
   );
 }
 
