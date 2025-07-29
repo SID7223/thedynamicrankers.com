@@ -16,9 +16,9 @@ const PrivacyPolicy: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy - Your Website Name</title>
+        <title>Privacy Policy - The Dynamic Rankers</title>
         <meta name="description" content="Read our privacy policy." />
-        <meta property="og:title" content="Privacy Policy - Your Website Name" />
+        <meta property="og:title" content="Privacy Policy - The Dynamic Rankers" />
         <meta property="og:description" content="Read our privacy policy." />
         <meta property="og:type" content="website" />
       </Helmet>
@@ -70,19 +70,19 @@ const PrivacyPolicy: React.FC = () => {
                 <div className="prose dark:prose-invert max-w-none prose-headings:text-gray-800 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-a:text-purple-600 dark:prose-a:text-purple-400">
                   
                   <section id="introduction" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Introduction</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Introduction</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       This Privacy Policy describes how we collect, use, and disclose your personal information when you visit our website. 
                       By using our website, you agree to the collection and use of information in accordance with this policy.
                     </p>
                   </section>
                   
                   <section id="information-collected" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Information We Collect</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Information We Collect</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       We may collect personal information that you provide to us, such as your name, email address, and other contact information when you:
                     </p>
-                    <ul className="list-disc pl-6 space-y-2 mt-4">
+                    <ul className="list-disc pl-6 space-y-2 mt-4 text-gray-700 dark:text-gray-300">
                       <li>Fill out a form on our website</li>
                       <li>Subscribe to our newsletter</li>
                       <li>Contact us with inquiries</li>
@@ -91,11 +91,11 @@ const PrivacyPolicy: React.FC = () => {
                   </section>
                   
                   <section id="how-we-use" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">How We Use Your Information</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">How We Use Your Information</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       We may use your personal information to:
                     </p>
-                    <ul className="list-disc pl-6 space-y-2 mt-4">
+                    <ul className="list-disc pl-6 space-y-2 mt-4 text-gray-700 dark:text-gray-300">
                       <li>Respond to your inquiries and provide customer support</li>
                       <li>Send you newsletters and marketing communications (if you have opted in)</li>
                       <li>Improve our website and services</li>
@@ -105,11 +105,11 @@ const PrivacyPolicy: React.FC = () => {
                   </section>
                   
                   <section id="disclosure" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Disclosure of Your Information</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Disclosure of Your Information</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       We may share your personal information with third parties in the following circumstances:
                     </p>
-                    <ul className="list-disc pl-6 space-y-2 mt-4">
+                    <ul className="list-disc pl-6 space-y-2 mt-4 text-gray-700 dark:text-gray-300">
                       <li>With your consent</li>
                       <li>With service providers who help us operate our website and provide services</li>
                       <li>To comply with legal obligations</li>
@@ -118,12 +118,12 @@ const PrivacyPolicy: React.FC = () => {
                   </section>
                   
                   <section id="data-security" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Data Security</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Data Security</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       We take reasonable measures to protect your personal information from unauthorized access, use, or disclosure. 
                       These measures include:
                     </p>
-                    <ul className="list-disc pl-6 space-y-2 mt-4">
+                    <ul className="list-disc pl-6 space-y-2 mt-4 text-gray-700 dark:text-gray-300">
                       <li>Encryption of sensitive data</li>
                       <li>Regular security assessments</li>
                       <li>Employee training on data protection</li>
@@ -132,11 +132,11 @@ const PrivacyPolicy: React.FC = () => {
                   </section>
                   
                   <section id="your-rights" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Your Rights</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Your Rights</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       You have the right to:
                     </p>
-                    <ul className="list-disc pl-6 space-y-2 mt-4">
+                    <ul className="list-disc pl-6 space-y-2 mt-4 text-gray-700 dark:text-gray-300">
                       <li>Access your personal information</li>
                       <li>Update or correct your information</li>
                       <li>Delete your information</li>
@@ -146,29 +146,29 @@ const PrivacyPolicy: React.FC = () => {
                   </section>
                   
                   <section id="changes" className="mb-10 scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Changes to This Privacy Policy</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Changes to This Privacy Policy</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       We may update this Privacy Policy from time to time. We will notify you of any changes by:
                     </p>
-                    <ul className="list-disc pl-6 space-y-2 mt-4">
+                    <ul className="list-disc pl-6 space-y-2 mt-4 text-gray-700 dark:text-gray-300">
                       <li>Posting the new Privacy Policy on this page</li>
                       <li>Sending you an email notification</li>
                       <li>Displaying a prominent notice on our website</li>
                     </ul>
-                    <p className="mt-4">
+                    <p className="mt-4 text-gray-700 dark:text-gray-300">
                       You are advised to review this Privacy Policy periodically for any changes.
                     </p>
                   </section>
                   
                   <section id="contact" className="scroll-mt-24">
-                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">Contact Us</h2>
-                    <p>
+                    <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white">Contact Us</h2>
+                    <p className="text-gray-700 dark:text-gray-300">
                       If you have any questions about this Privacy Policy, please contact us:
                     </p>
                     <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <p className="font-medium text-gray-800 dark:text-gray-200">Email: privacy@yourwebsite.com</p>
-                      <p className="font-medium text-gray-800 dark:text-gray-200">Phone: (123) 456-7890</p>
-                      <p className="font-medium text-gray-800 dark:text-gray-200">Address: 123 Business St, City, Country</p>
+                      <p className="font-medium text-gray-800 dark:text-gray-200">Email: eric@thedynamicrankers.com</p>
+                      <p className="font-medium text-gray-800 dark:text-gray-200">Phone: +1 (346) 556-1173</p>
+                      <p className="font-medium text-gray-800 dark:text-gray-200">Address: 234 Westheimer Rd, Apt 101, Houston, TX 77077</p>
                     </div>
                   </section>
                 </div>
