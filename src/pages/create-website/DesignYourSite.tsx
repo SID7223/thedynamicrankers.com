@@ -1,7 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-
 const DesignYourSite = () => {
   return (
     <>
@@ -81,27 +80,27 @@ const DesignYourSite = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Strategic <Link to="/definitions/brand-identity" className="text-blue-600 hover:text-blue-800 underline">Brand Identity</Link> Development:</strong> 
-                  <span className="text-gray-700 dark:text-white"> Build distinctive visual identities that stand out in competitive digital marketing landscapes</span>
+                  <strong className="text-gray-900 dark:text-white">Strategic <Link to="/definitions/brand-identity" className="text-blue-600 hover:text-blue-800 underline">Brand Identity</Link> Development:</strong> 
+                  <span className="text-gray-600 dark:text-white"> Build distinctive visual identities that stand out in competitive digital marketing landscapes</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Adaptive <Link to="/definitions/visual-storytelling" className="text-blue-600 hover:text-blue-800 underline">Visual Storytelling</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-white"> Craft compelling narratives through design that engage visitors across all social media touchpoints</span>
+                  <strong className="text-gray-900 dark:text-white">Adaptive <Link to="/definitions/visual-storytelling" className="text-blue-600 hover:text-blue-800 underline">Visual Storytelling</Link>:</strong> 
+                  <span className="text-gray-600 dark:text-white"> Craft compelling narratives through design that engage visitors across all social media touchpoints</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Mobile-First Approach:</strong> <span className="text-gray-700 dark:text-white">Design with Rankers-level attention to mobile user experience and cross-device consistency</span>
+                  <strong className="text-gray-900 dark:text-white">Mobile-First Approach:</strong> <span className="text-gray-600 dark:text-white">Design with Rankers-level attention to mobile user experience and cross-device consistency</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Performance Optimization:</strong> <span className="text-gray-700 dark:text-white">Balance stunning visuals with lightning-fast loading speeds for optimal Google rankings</span>
+                  <strong className="text-gray-900 dark:text-white">Performance Optimization:</strong> <span className="text-gray-600 dark:text-white">Balance stunning visuals with lightning-fast loading speeds for optimal Google rankings</span>
                 </div>
               </li>
             </ul>
@@ -122,5 +121,4 @@ const DesignYourSite = () => {
     </>
   );
 };
-
 export default DesignYourSite;
