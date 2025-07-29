@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
 import ScrollToTop from './components/ScrollToTop';
@@ -154,8 +154,7 @@ function App() {
   const isDesktop = useIsDesktop();
 
   return (
-    <Router>
-      <ScrollToTop />
+    <ScrollToTop />
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <Header />
         <DarkModeToggle />
@@ -226,7 +225,6 @@ function App() {
         <Footer />
         <AIAssistant />
       </div>
-    </Router>
   );
 }
 
