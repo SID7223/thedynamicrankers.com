@@ -1,7 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-
 const CopywritingServices = () => {
   return (
     <>
@@ -81,27 +80,27 @@ const CopywritingServices = () => {
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Persuasive <Link to="/definitions/sales-psychology" className="text-orange-600 hover:text-orange-800 underline">Sales Psychology</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-white"> Apply proven psychological triggers that motivate action and increase conversion rates across all marketing materials</span>
+                  <strong className="text-gray-900 dark:text-white">Persuasive <Link to="/definitions/sales-psychology" className="text-orange-600 hover:text-orange-800 underline">Sales Psychology</Link>:</strong> 
+                  <span className="text-gray-600 dark:text-white"> Apply proven psychological triggers that motivate action and increase conversion rates across all marketing materials</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Advanced <Link to="/definitions/content-optimization" className="text-orange-600 hover:text-orange-800 underline">Content Optimization</Link>:</strong> 
-                  <span className="text-gray-700 dark:text-white"> Optimize every word for both human engagement and Google search rankings with Rankers-level precision</span>
+                  <strong className="text-gray-900 dark:text-white">Advanced <Link to="/definitions/content-optimization" className="text-orange-600 hover:text-orange-800 underline">Content Optimization</Link>:</strong> 
+                  <span className="text-gray-600 dark:text-white"> Optimize every word for both human engagement and Google search rankings with Rankers-level precision</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>Multi-Channel Messaging:</strong> <span className="text-gray-700 dark:text-white">Adapt your message for different platforms while maintaining brand consistency across social media and digital channels</span>
+                  <strong className="text-gray-900 dark:text-white">Multi-Channel Messaging:</strong> <span className="text-gray-600 dark:text-white">Adapt your message for different platforms while maintaining brand consistency across social media and digital channels</span>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <span className="w-2 h-2 bg-orange-500 rounded-full mt-2"></span>
                 <div>
-                  <strong>AI-Enhanced Writing:</strong> <span className="text-gray-700 dark:text-white">Leverage artificial intelligence tools to refine and optimize copy for maximum impact and engagement</span>
+                  <strong className="text-gray-900 dark:text-white">AI-Enhanced Writing:</strong> <span className="text-gray-600 dark:text-white">Leverage artificial intelligence tools to refine and optimize copy for maximum impact and engagement</span>
                 </div>
               </li>
             </ul>
@@ -122,5 +121,4 @@ const CopywritingServices = () => {
     </>
   );
 };
-
 export default CopywritingServices;
