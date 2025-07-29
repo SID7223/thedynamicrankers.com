@@ -1,7 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { FaFacebook, FaLinkedin, FaInstagram, FaCommentDots, FaSun } from 'react-icons/fa';
 
 const AboutUs: React.FC = () => {
   return (
