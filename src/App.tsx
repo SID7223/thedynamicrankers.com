@@ -72,6 +72,7 @@ const LoadingSpinner = () => (
     </div>
   </div>
 );
+
 // Main page component that handles scrolling based on URL
 const MainPage = () => {
   const location = useLocation();
@@ -108,12 +109,13 @@ const MainPage = () => {
         }, 100);
       }
     };
-
+    
     scrollToSection();
   }, [location.pathname]);
 
   // Determine which components to show based on route
   const isHomePage = location.pathname === '/';
+  
   return (
     <>
       <Helmet>
@@ -136,23 +138,23 @@ const MainPage = () => {
 // Hook to detect desktop screen size
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = React.useState(false);
-
+  
   React.useEffect(() => {
     const checkScreenSize = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
-
+    
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
-
+  
   return isDesktop;
 };
+
 function App() {
   const isDesktop = useIsDesktop();
-
+  
   return (
     <>
       <ScrollToTop />
