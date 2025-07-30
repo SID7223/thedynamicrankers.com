@@ -111,9 +111,12 @@ const CustomCodingOptions = () => {
                 Transform your vision into reality with custom coding solutions that set you apart 
                 from the competition and drive meaningful digital marketing results.
               </p>
-              <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Start Custom Project
-              </button>
+              </Link>
             </div>
           </div>
         </div>
