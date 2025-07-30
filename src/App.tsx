@@ -27,6 +27,7 @@ const Blog = React.lazy(() => import('./pages/Blog'));
 const Portfolio = React.lazy(() => import('./pages/Portfolio'));
 const Careers = React.lazy(() => import('./pages/Careers'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
+const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'));
 
 
 // Lazy load sub-pages
@@ -235,6 +236,7 @@ function App() {
             <Route path="/definitions/sales-psychology" element={<SalesPsychology />} />
             <Route path="/definitions/content-optimization" element={<ContentOptimization />} />
             <Route path="/book-a-call" element={<BookACall />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
           </Routes>
         </Suspense>
         
