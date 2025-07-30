@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { TrendingUp, Mail, Phone, MapPin, Facebook, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2023;
   const location = useLocation();
 
   // Helper function to check if link is active
