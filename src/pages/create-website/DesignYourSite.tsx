@@ -111,9 +111,12 @@ const DesignYourSite = () => {
                 Transform your brand into a digital masterpiece with Dynamic design solutions 
                 that captivate, convert, and create lasting impressions across every platform.
               </p>
-              <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Start Design Process
-              </button>
+              </Link>
             </div>
           </div>
         </div>
