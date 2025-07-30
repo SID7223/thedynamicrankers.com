@@ -111,9 +111,12 @@ const VideoEditingServices = () => {
                 Transform your raw footage into professional video content that captivates audiences 
                 and drives results across all your digital marketing channels.
               </p>
-              <button className="bg-white text-orange-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-orange-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Start Video Project
-              </button>
+              </Link>
             </div>
           </div>
         </div>
