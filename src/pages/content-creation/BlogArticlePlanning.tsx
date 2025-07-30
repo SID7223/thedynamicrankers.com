@@ -111,9 +111,12 @@ const BlogArticlePlanning = () => {
                 Transform your blog into a powerful digital marketing engine with strategic planning 
                 that drives traffic, engagement, and business growth.
               </p>
-              <button className="bg-white text-orange-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-orange-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Plan Your Content
-              </button>
+              </Link>
             </div>
           </div>
         </div>
