@@ -87,9 +87,12 @@ const DigitalMarketingSolution = () => {
                 Contact The Dynamic Rankers today to discuss your digital marketing needs and 
                 discover how we can help your USA business thrive online.
               </p>
-              <button className="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Get Started Today
-              </button>
+              </Link>
             </div>
           </div>
         </div>
