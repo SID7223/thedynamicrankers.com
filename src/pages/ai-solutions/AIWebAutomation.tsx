@@ -112,9 +112,12 @@ const AIWebAutomation = () => {
                 Experience the power of AI web automation that transforms your business operations 
                 while you focus on growth and innovation. Let Dynamic intelligence handle the routine.
               </p>
-              <button className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Start Automation
-              </button>
+              </Link>
             </div>
           </div>
         </div>
