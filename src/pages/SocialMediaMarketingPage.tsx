@@ -188,7 +188,7 @@ const SocialMediaMarketingPage = () => {
                     Our AI-powered approach delivers authentic engagement and measurable growth across all platforms.
                   </p>
                   <Link 
-                    to="/contact" 
+                    to="/book-a-call" 
                     className="inline-block bg-white text-pink-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                   >
                     Boost Social Media
