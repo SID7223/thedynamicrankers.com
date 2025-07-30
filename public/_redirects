@@ -1,3 +1,4 @@
 # public/_redirects
 # Handle client-side routing
 /*    /index.html   200
+/success  /thank-you  302
