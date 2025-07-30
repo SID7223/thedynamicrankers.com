@@ -93,9 +93,12 @@ const ScopeOfDigitalMarketing = () => {
                 The Dynamic Rankers helps USA businesses leverage the full scope of digital marketing 
                 to achieve their growth objectives and stay ahead of the competition.
               </p>
-              <button className="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-green-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Explore Opportunities
-              </button>
+              </Link>
             </div>
           </div>
         </div>
