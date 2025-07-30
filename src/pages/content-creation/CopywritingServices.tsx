@@ -111,9 +111,12 @@ const CopywritingServices = () => {
                 Transform your business with copywriting that doesn't just inform—it persuades, 
                 converts, and builds lasting relationships with your audience through Dynamic storytelling.
               </p>
-              <button className="bg-white text-orange-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/book-a-call"
+                className="bg-white text-orange-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+              >
                 Get Copy That Converts
-              </button>
+              </Link>
             </div>
           </div>
         </div>
