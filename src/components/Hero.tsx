@@ -1,88 +1,94 @@
-import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Play } from 'lucide-react';
 
-const AboutUs: React.FC = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+const Hero = () => {
+  const bgRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { width, height, left, top } = currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: (clientX - left) / width,
-      y: (clientY - top) / height,
-    });
-  };
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
 
-  const backgroundGradient = {
-    light: `radial-gradient(circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, #ffffff, #000000)`,
-    dark: `radial-gradient(circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, #000000, #c0c0c0)`
-  };
+      if (bgRef.current) {
+        bgRef.current.style.background = `radial-gradient(
+          circle at ${x * 100}% ${y * 100}%,
+          rgba(59, 130, 246, 0.2),
+          rgba(139, 92, 246, 0.2)
+        )`;
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <>
-      <Helmet>
-        <title>About Us - Your Website Name</title>
-        <meta name="description" content="Learn more about our company and mission." />
-        <meta property="og:title" content="About Us - Your Website Name" />
-        <meta property="og:description" content="Learn more about our company and mission." />
-        <meta property="og:type" content="website" />
-      </Helmet>
+    <section
+      id="home"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 sm:pt-0"
+    >
+      <div ref={bgRef} className="absolute inset-0 transition-colors duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900" />
+      <div className="absolute inset-0 bg-black opacity-20" />
 
-      <div
-        onMouseMove={handleMouseMove}
-        className="min-h-screen transition-colors duration-300 dark:text-white"
-        style={{
-          background: backgroundGradient.light,
-        }}
-      >
-        <main className="pt-20">
-          <div className="max-w-6xl mx-auto px-6 py-12">
-            <motion.h1
-              className="text-5xl font-bold text-center mb-10 text-gray-900 dark:text-white"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              About Us
-            </motion.h1>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500 opacity-10 rounded-full filter blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 opacity-10 rounded-full filter blur-3xl animate-pulse delay-1000"></div>
+      </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-center md:space-x-10">
-              <motion.div
-                className="md:w-1/2 mb-8 md:mb-0"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center max-w-4xl mx-auto">
+          <div className="flex flex-col items-center justify-center min-h-screen pt-20 sm:pt-0">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              Elevate Your
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-4">
+                Digital Presence
+              </span>
+            </h1>
+
+            <p className="text-lg sm:text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed px-4">
+              We specialize in Digitam Marketin, SEO, SEM, social media marketing,
+              and customer support to help your business dominate the digital landscape.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto px-4">
+              <Link
+                to="/book-a-call"
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
               >
-                <img
-                  src="https://images.pexels.com/photos/373912/pexels-photo-373912.jpeg"
-                  alt="About Building"
-                  className="rounded-xl shadow-2xl object-cover w-full h-auto max-h-[400px] grayscale dark:invert"
-                />
-              </motion.div>
+                <span>Get Started Today</span>
+                <ArrowRight className="w-5 h-5" />
+              </Link>
 
-              <motion.div
-                className="md:w-1/2 text-left"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+              <Link
+                to="/our-services"
+                className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-gray-800 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 flex items-center justify-center space-x-2"
               >
-                <h2 className="text-3xl font-semibold mb-4 text-gray-900 dark:text-white">Our Mission</h2>
-                <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
-                  We are a dedicated team of professionals who are passionate about what they do. Our mission is to deliver high-quality solutions tailored to your needs, driven by creativity, innovation, and a commitment to excellence.
-                </p>
+                <Play className="w-5 h-5" />
+                <span>View Our Services</span>
+              </Link>
+            </div>
 
-                <h2 className="text-3xl font-semibold mb-4 text-gray-900 dark:text-white">Our Team</h2>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Meet our dedicated team of professionals who are passionate about their work. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.
-                </p>
-              </motion.div>
+            <div className="mt-16 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 text-center px-4 w-full max-w-sm sm:max-w-none mx-auto">
+              <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-6 sm:p-8 hover:bg-opacity-20 transition-all duration-300">
+                <div className="text-2xl sm:text-4xl font-bold text-white mb-3">50+</div>
+                <p className="text-blue-100 text-sm sm:text-lg">Projects Completed</p>
+              </div>
+              <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-6 sm:p-8 hover:bg-opacity-20 transition-all duration-300">
+                <div className="text-2xl sm:text-4xl font-bold text-white mb-3">24/7</div>
+                <p className="text-blue-100 text-sm sm:text-lg">Customer Support</p>
+              </div>
+              <div className="col-span-2 sm:col-span-1 bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-6 sm:p-8 hover:bg-opacity-20 transition-all duration-300">
+                <div className="text-2xl sm:text-4xl font-bold text-white mb-3">100%</div>
+                <p className="text-blue-100 text-sm sm:text-lg">Client Satisfaction</p>
+              </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
-    </>
+    </section>
   );
 };
 
-export default AboutUs;
+export default Hero;
