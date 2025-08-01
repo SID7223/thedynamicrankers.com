@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global fallback values for interactive background */
+:root {
+  --x: 50%;
+  --y: 50%;
+}
+
 @keyframes drawLine {
   0% {
     stroke-dashoffset: 1000;
