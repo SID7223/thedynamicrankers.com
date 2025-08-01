@@ -14,7 +14,7 @@ const CustomerSupportPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         <main className="pt-20">
           {/* Hero Section */}
-          <section className="py-20 bg-gradient-to-br from-teal-700 to-cyan-900">
+          <section className="py-20 bg-gradient-to-br from-teal-500 to-cyan-600">
             <div className="container mx-auto px-4 text-center">
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
                 Customer Support
