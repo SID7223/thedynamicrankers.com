@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
 
 const CustomerSupportPage = () => {
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      document.documentElement.style.setProperty('--x', `${x}%`);
+      document.documentElement.style.setProperty('--y', `${y}%`);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -10,11 +21,18 @@ const CustomerSupportPage = () => {
         <meta name="description" content="Explore The Dynamic Rankers' Customer Support service with performance visuals and clean design." />
         <meta name="keywords" content="customer support, live chat, AI bots, CRM automation, ticket resolution, The Dynamic Rankers" />
       </Helmet>
-      
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+
+      <div
+        className="min-h-screen transition-colors duration-300"
+        style={{
+          background: 'radial-gradient(circle at var(--x, 50%) var(--y, 50%), #0bc5ea, #319795)',
+          backgroundSize: '400% 400%',
+          transition: 'background-position 0.2s',
+        }}
+      >
         <main className="pt-20">
           {/* Hero Section */}
-          <section className="py-20 bg-gradient-to-br from-teal-500 to-cyan-600 to-inidigo-600">
+          <section className="py-20 bg-transparent">
             <div className="container mx-auto px-4 text-center">
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
                 Customer Support
