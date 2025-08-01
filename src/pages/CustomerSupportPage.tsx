@@ -1,8 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 const CustomerSupportPage = () => {
+  const [isDark, setIsDark] = useState(false);
+
   useEffect(() => {
+    // Set initial dark mode state
+    setIsDark(document.documentElement.classList.contains('dark'));
+
+    // Mouse tracking for radial gradient focus
     const handleMouseMove = (e) => {
       const x = (e.clientX / window.innerWidth) * 100;
       const y = (e.clientY / window.innerHeight) * 100;
@@ -13,6 +19,14 @@ const CustomerSupportPage = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  const backgroundStyle = {
+    background: isDark
+      ? 'radial-gradient(circle at var(--x, 50%) var(--y, 50%), #1a202c, #2d3748)'
+      : 'radial-gradient(circle at var(--x, 50%) var(--y, 50%), #0bc5ea, #319795)',
+    backgroundSize: '400% 400%',
+    transition: 'background-position 0.2s ease',
+  };
 
   return (
     <>
