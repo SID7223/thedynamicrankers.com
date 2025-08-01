@@ -8,6 +8,26 @@
   --y: 50%;
 }
 
+/* ===== Background Color Animation Based on Mouse Movement ===== */
+body {
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    hsl(210, 100%, 95%),
+    hsl(210, 100%, 90%)
+  );
+  transition: background 0.2s ease;
+}
+
+.dark body {
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    hsl(210, 30%, 8%),
+    hsl(210, 30%, 10%)
+  );
+  transition: background 0.2s ease;
+}
+
+/* ===== Optional SVG Line Animations ===== */
 @keyframes drawLine {
   0% {
     stroke-dashoffset: 1000;
