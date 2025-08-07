@@ -8,4 +8,9 @@ export default defineConfig({
     exclude: ['lucide-react'],
     include: ['react-icons/fa'],
   },
+  build: {
+    rollupOptions: {
+      external: ['framer-motion'],
+    },
+  },
 });
