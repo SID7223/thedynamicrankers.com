@@ -10,42 +10,42 @@ const WhatIsDigitalMarketing: React.FC = () => {
       label: "Your Brand",
       icon: <FaLightbulb className="w-8 h-8" />,
       color: "text-green-500",
-      description: "We define your unique brand identity and value proposition to resonate with your target audience."
+      description: "We define your brand to resonate with audiences."
     },
     {
       id: 2,
       label: "Website & Social Media",
       icon: <FaLaptopCode className="w-8 h-8" />,
       color: "text-blue-500",
-      description: "We create responsive websites and engaging social profiles that showcase your brand."
+      description: "We build responsive websites and engaging social profiles."
     },
     {
       id: 3,
       label: "Targeted Traffic",
       icon: <FaBullseye className="w-8 h-8" />,
       color: "text-purple-500",
-      description: "Using SEO, content marketing, and paid ads to drive qualified visitors to your digital properties."
+      description: "We use SEO, content, and ads to drive traffic."
     },
     {
       id: 4,
       label: "Leads",
       icon: <FaClipboardList className="w-8 h-8" />,
       color: "text-orange-500",
-      description: "Converting visitors to prospects through strategic calls-to-action and lead magnets."
+      description: "We convert visitors with CTAs and lead magnets."
     },
     {
       id: 5,
       label: "Sales",
       icon: <FaShoppingCart className="w-8 h-8" />,
       color: "text-red-500",
-      description: "Turning prospects into customers with nurturing, retargeting, and sales funnels."
+      description: "We turn prospects into customers through nurturing and funnels."
     },
     {
       id: 6,
       label: "Growth",
       icon: <FaChartLine className="w-8 h-8" />,
       color: "text-green-600",
-      description: "Analyzing performance data to optimize campaigns and expand your market reach."
+      description: "We analyze data to optimize campaigns and grow reach."
     },
   ];
 
@@ -179,7 +179,7 @@ const WhatIsDigitalMarketing: React.FC = () => {
                   Ready to Grow Your Business?
                 </h2>
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-                  We don't just do digital marketing—we engineer growth. Our AI-powered strategies, combined with human creativity, create campaigns that drive measurable results.
+                  We don't just do digital marketing. We engineer growth. Our AI powered strategies combined with human creativity create campaigns that drive measurable results.
                 </p>
                 <Link to="/book-a-call" className="inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-green-700 transition-colors">
                   Get Your Free Consultation
