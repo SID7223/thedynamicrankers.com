@@ -27,7 +27,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ title, basePath, links }) => {
       <nav className="p-4">
         <ul className="space-y-2">
           {links.map((link, index) => {
-            const fullPath = `${basePath}${link.path}`;
+            const fullPath = `${basePath}/${link.path}`;
             const isActive = location.pathname === fullPath;
             
             return (
