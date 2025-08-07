@@ -9,22 +9,22 @@ const AISolutionsPage = () => {
 
   const subPages = [
     {
-      path: '/ai-web-automation',
+      path: 'ai-web-automation',
       title: 'AI Web Automation',
       description: 'Automate your website processes with cutting-edge AI technology'
     },
     {
-      path: '/ai-content-tools',
+      path: 'ai-content-tools',
       title: 'AI Content Tools',
       description: 'Create engaging content faster with AI-powered writing tools'
     },
     {
-      path: '/ai-marketing-insights',
+      path: 'ai-marketing-insights',
       title: 'AI Marketing Insights',
       description: 'Data-driven marketing decisions with AI analytics and insights'
     },
     {
-      path: '/ai-seo-enhancement',
+      path: 'ai-seo-enhancement',
       title: 'AI SEO Enhancement',
       description: 'Boost your search rankings with AI-optimized SEO strategies'
     }
