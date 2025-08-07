@@ -8,6 +8,7 @@ const DigitalMarketingSolution = () => {
         <title>Digital Marketing Solution USA - The Dynamic Rankers</title>
         <meta name="description" content="Comprehensive digital marketing solutions for USA businesses. Boost your online presence with proven strategies from The Dynamic Rankers." />
         <meta name="keywords" content="digital marketing solution, USA, online marketing, The Dynamic Rankers" />
+        <link rel="canonical" href="https://thedynamicrankers.com/digital-marketing/digital-marketing-solution" />
       </Helmet>
       
       <div className="p-8">
