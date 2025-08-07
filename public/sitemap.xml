@@ -7,18 +7,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://thedynamicrankers.com/services</loc>
-    <lastmod>2025-07-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://thedynamicrankers.com/contact</loc>
-    <lastmod>2025-07-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://thedynamicrankers.com/our-services</loc>
     <lastmod>2025-01-27</lastmod>
     <changefreq>monthly</changefreq>
@@ -54,7 +42,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
-
+  
   <!-- Digital Marketing Pages -->
   <url>
     <loc>https://thedynamicrankers.com/digital-marketing</loc>
@@ -86,7 +74,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
+  
   <!-- AI Solutions Pages -->
   <url>
     <loc>https://thedynamicrankers.com/ai-solutions</loc>
@@ -118,7 +106,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
+  
   <!-- Create Website Pages -->
   <url>
     <loc>https://thedynamicrankers.com/create-website</loc>
@@ -150,7 +138,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
+  
   <!-- Content Creation Pages -->
   <url>
     <loc>https://thedynamicrankers.com/content-creation</loc>
@@ -268,36 +256,10 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- Other Pages -->
   <url>
     <loc>https://thedynamicrankers.com/book-a-call</loc>
     <lastmod>2025-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://thedynamicrankers.com/about-us</loc>
-    <lastmod>2025-08-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-  <loc>https://thedynamicrankers.com/definitions/brand-identity</loc>
-  <lastmod>2025-08-07</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.6</priority>
-</url>
-<url>
-  <loc>https://thedynamicrankers.com/definitions/multi-channel-strategy</loc>
-  <lastmod>2025-08-07</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.6</priority>
-</url>
-<url>
-  <loc>https://thedynamicrankers.com/definitions/process-optimization</loc>
-  <lastmod>2025-08-07</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.6</priority>
-</url>
 </urlset>
