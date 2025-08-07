@@ -24,7 +24,7 @@ const AISolutionsPage = () => {
       description: 'Data-driven marketing decisions with AI analytics and insights'
     },
     {
-      path: '/ai-seo-enhancement',
+      path: 'ai-seo-enhancement',
       title: 'AI SEO Enhancement',
       description: 'Boost your search rankings with AI-optimized SEO strategies'
     }
