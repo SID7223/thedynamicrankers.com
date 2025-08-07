@@ -9,22 +9,22 @@ const DigitalMarketingPage = () => {
 
   const subPages = [
     {
-      path: '/digital-marketing-solution',
+      path: 'digital-marketing-solution',
       title: 'Digital Marketing Solution',
       description: 'Comprehensive digital marketing strategies tailored for USA businesses'
     },
     {
-      path: '/scope-of-digital-marketing',
+      path: 'scope-of-digital-marketing',
       title: 'Scope of Digital Marketing',
       description: 'Understanding the full potential and reach of digital marketing'
     },
     {
-      path: '/what-is-digital-marketing',
+      path: 'what-is-digital-marketing',
       title: 'What is Digital Marketing',
       description: 'Complete guide to digital marketing fundamentals and benefits'
     },
     {
-      path: '/digital-growth-impact',
+      path: 'digital-growth-impact',
       title: 'Digital Growth Impact',
       description: 'Measuring and maximizing your digital marketing ROI'
     }
