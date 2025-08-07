@@ -85,7 +85,7 @@ const WhatIsDigitalMarketing: React.FC = () => {
                 
                 {/* Desktop Flowchart */}
                 <div className="hidden md:flex items-start justify-between relative">
-                  <div className="absolute top-10 left-0 w-full h-0.5 bg-gradient-to-r from-black to-white" style={{ background: 'linear-gradient(to right, black, white)', backgroundRepeat: 'no-repeat', backgroundSize: '100% 2px', backgroundPosition: 'center' }}></div>
+                  <div className="absolute top-10 left-0 w-full h-0.5 bg-gray-300 dark:bg-gray-700" />
                   
                   {flowSteps.map((step) => (
                     <div key={step.id} className="flex flex-col items-center w-48 text-center z-10">
@@ -111,7 +111,7 @@ const WhatIsDigitalMarketing: React.FC = () => {
                               {step.icon}
                             </div>
                           </div>
-                          {index < flowSteps.length - 1 && <div className="w-0.5 h-16 bg-gradient-to-b from-black to-white mt-2"></div>}
+                          {index < flowSteps.length - 1 && <div className="w-0.5 h-16 bg-gray-300 dark:bg-gray-600 mt-2"></div>}
                         </div>
                         <div>
                           <h3 className={`font-semibold ${step.color}`}>{step.label}</h3>
