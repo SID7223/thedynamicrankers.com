@@ -9,22 +9,22 @@ const CreateWebsitePage = () => {
 
   const subPages = [
     {
-      path: '/design-your-site',
+      path: 'design-your-site',
       title: 'Design Your Site',
       description: 'Custom website design tailored to your brand and business goals'
     },
     {
-      path: '/custom-coding-options',
+      path: 'custom-coding-options',
       title: 'Custom Coding Options',
       description: 'Advanced development solutions with custom coding and functionality'
     },
     {
-      path: '/seo-foundation-setup',
+      path: 'seo-foundation-setup',
       title: 'SEO Foundation Setup',
       description: 'Build your website with strong SEO foundations for better rankings'
     },
     {
-      path: '/us-based-deployment',
+      path: 'us-based-deployment',
       title: 'US-Based Deployment',
       description: 'Fast, reliable hosting and deployment services in the USA'
     }
