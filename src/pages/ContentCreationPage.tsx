@@ -9,22 +9,22 @@ const ContentCreationPage = () => {
 
   const subPages = [
     {
-      path: '/copywriting-services',
+      path: 'copywriting-services',
       title: 'Copywriting Services',
       description: 'Professional copywriting that converts visitors into customers'
     },
     {
-      path: '/video-editing-services',
+      path: 'video-editing-services',
       title: 'Video Editing Services',
       description: 'Professional video editing for marketing and promotional content'
     },
     {
-      path: '/blog-article-planning',
+      path: 'blog-article-planning',
       title: 'Blog Article Planning',
       description: 'Strategic blog content planning and creation for better SEO'
     },
     {
-      path: '/social-post-design',
+      path: 'social-post-design',
       title: 'Social Post Design',
       description: 'Eye-catching social media designs that drive engagement'
     }
