@@ -50,7 +50,7 @@ const DarkModeToggle = () => {
     <div 
       className={`fixed top-20 right-6 z-40 transition-all duration-500 ease-out ${
         isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-      } hidden sm:block`}
+      }`}
     >
       <button
         onClick={toggleDarkMode}
