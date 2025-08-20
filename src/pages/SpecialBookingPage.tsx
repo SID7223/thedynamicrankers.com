@@ -1,4 +1,3 @@
-// SpecialBookingPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
@@ -175,18 +174,13 @@ const SpecialBookingPage: React.FC = () => {
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/thank-you"  // ✅ change to an actual page you create
+                      action="/thank-you"
                       className="space-y-4"
                     >
-                      <input
-                        type="hidden"
-                        name="form-name"
-                        value="google-meeting-request"
-                      />
+                      <input type="hidden" name="form-name" value="google-meeting-request" />
                       <div hidden>
                         <label>
-                          Don’t fill this out if you're human:{" "}
-                          <input name="bot-field" />
+                          Don’t fill this out if you're human: <input name="bot-field" />
                         </label>
                       </div>
 
@@ -195,7 +189,6 @@ const SpecialBookingPage: React.FC = () => {
                           <label htmlFor="name">Full Name *</label>
                           <input type="text" name="name" id="name" required />
                         </div>
-
                         <div>
                           <label htmlFor="email">Email *</label>
                           <input type="email" name="email" id="email" required />
@@ -207,16 +200,9 @@ const SpecialBookingPage: React.FC = () => {
                           <label htmlFor="phone">Phone</label>
                           <input type="tel" name="phone" id="phone" />
                         </div>
-
                         <div>
-                          <label htmlFor="serviceOfInterest">
-                            Service of Interest *
-                          </label>
-                          <select
-                            name="serviceOfInterest"
-                            id="serviceOfInterest"
-                            required
-                          >
+                          <label htmlFor="serviceOfInterest">Service of Interest *</label>
+                          <select name="serviceOfInterest" id="serviceOfInterest" required>
                             <option value="">Select a Service</option>
                             <option value="ai-solutions">AI Solutions</option>
                             <option value="content-creation">Content Creation</option>
@@ -224,12 +210,8 @@ const SpecialBookingPage: React.FC = () => {
                             <option value="customer-support">Customer Support</option>
                             <option value="digital-marketing">Digital Marketing</option>
                             <option value="seo-services">SEO Services</option>
-                            <option value="search-engine-marketing">
-                              Search Engine Marketing
-                            </option>
-                            <option value="social-media-marketing">
-                              Social Media Marketing
-                            </option>
+                            <option value="search-engine-marketing">Search Engine Marketing</option>
+                            <option value="social-media-marketing">Social Media Marketing</option>
                             <option value="all-services">All Services</option>
                           </select>
                         </div>
@@ -245,7 +227,6 @@ const SpecialBookingPage: React.FC = () => {
                           <label htmlFor="preferredDate">Preferred Date *</label>
                           <input type="date" name="preferredDate" id="preferredDate" required />
                         </div>
-
                         <div>
                           <label htmlFor="preferredTime">Preferred Time *</label>
                           <input type="time" name="preferredTime" id="preferredTime" required />
