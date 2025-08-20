@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
@@ -304,63 +303,6 @@ const SpecialBookingPage: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            id="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-                            placeholder="+1 (555) 123-4567"
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="serviceOfInterest" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Service of Interest *
-                          </label>
-                          <select
-                            name="serviceOfInterest"
-                            id="serviceOfInterest"
-                            required
-                            value={formData.serviceOfInterest}
-                            onChange={handleSelectChange}
-                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-                          >
-                            <option value="">Select a Service</option>
-                            <option value="ai-solutions">AI Solutions</option>
-                            <option value="content-creation">Content Creation</option>
-                            <option value="website-development">Website Development</option>
-                            <option value="customer-support">Customer Support</option>
-                            <option value="digital-marketing">Digital Marketing</option>
-                            <option value="seo-services">SEO Services</option>
-                            <option value="search-engine-marketing">Search Engine Marketing</option>
-                            <option value="social-media-marketing">Social Media Marketing</option>
-                            <option value="all-services">All Services</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Company Name
-                        </label>
-                        <input
-                          type="text"
-                          name="company"
-                          id="company"
-                          value={formData.company}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-                          placeholder="Your company name"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
                           <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Preferred Date *
                           </label>
@@ -409,33 +351,12 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Project Timeline
-                        </label>
-                        <select
-                          name="timeline"
-                          id="timeline"
-                          value={formData.timeline}
-                          onChange={handleSelectChange}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
-                        >
-                          <option value="">Select timeline</option>
-                          <option value="asap">ASAP</option>
-                          <option value="1-month">Within 1 month</option>
-                          <option value="3-months">Within 3 months</option>
-                          <option value="6-months">Within 6 months</option>
-                          <option value="planning">Just planning ahead</option>
-                        </select>
-                      </div>
-
-                      <div>
                         <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Tell us about your project *
                         </label>
                         <textarea
                           name="message"
                           id="message"
-                          required
                           required
                           rows={4}
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200 resize-none"
