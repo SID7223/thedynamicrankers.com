@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Calendar, Clock, Phone, Video, Send, CheckCircle } from 'lucide-react';
 
@@ -120,7 +119,7 @@ const SpecialBookingPage: React.FC = () => {
 
                 {/* Content Sections */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Schedule a Call Section */}
+                  {/* Schedule a Call Section (CORRECTED) */}
                   <div className={`bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border-2 transition-all duration-300 ${
                     activeTab === 'call' 
                       ? 'border-blue-500 ring-4 ring-blue-100 dark:ring-blue-900' 
@@ -158,13 +157,72 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <Link
-                      to="/book-a-call"
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg"
+                    {/* CORRECTED FORM FOR PHONE CALLS */}
+                    <form 
+                      name="phone-call-request" 
+                      method="POST"
+                      data-netlify="true"
+                      data-netlify-honeypot="bot-field"
+                      action="/success"
+                      className="space-y-4"
                     >
-                      <Phone className="w-5 h-5" />
-                      <span>Schedule Phone Call</span>
-                    </Link>
+                      <input type="hidden" name="form-name" value="phone-call-request" />
+                      <div hidden>
+                        <label>
+                          Don't fill this out if you're human: <input name="bot-field" />
+                        </label>
+                      </div>
+
+                      {/* Your form fields for the phone call request can go here */}
+                      <div>
+                        <label htmlFor="call_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          id="call_name"
+                          required
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                          placeholder="Your full name"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="call_email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          id="call_email"
+                          required
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                          placeholder="your.email@example.com"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="call_phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Phone Number *
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          id="call_phone"
+                          required
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                          placeholder="+1 (555) 123-4567"
+                        />
+                      </div>
+                      
+                      <button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg"
+                      >
+                        <Phone className="w-5 h-5" />
+                        <span>Schedule Phone Call</span>
+                        <Send className="w-5 h-5" />
+                      </button>
+                    </form>
                   </div>
 
                   {/* Book Google Meeting Section */}
