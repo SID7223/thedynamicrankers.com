@@ -1,3 +1,4 @@
+// SpecialBookingPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
@@ -29,7 +30,6 @@ const SpecialBookingPage: React.FC = () => {
         mouseY.set(e.clientY - bounds.top);
       }
     };
-
     const el = containerRef.current;
     if (el) {
       el.addEventListener('mousemove', handleMouseMove);
@@ -165,18 +165,17 @@ const SpecialBookingPage: React.FC = () => {
                       </h2>
                       <div className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-4 py-2 rounded-lg inline-flex items-center space-x-2">
                         <Video className="w-4 h-4" />
-                        <span className="font-semibold">
-                          Video Consultation
-                        </span>
+                        <span className="font-semibold">Video Consultation</span>
                       </div>
                     </div>
 
+                    {/* ✅ Fixed Form */}
                     <form
                       name="google-meeting-request"
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/success"
+                      action="/thank-you"  // ✅ change to an actual page you create
                       className="space-y-4"
                     >
                       <input
@@ -186,7 +185,7 @@ const SpecialBookingPage: React.FC = () => {
                       />
                       <div hidden>
                         <label>
-                          Don't fill this out if you're human:{' '}
+                          Don’t fill this out if you're human:{" "}
                           <input name="bot-field" />
                         </label>
                       </div>
@@ -194,36 +193,19 @@ const SpecialBookingPage: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="name">Full Name *</label>
-                          <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            required
-                            placeholder="Your full name"
-                          />
+                          <input type="text" name="name" id="name" required />
                         </div>
 
                         <div>
-                          <label htmlFor="email">Email Address *</label>
-                          <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            required
-                            placeholder="your.email@example.com"
-                          />
+                          <label htmlFor="email">Email *</label>
+                          <input type="email" name="email" id="email" required />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="phone">Phone Number</label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            id="phone"
-                            placeholder="+1 (555) 123-4567"
-                          />
+                          <label htmlFor="phone">Phone</label>
+                          <input type="tel" name="phone" id="phone" />
                         </div>
 
                         <div>
@@ -237,18 +219,10 @@ const SpecialBookingPage: React.FC = () => {
                           >
                             <option value="">Select a Service</option>
                             <option value="ai-solutions">AI Solutions</option>
-                            <option value="content-creation">
-                              Content Creation
-                            </option>
-                            <option value="website-development">
-                              Website Development
-                            </option>
-                            <option value="customer-support">
-                              Customer Support
-                            </option>
-                            <option value="digital-marketing">
-                              Digital Marketing
-                            </option>
+                            <option value="content-creation">Content Creation</option>
+                            <option value="website-development">Website Development</option>
+                            <option value="customer-support">Customer Support</option>
+                            <option value="digital-marketing">Digital Marketing</option>
                             <option value="seo-services">SEO Services</option>
                             <option value="search-engine-marketing">
                               Search Engine Marketing
@@ -262,39 +236,19 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="company">Company Name</label>
-                        <input
-                          type="text"
-                          name="company"
-                          id="company"
-                          placeholder="Your company name"
-                        />
+                        <label htmlFor="company">Company</label>
+                        <input type="text" name="company" id="company" />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="preferredDate">Preferred Date *</label>
-                          <input
-                            type="date"
-                            name="preferredDate"
-                            id="preferredDate"
-                            required
-                            min={new Date().toISOString().split('T')[0]}
-                          />
+                          <input type="date" name="preferredDate" id="preferredDate" required />
                         </div>
 
                         <div>
-                          <label htmlFor="preferredTime">
-                            Preferred Time (CST) *
-                          </label>
-                          <input
-                            type="time"
-                            name="preferredTime"
-                            id="preferredTime"
-                            required
-                            min="07:00"
-                            max="17:00"
-                          />
+                          <label htmlFor="preferredTime">Preferred Time *</label>
+                          <input type="time" name="preferredTime" id="preferredTime" required />
                         </div>
                       </div>
 
@@ -311,85 +265,15 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="message">
-                          Tell us about your project *
-                        </label>
-                        <textarea
-                          name="message"
-                          id="message"
-                          required
-                          rows={4}
-                          placeholder="Describe your business goals, challenges, and how we can help you succeed..."
-                        ></textarea>
+                        <label htmlFor="message">Message *</label>
+                        <textarea name="message" id="message" required rows={4}></textarea>
                       </div>
 
-                      <button
-                        type="submit"
-                        className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg"
-                      >
-                        <Video className="w-5 h-5" />
-                        <span>Schedule Google Meeting</span>
-                        <Send className="w-5 h-5" />
+                      <button type="submit">
+                        <Video className="w-5 h-5" /> Schedule Google Meeting <Send className="w-5 h-5" />
                       </button>
-
-                      <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                        By submitting this form, you agree to receive
-                        communications from us. We respect your privacy and will
-                        never share your information.
-                      </p>
                     </form>
                   </div>
-                </div>
-
-                {/* Additional Information */}
-                <div className="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl p-8 border border-gray-200 dark:border-gray-500">
-                  <div className="text-center">
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                      Why Choose The Dynamic Rankers?
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                          100+
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          Successful Projects
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                          24/7
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          Support Available
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
-                          4-6x
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
-                          Average ROI
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="mt-8 text-center">
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">
-                    Need immediate assistance? Call us directly:
-                  </p>
-                  <a
-                    href="tel:+13465561173"
-                    className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                  >
-                    +1 (346) 556-1173
-                  </a>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    Monday - Friday: 7 AM - 5 PM CST
-                  </p>
                 </div>
               </div>
             </div>
