@@ -5,17 +5,7 @@ import { Calendar, Clock, Phone, Video, Send, CheckCircle } from 'lucide-react';
 
 const SpecialBookingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'call' | 'meeting'>('call');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    serviceOfInterest: '',
-    company: '',
-    preferredDate: '',
-    preferredTime: '',
-    timeline: '',
-    message: ''
-  });
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -47,20 +37,30 @@ const SpecialBookingPage: React.FC = () => {
     return () => el?.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmissionStatus('submitting');
+    
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      if (response.ok) {
+        setSubmissionStatus('success');
+        form.reset(); // Reset form fields
+      } else {
+        setSubmissionStatus('error');
+      }
+    } catch (error) {
+      console.error("Form submission failed:", error);
+      setSubmissionStatus('error');
+    }
   };
 
   return (
@@ -119,7 +119,7 @@ const SpecialBookingPage: React.FC = () => {
 
                 {/* Content Sections */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Schedule a Call Section (CORRECTED) */}
+                  {/* Schedule a Call Section */}
                   <div className={`bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border-2 transition-all duration-300 ${
                     activeTab === 'call' 
                       ? 'border-blue-500 ring-4 ring-blue-100 dark:ring-blue-900' 
@@ -157,13 +157,12 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* CORRECTED FORM FOR PHONE CALLS */}
                     <form 
                       name="phone-call-request" 
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/success"
+                      onSubmit={handleSubmit} // Use JavaScript handler
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="phone-call-request" />
@@ -216,10 +215,13 @@ const SpecialBookingPage: React.FC = () => {
                       
                       <button
                         type="submit"
+                        disabled={submissionStatus === 'submitting'}
                         className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-4 px-6 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg"
                       >
                         <Phone className="w-5 h-5" />
-                        <span>Schedule Phone Call</span>
+                        <span>
+                          {submissionStatus === 'submitting' ? 'Scheduling...' : 'Schedule Phone Call'}
+                        </span>
                         <Send className="w-5 h-5" />
                       </button>
                     </form>
@@ -268,7 +270,7 @@ const SpecialBookingPage: React.FC = () => {
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/success"
+                      onSubmit={handleSubmit} // Use JavaScript handler
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
@@ -424,10 +426,13 @@ const SpecialBookingPage: React.FC = () => {
 
                       <button
                         type="submit"
+                        disabled={submissionStatus === 'submitting'}
                         className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg"
                       >
                         <Video className="w-5 h-5" />
-                        <span>Schedule Google Meeting</span>
+                        <span>
+                          {submissionStatus === 'submitting' ? 'Scheduling...' : 'Schedule Google Meeting'}
+                        </span>
                         <Send className="w-5 h-5" />
                       </button>
 
@@ -437,6 +442,18 @@ const SpecialBookingPage: React.FC = () => {
                     </form>
                   </div>
                 </div>
+
+                {/* Submission Status Message */}
+                {submissionStatus === 'success' && (
+                  <div className="mt-8 p-4 text-center bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg">
+                    <p className="font-semibold">Thank you! Your request has been submitted successfully. We will be in touch shortly.</p>
+                  </div>
+                )}
+                {submissionStatus === 'error' && (
+                  <div className="mt-8 p-4 text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg">
+                    <p className="font-semibold">There was an error submitting your request. Please try again later or call us directly.</p>
+                  </div>
+                )}
 
                 {/* Additional Information */}
                 <div className="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-xl p-8 border border-gray-200 dark:border-gray-500">
