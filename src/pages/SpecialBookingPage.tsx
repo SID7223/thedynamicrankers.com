@@ -6,6 +6,18 @@ import { Calendar, Clock, Phone, Video, Send, CheckCircle } from 'lucide-react';
 
 const SpecialBookingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'call' | 'meeting'>('call');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    serviceOfInterest: '',
+    company: '',
+    preferredDate: '',
+    preferredTime: '',
+    timeline: '',
+    message: ''
+  });
+
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -35,6 +47,22 @@ const SpecialBookingPage: React.FC = () => {
     }
     return () => el?.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   return (
     <>
