@@ -221,7 +221,7 @@ const CustomerSupportPage = () => {
                     Our AI-powered tools and dedicated team ensure every customer interaction builds lasting relationships.
                   </p>
                   <Link 
-                    to="/book-a-call" 
+                    to="/book-a-call-meeting" 
                     className="inline-block bg-white text-teal-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                   >
                     Get Support Solutions

@@ -113,7 +113,7 @@ const AIContentTools = () => {
                 efforts while maintaining quality and brand consistency.
               </p>
               <Link 
-                to="/book-a-call"
+                to="/book-a-call-meeting"
                 className="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
               >
                 Explore AI Tools

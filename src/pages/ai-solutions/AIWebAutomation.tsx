@@ -113,7 +113,7 @@ const AIWebAutomation = () => {
                 while you focus on growth and innovation. Let Dynamic intelligence handle the routine.
               </p>
               <Link 
-                to="/book-a-call"
+                to="/book-a-call-meeting"
                 className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
               >
                 Start Automation

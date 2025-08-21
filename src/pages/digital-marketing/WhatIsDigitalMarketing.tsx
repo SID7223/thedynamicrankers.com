@@ -182,6 +182,7 @@ const WhatIsDigitalMarketing: React.FC = () => {
                   We don't just do digital marketing. We engineer growth. Our AI powered strategies combined with human creativity create campaigns that drive measurable results.
                 </p>
                 <Link to="/book-a-call" className="inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-green-700 transition-colors">
+                <Link to="/book-a-call-meeting" className="inline-block bg-green-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-green-700 transition-colors">
                   Get Your Free Consultation
                 </Link>
               </section>

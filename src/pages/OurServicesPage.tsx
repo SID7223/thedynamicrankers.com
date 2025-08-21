@@ -149,7 +149,7 @@ const OurServicesPage = () => {
                     </li>
                   </ul>
                   <Link 
-                    to="/book-a-call" 
+                    to="/book-a-call-meeting" 
                     className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                   >
                     Get Started Today

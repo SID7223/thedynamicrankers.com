@@ -236,7 +236,7 @@ function App() {
             <Route path="/definitions/visual-storytelling" element={<VisualStorytelling />} />
             <Route path="/definitions/sales-psychology" element={<SalesPsychology />} />
             <Route path="/definitions/content-optimization" element={<ContentOptimization />} />
-            <Route path="/book-a-call" element={<BookACall />} />
+            <Route path="/book-a-call-meeting" element={<BookACall />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="/special-booking" element={<SpecialBookingPage />} />
           </Routes>

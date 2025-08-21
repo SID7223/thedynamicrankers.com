@@ -176,7 +176,7 @@ const BusinessGrowth = () => {
 
               <div className="mt-8 text-center">
                 <Link 
-                  to="/book-a-call"
+                  to="/book-a-call-meeting"
                   className="inline-block w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 sm:px-8 py-4 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 shadow-lg text-center"
                 >
                   Start Growing Today
