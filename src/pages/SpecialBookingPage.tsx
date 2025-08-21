@@ -135,7 +135,7 @@ const SpecialBookingPage: React.FC = () => {
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/success"
+                      action="/thank-you"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="phone-call-request" />
@@ -239,7 +239,7 @@ const SpecialBookingPage: React.FC = () => {
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/success"
+                      action="/thank-you"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
