@@ -162,7 +162,7 @@ const SearchEngineMarketingPage = () => {
                     Our data-driven approach delivers immediate results and sustainable growth through AI-powered optimization.
                   </p>
                   <Link 
-                    to="/book-a-call" 
+                    to="/book-a-call-meeting" 
                     className="inline-block bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                   >
                     Launch Campaign
