@@ -135,10 +135,10 @@ const SpecialBookingPage: React.FC = () => {
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/thank-you"
+                      action="/success"
                       className="space-y-4"
                     >
-                      <input type="hidden" name="form-name" value="phone-call-request" />
+                      <input type="hidden" name="form-name" value="book-a-call" />
                       <div hidden>
                         <label>
                           Don't fill this out if you're human: <input name="bot-field" />
