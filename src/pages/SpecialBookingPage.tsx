@@ -303,10 +303,8 @@ const SpecialBookingPage: React.FC = () => {
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
                       <div hidden>
-                        <label>
-                          Don’t fill this out if you're human:
-                          <input name="bot-field" />
-                        </label>
+                      <div style={{display: "none"}}>
+                        <input name="bot-field" />
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
