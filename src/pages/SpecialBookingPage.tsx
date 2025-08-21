@@ -131,11 +131,10 @@ const SpecialBookingPage: React.FC = () => {
                     </div>
 
                     <form 
-                      name="phone-call-request" 
+                      name="book-a-call" 
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/success"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="book-a-call" />
@@ -145,7 +144,6 @@ const SpecialBookingPage: React.FC = () => {
                         </label>
                       </div>
 
-                      {/* Your form fields for the phone call request can go here */}
                       <div>
                         <label htmlFor="call_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Full Name *
@@ -184,6 +182,44 @@ const SpecialBookingPage: React.FC = () => {
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
                           placeholder="+1 (555) 123-4567"
                         />
+                      </div>
+
+                      <div>
+                        <label htmlFor="call_service" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Service of Interest *
+                        </label>
+                        <select
+                          name="serviceOfInterest"
+                          id="call_service"
+                          required
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                        >
+                          <option value="">Select a Service</option>
+                          <option value="ai-solutions">AI Solutions</option>
+                          <option value="content-creation">Content Creation</option>
+                          <option value="create-website">Create Website</option>
+                          <option value="customer-support">Customer Support</option>
+                          <option value="digital-marketing">Digital Marketing</option>
+                          <option value="our-services">Our Services</option>
+                          <option value="seo-services">SEO Services</option>
+                          <option value="search-engine-marketing">Search Engine Marketing</option>
+                          <option value="social-media-marketing">Social Media Marketing</option>
+                          <option value="website-development">Website Development</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label htmlFor="call_message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Tell us about your project *
+                        </label>
+                        <textarea
+                          name="message"
+                          id="call_message"
+                          required
+                          rows={3}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 resize-none"
+                          placeholder="Describe your business goals and how we can help..."
+                        ></textarea>
                       </div>
                       
                       <button
@@ -239,7 +275,6 @@ const SpecialBookingPage: React.FC = () => {
                       method="POST"
                       data-netlify="true"
                       data-netlify-honeypot="bot-field"
-                      action="/thank-you"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
