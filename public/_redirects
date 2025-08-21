@@ -1,4 +1,5 @@
 # public/_redirects
 # Handle client-side routing
-/*    /index.html   200
 /success  /thank-you  302
+/book-a-call  /book-a-call-meeting  301
+/*    /index.html   200
