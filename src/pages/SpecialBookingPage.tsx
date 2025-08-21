@@ -296,15 +296,13 @@ const SpecialBookingPage: React.FC = () => {
                       name="google-meeting-request" 
                       method="POST"
                       data-netlify="true"
-                      netlify-honeypot="bot-field"
+                      data-netlify-honeypot="bot-field"
                       action="/success"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
                       <div style={{display: "none"}}>
                         <input name="bot-field" />
-                      </div>
-                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="meeting_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
