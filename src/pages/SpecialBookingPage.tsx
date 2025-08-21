@@ -52,7 +52,6 @@ const SpecialBookingPage: React.FC = () => {
 
         <main className="pt-20">
           <section className="py-20">
-                      action="/success"
             <div className="container mx-auto px-4">
               <div className="text-center mb-12">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
