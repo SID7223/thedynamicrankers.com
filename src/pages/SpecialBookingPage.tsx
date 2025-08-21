@@ -297,7 +297,7 @@ const SpecialBookingPage: React.FC = () => {
                       name="google-meeting-request" 
                       method="POST"
                       data-netlify="true"
-                      data-netlify-honeypot="bot-field"
+                      netlify-honeypot="bot-field"
                       action="/success"
                       className="space-y-4"
                     >
