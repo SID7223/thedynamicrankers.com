@@ -49,6 +49,7 @@ const SpecialBookingPage: React.FC = () => {
         style={{ backgroundImage: bgGradient }}
         className="min-h-screen bg-gray-50 dark:bg-gray-800 transition-colors duration-300"
       >
+
         <main className="pt-20">
           <section className="py-20">
             <div className="container mx-auto px-4">
@@ -140,10 +141,8 @@ const SpecialBookingPage: React.FC = () => {
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="book-a-call" />
-                      <div style={{display: 'none'}}>
-                        <label>
-                          Don't fill this out if you're human: <input name="bot-field" />
-                        </label>
+                      <div style={{display: "none"}}>
+                        <input name="bot-field" />
                       </div>
 
                       <div>
@@ -302,12 +301,9 @@ const SpecialBookingPage: React.FC = () => {
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
-                      <div style={{display: 'none'}}>
-                        <label>
-                          Don't fill this out if you're human: <input name="bot-field" />
-                        </label>
+                      <div style={{display: "none"}}>
+                        <input name="bot-field" />
                       </div>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="meeting_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

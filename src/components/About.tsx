@@ -32,10 +32,10 @@ const About = () => {
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
-                to="/book-a-call-meeting"
+                to="/contact"
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 text-center"
               >
-                Book a Meeting
+                Get In Touch
               </Link>
               <Link 
                 to="/testimonials"
