@@ -302,9 +302,7 @@ const SpecialBookingPage: React.FC = () => {
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
-                      <div style={{display: 'none'}}>
-                        <input name="bot-field" />
-                      </div>
+                      <input type="hidden" name="bot-field" />
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
