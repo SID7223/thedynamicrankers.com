@@ -92,7 +92,7 @@ const SpecialBookingPage: React.FC = () => {
 
                 {/* Content Sections */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Schedule a Call Section */}
+                  {/* Schedule a Call Section - Using book-a-call form */}
                   <div className={`bg-white dark:bg-gray-700 rounded-xl shadow-lg p-8 border-2 transition-all duration-300 ${
                     activeTab === 'call' 
                       ? 'border-blue-500 ring-4 ring-blue-100 dark:ring-blue-900' 
@@ -130,15 +130,17 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
                     </div>
 
+                    {/* This matches the book-a-call form in index.html */}
                     <form 
                       name="book-a-call" 
                       method="POST"
                       data-netlify="true"
-                      data-netlify-honeypot="bot-field"
+                      netlify-honeypot="bot-field"
+                      action="/success"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="book-a-call" />
-                      <div hidden>
+                      <div style={{display: 'none'}}>
                         <label>
                           Don't fill this out if you're human: <input name="bot-field" />
                         </label>
@@ -157,6 +159,7 @@ const SpecialBookingPage: React.FC = () => {
                           placeholder="Your full name"
                         />
                       </div>
+
                       <div>
                         <label htmlFor="call_email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Email Address *
@@ -170,6 +173,7 @@ const SpecialBookingPage: React.FC = () => {
                           placeholder="your.email@example.com"
                         />
                       </div>
+
                       <div>
                         <label htmlFor="call_phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Phone Number *
@@ -221,6 +225,24 @@ const SpecialBookingPage: React.FC = () => {
                           placeholder="Describe your business goals and how we can help..."
                         ></textarea>
                       </div>
+
+                      <div>
+                        <label htmlFor="call_timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Project Timeline
+                        </label>
+                        <select
+                          name="timeline"
+                          id="call_timeline"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                        >
+                          <option value="">Select timeline</option>
+                          <option value="asap">ASAP</option>
+                          <option value="1-month">Within 1 month</option>
+                          <option value="3-months">Within 3 months</option>
+                          <option value="6-months">Within 6 months</option>
+                          <option value="planning">Just planning ahead</option>
+                        </select>
+                      </div>
                       
                       <button
                         type="submit"
@@ -270,15 +292,17 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
                     </div>
 
+                    {/* This exactly matches the google-meeting-request form in index.html */}
                     <form 
                       name="google-meeting-request" 
                       method="POST"
                       data-netlify="true"
-                      data-netlify-honeypot="bot-field"
+                      netlify-honeypot="bot-field"
+                      action="/success"
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="google-meeting-request" />
-                      <div hidden>
+                      <div style={{display: 'none'}}>
                         <label>
                           Don't fill this out if you're human: <input name="bot-field" />
                         </label>
@@ -286,13 +310,13 @@ const SpecialBookingPage: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label htmlFor="meeting_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Full Name *
                           </label>
                           <input
                             type="text"
                             name="name"
-                            id="name"
+                            id="meeting_name"
                             required
                             className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
                             placeholder="Your full name"
@@ -300,13 +324,13 @@ const SpecialBookingPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label htmlFor="meeting_email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Email Address *
                           </label>
                           <input
                             type="email"
                             name="email"
-                            id="email"
+                            id="meeting_email"
                             required
                             className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
                             placeholder="your.email@example.com"
@@ -316,25 +340,25 @@ const SpecialBookingPage: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label htmlFor="meeting_phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Phone Number
                           </label>
                           <input
                             type="tel"
                             name="phone"
-                            id="phone"
+                            id="meeting_phone"
                             className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
                             placeholder="+1 (555) 123-4567"
                           />
                         </div>
 
                         <div>
-                          <label htmlFor="serviceOfInterest" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label htmlFor="meeting_service" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Service of Interest *
                           </label>
                           <select
                             name="serviceOfInterest"
-                            id="serviceOfInterest"
+                            id="meeting_service"
                             required
                             className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
                           >
@@ -353,13 +377,13 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label htmlFor="meeting_company" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Company Name
                         </label>
                         <input
                           type="text"
                           name="company"
-                          id="company"
+                          id="meeting_company"
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
                           placeholder="Your company name"
                         />
@@ -367,13 +391,13 @@ const SpecialBookingPage: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label htmlFor="meeting_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Preferred Date *
                           </label>
                           <input
                             type="date"
                             name="preferredDate"
-                            id="preferredDate"
+                            id="meeting_date"
                             required
                             min={new Date().toISOString().split('T')[0]}
                             className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
@@ -381,13 +405,13 @@ const SpecialBookingPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <label htmlFor="preferredTime" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label htmlFor="meeting_time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Preferred Time (CST) *
                           </label>
                           <input
                             type="time"
                             name="preferredTime"
-                            id="preferredTime"
+                            id="meeting_time"
                             required
                             min="07:00"
                             max="17:00"
@@ -397,12 +421,12 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label htmlFor="meeting_timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Project Timeline
                         </label>
                         <select
                           name="timeline"
-                          id="timeline"
+                          id="meeting_timeline"
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200"
                         >
                           <option value="">Select timeline</option>
@@ -415,12 +439,12 @@ const SpecialBookingPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label htmlFor="meeting_message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Tell us about your project *
                         </label>
                         <textarea
                           name="message"
-                          id="message"
+                          id="meeting_message"
                           required
                           rows={4}
                           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors duration-200 resize-none"
