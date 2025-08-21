@@ -49,38 +49,10 @@ const SpecialBookingPage: React.FC = () => {
         style={{ backgroundImage: bgGradient }}
         className="min-h-screen bg-gray-50 dark:bg-gray-800 transition-colors duration-300"
       >
-        {/* Hidden form for Netlify detection */}
-        <form name="google-meeting-request" data-netlify="true" netlify-honeypot="bot-field" style={{display: 'none'}}>
-          <input type="text" name="name" />
-          <input type="email" name="email" />
-          <input type="tel" name="phone" />
-          <select name="serviceOfInterest">
-            <option value="ai-solutions">AI Solutions</option>
-            <option value="content-creation">Content Creation</option>
-            <option value="website-development">Website Development</option>
-            <option value="customer-support">Customer Support</option>
-            <option value="digital-marketing">Digital Marketing</option>
-            <option value="seo-services">SEO Services</option>
-            <option value="search-engine-marketing">Search Engine Marketing</option>
-            <option value="social-media-marketing">Social Media Marketing</option>
-            <option value="all-services">All Services</option>
-          </select>
-          <input type="text" name="company" />
-          <input type="date" name="preferredDate" />
-          <input type="time" name="preferredTime" />
-          <select name="timeline">
-            <option value="asap">ASAP</option>
-            <option value="1-month">Within 1 month</option>
-            <option value="3-months">Within 3 months</option>
-            <option value="6-months">Within 6 months</option>
-            <option value="planning">Just planning ahead</option>
-          </select>
-          <textarea name="message"></textarea>
-          <input name="bot-field" />
-        </form>
 
         <main className="pt-20">
           <section className="py-20">
+                      action="/success"
             <div className="container mx-auto px-4">
               <div className="text-center mb-12">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">
