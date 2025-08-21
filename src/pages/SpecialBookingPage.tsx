@@ -142,7 +142,7 @@ const SpecialBookingPage: React.FC = () => {
                       className="space-y-4"
                     >
                       <input type="hidden" name="form-name" value="book-a-call" />
-                      <div style={{display: 'none'}}>
+                      <div style={{display: "none"}}>
                         <input name="bot-field" />
                       </div>
 
