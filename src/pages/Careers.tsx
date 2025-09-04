@@ -25,7 +25,7 @@ const Careers: React.FC = () => {
     // Handle form submission logic here (e.g., send data to an API)
     console.log('Form submitted for job:', selectedJob);
     // Redirect to /book-a-call after submission
-    navigate('/book-a-call');
+    navigate('/book-a-call-meeting');
   };
   return (
     <>
