@@ -6,6 +6,7 @@ import ScrollToTop from './components/ScrollToTop';
 import DarkModeToggle from './components/DarkModeToggle';
 import Hero from './components/Hero';
 import BusinessGrowth from './components/BusinessGrowth';
+import TestimonialsLanding from './components/TestimonialsLanding';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AIAssistant from './components/AIAssistant';
@@ -135,6 +136,9 @@ const MainPage = () => {
       
       {/* Show Hero only on homepage */}
       {isHomePage && <Hero />}
+      
+      {/* Show Testimonials Landing on homepage */}
+      {isHomePage && <TestimonialsLanding />}
       
       {/* Only show BusinessGrowth and Contact on homepage */}
       {isHomePage && <BusinessGrowth />}
