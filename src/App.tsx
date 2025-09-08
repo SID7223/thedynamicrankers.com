@@ -31,6 +31,11 @@ const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'));
 const SpecialBookingPage = React.lazy(() => import('./pages/SpecialBookingPage'));
 
+// CRM Microsite
+const CRMPage = React.lazy(() => import('./pages/CRMPage'));
+const CRMFeatures = React.lazy(() => import('./pages/CRMFeatures'));
+const CRMIndustries = React.lazy(() => import('./pages/CRMIndustries'));
+const CRMCaseStudies = React.lazy(() => import('./pages/CRMCaseStudies'));
 
 // Lazy load sub-pages
 const DigitalMarketingSolution = React.lazy(() => import('./pages/digital-marketing/DigitalMarketingSolution'));
@@ -243,6 +248,12 @@ function App() {
             <Route path="/book-a-call-meeting" element={<BookACall />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="/special-booking" element={<SpecialBookingPage />} />
+                     
+            {/* CRM Microsite */}
+            <Route path="/crm" element={<CRMPage />} />
+            <Route path="/crm/features" element={<CRMFeatures />} />
+            <Route path="/crm/industries" element={<CRMIndustries />} />
+            <Route path="/crm/case-studies" element={<CRMCaseStudies />} />
           </Routes>
         </Suspense>
         
