@@ -79,6 +79,11 @@ const Header = () => {
         { path: '/content-creation/blog-article-planning', label: 'Blog Article Planning' },
         { path: '/content-creation/social-post-design', label: 'Social Post Design' }
       ]
+    },
+    {
+      name: 'crm',
+      path: '/crm',
+      label: 'CRM Solutions'
     }
   ];
 
