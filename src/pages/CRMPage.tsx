@@ -1,9 +1,15 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Users, BarChart3, Zap, Shield, ArrowRight, CheckCircle, Star, Play } from 'lucide-react';
+import { Users, BarChart3, Zap, Shield, ArrowRight, CheckCircle, Star, Play, Menu, X } from 'lucide-react';
 
 const CRMPage = () => {
+  const [isCrmMenuOpen, setIsCrmMenuOpen] = React.useState(false);
+
+  const closeCrmMenu = () => {
+    setIsCrmMenuOpen(false);
+  };
+
   const features = [
     {
       icon: Users,
@@ -105,7 +111,7 @@ const CRMPage = () => {
                 </Link>
               </div>
               
-              <nav className="hidden md:flex items-center space-x-6">
+              <nav className="hidden lg:flex items-center space-x-6">
                 <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Features</a>
                 <a href="#industries" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Industries</a>
                 <a href="#testimonials" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Success Stories</a>
@@ -113,6 +119,72 @@ const CRMPage = () => {
                 <Link to="/crm/case-studies" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Case Studies</Link>
                 <a href="#demo" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">Request Demo</a>
               </nav>
+
+              {/* Mobile Menu Button */}
+              <button
+                className="lg:hidden"
+                onClick={() => setIsCrmMenuOpen(!isCrmMenuOpen)}
+              >
+                {isCrmMenuOpen ? (
+                  <X className="w-6 h-6 text-gray-800 dark:text-white" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-800 dark:text-white" />
+                )}
+              </button>
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className={`lg:hidden transition-all duration-300 ease-in-out ${
+              isCrmMenuOpen 
+                ? 'max-h-screen opacity-100 mt-4' 
+                : 'max-h-0 opacity-0 overflow-hidden'
+            }`}>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+                <nav className="py-2">
+                  <a 
+                    href="#features" 
+                    onClick={closeCrmMenu}
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
+                  >
+                    Features
+                  </a>
+                  <a 
+                    href="#industries" 
+                    onClick={closeCrmMenu}
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
+                  >
+                    Industries
+                  </a>
+                  <a 
+                    href="#testimonials" 
+                    onClick={closeCrmMenu}
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
+                  >
+                    Success Stories
+                  </a>
+                  <Link 
+                    to="/crm/features" 
+                    onClick={closeCrmMenu}
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
+                  >
+                    All Features
+                  </Link>
+                  <Link 
+                    to="/crm/case-studies" 
+                    onClick={closeCrmMenu}
+                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
+                  >
+                    Case Studies
+                  </Link>
+                  <a 
+                    href="#demo" 
+                    onClick={closeCrmMenu}
+                    className="block mx-4 my-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-center font-medium"
+                  >
+                    Request Demo
+                  </a>
+                </nav>
+              </div>
             </div>
           </div>
         </header>
