@@ -72,6 +72,7 @@ const Footer = () => {
               <li><FooterLink to="/social-media-marketing">Social Media Marketing</FooterLink></li>
               <li><FooterLink to="/customer-support">Customer Support</FooterLink></li>
               <li><FooterLink to="/our-services">Our Services</FooterLink></li>
+              <li><FooterLink to="/crm">CRM Solutions</FooterLink></li>
             </ul>
           </div>
 
