@@ -171,12 +171,18 @@ const useIsDesktop = () => {
 
 function App() {
   const isDesktop = useIsDesktop();
+  const location = useLocation(); // New addition to track URL
+  
+  // New logic to check if current route is part of the CRM section
+  const isCrmPage = location.pathname.startsWith('/crm'); 
   
   return (
     <>
       <ScrollToTop />
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-        <Header />
+        {/* Only render global Header if NOT on a CRM page */}
+        {!isCrmPage && <Header />}
+        
         <DarkModeToggle />
         
         <Suspense fallback={<LoadingSpinner />}>
