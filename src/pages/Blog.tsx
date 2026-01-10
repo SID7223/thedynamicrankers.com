@@ -15,7 +15,7 @@ const Blog: React.FC = () => {
       title: 'The Future of SEO: Beyond Keywords to User Intent', 
       date: 'December 28, 2025', 
       excerpt: 'Search engines now prioritize "helpful content" over keyword density. Learn the new rules of ranking high on Google’s ever-evolving algorithm.', 
-      image: 'https://images.unsplash.com/photo-1571721738239-55d11750214a?auto=format&fit=crop&q=80&w=800',
+      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000',
       category: 'SEO Services'
     },
     { 
