@@ -167,7 +167,7 @@ const PrivacyPolicy: React.FC = () => {
                     </p>
                     <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <p className="font-medium text-gray-800 dark:text-gray-200">Email: eric@thedynamicrankers.com</p>
-                      <p className="font-medium text-gray-800 dark:text-gray-200">Phone: +1 (346) 556-1173</p>
+                      <p className="font-medium text-gray-800 dark:text-gray-200">Phone: </p>
                       <p className="font-medium text-gray-800 dark:text-gray-200">Address: 234 Westheimer Rd, Apt 101, Houston, TX 77077</p>
                     </div>
                   </section>
