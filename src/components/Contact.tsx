@@ -40,7 +40,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Call Us</h4>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">+1 (346) 556-1173</p>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300"></p>
                 </div>
               </div>
 
