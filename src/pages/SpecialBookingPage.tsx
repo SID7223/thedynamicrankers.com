@@ -495,7 +495,7 @@ const SpecialBookingPage: React.FC = () => {
                     href="tel:+13465561173"
                     className="text-2xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                   >
-                    +1 (346) 556-1173
+                    
                   </a>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                     Monday - Friday: 7 AM - 5 PM CST
