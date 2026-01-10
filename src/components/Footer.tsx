@@ -96,7 +96,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                <span className="text-sm sm:text-base text-gray-400"TBD</span>
+                <span className="text-sm sm:text-base text-gray-400">TBD</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
