@@ -52,8 +52,8 @@ const Hero = () => {
             </h1>
 
             <p className="text-lg sm:text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed px-4">
-              We specialize in Digital Marketing, SEO, SEM, social media marketing,
-              and customer support to help your business dominate the digital landscape.
+             AI driven Digital Marketing, SEO, SEM, Social media marketing,
+              and Customer support to help your business dominate the digital landscape.
             </p>
 
             {/* CTA Buttons */}
