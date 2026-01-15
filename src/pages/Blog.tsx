@@ -1,10 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Blog: React.FC = () => {
   const blogPosts = [
     { 
+      slug: 'ai-powered-crms-revolutionizing-sales',
       title: 'How AI-Powered CRMs are Revolutionizing Sales in 2025', 
       date: 'January 10, 2026', 
       excerpt: 'Discover how predictive analytics and automated lead scoring are helping small businesses close deals 3x faster than traditional methods.', 
@@ -12,6 +14,7 @@ const Blog: React.FC = () => {
       category: 'CRM Solutions'
     },
     { 
+      slug: 'future-of-seo-user-intent',
       title: 'The Future of SEO: Beyond Keywords to User Intent', 
       date: 'December 28, 2025', 
       excerpt: 'Search engines now prioritize "helpful content" over keyword density. Learn the new rules of ranking high on Google’s ever-evolving algorithm.', 
@@ -19,6 +22,7 @@ const Blog: React.FC = () => {
       category: 'SEO Services'
     },
     { 
+      slug: 'web-design-trends-2025',
       title: '7 High-Converting Web Design Trends for Service Agencies', 
       date: 'December 15, 2025', 
       excerpt: 'From micro-interactions to mobile-first speed optimization, here is what your website needs to turn casual visitors into loyal customers.', 
@@ -26,6 +30,7 @@ const Blog: React.FC = () => {
       category: 'Web Development'
     },
     { 
+      slug: 'maximizing-roi-multi-channel',
       title: 'Maximizing ROI: Why Multi-Channel Marketing is Mandatory', 
       date: 'November 30, 2025', 
       excerpt: 'Relying on just one social platform is a risk. We break down how to synchronize your Meta, Google, and Email campaigns for maximum impact.', 
@@ -83,10 +88,13 @@ const Blog: React.FC = () => {
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow">
                       {post.excerpt}
                     </p>
-                    <button className="text-blue-600 dark:text-blue-400 font-bold text-sm hover:underline inline-flex items-center">
+                    <Link 
+                      to={`/blog/${post.slug}`}
+                      className="text-blue-600 dark:text-blue-400 font-bold text-sm hover:underline inline-flex items-center"
+                    >
                       Read Full Article
                       <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </button>
+                    </Link>
                   </div>
                 </motion.article>
               ))}
