@@ -25,6 +25,7 @@ const CustomerSupportPage = React.lazy(() => import('./pages/CustomerSupportPage
 const BookACall = React.lazy(() => import('./pages/BookACall'));
 const AboutUs = React.lazy(() => import('./pages/AboutUs'));
 const Blog = React.lazy(() => import('./pages/Blog'));
+const BlogPost = React.lazy(() => import('./pages/BlogPost')); // ADDED THIS LINE
 const Portfolio = React.lazy(() => import('./pages/Portfolio'));
 const Careers = React.lazy(() => import('./pages/Careers'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
@@ -200,7 +201,11 @@ function App() {
             {/* Quick Link Pages */}
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            
+            {/* Blog Section */}
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} /> {/* DYNAMIC ROUTE ADDED HERE */}
+            
             <Route path="/career" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             
