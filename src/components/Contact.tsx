@@ -70,11 +70,16 @@ const Contact = () => {
               name="contact" 
               method="POST"
               data-netlify="true"
-              action="/thank-you.html"
+              data-netlify-honeypot="bot-field"
+              action="/thank-you"
               className="bg-gray-50 sm:bg-white dark:bg-gray-700 border border-gray-200 sm:border-transparent rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8"
             >
               <input type="hidden" name="form-name" value="contact" />
-              <input type="hidden" name="form-name" value="contact" />
+              <div className="hidden">
+                <label>
+                  Don&apos;t fill this out if you&apos;re human: <input name="bot-field" />
+                </label>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
