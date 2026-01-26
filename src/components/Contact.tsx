@@ -1,48 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 
 const Contact = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
   const isContactPage =
     typeof window !== 'undefined' &&
     window.location.pathname === '/contact';
-
-  const encode = (data: Record<string, string>) =>
-    new URLSearchParams(data).toString();
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrorMessage('');
-    setIsSubmitting(true);
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
-
-    try {
-      const response = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({ 'form-name': 'contact', ...data }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Submission failed');
-      }
-
-      setIsSubmitted(true);
-      form.reset();
-    } catch {
-      setErrorMessage(
-        'Something went wrong. Please try again or email us directly.'
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <section
@@ -65,6 +27,7 @@ const Contact = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Contact Info */}
           <div>
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6">
               Contact Information
@@ -115,63 +78,81 @@ const Contact = () => {
             </div>
           </div>
 
+          {/* Contact Form (Netlify Native) */}
           <div>
             <form
               name="contact"
               method="POST"
+              action="/thank-you"
               data-netlify="true"
               data-netlify-honeypot="bot-field"
-              onSubmit={handleSubmit}
               className="bg-gray-50 sm:bg-white dark:bg-gray-700 border border-gray-200 sm:border-transparent rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8"
             >
+              {/* Required Netlify fields */}
               <input type="hidden" name="form-name" value="contact" />
               <div className="hidden">
                 <label>
-                  Don&apos;t fill this out: <input name="bot-field" />
+                  Don&apos;t fill this out if you&apos;re human:{' '}
+                  <input name="bot-field" />
                 </label>
               </div>
 
-              {(isSubmitted || errorMessage) && (
-                <div
-                  className={`mb-6 rounded-lg border px-4 py-3 ${
-                    isSubmitted
-                      ? 'border-green-200 bg-green-50 text-green-700'
-                      : 'border-red-200 bg-red-50 text-red-700'
-                  }`}
-                >
-                  {isSubmitted
-                    ? 'Thanks! Our support team will contact you soon.'
-                    : errorMessage}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
                 </div>
-              )}
 
-              <input
-                name="name"
-                required
-                placeholder="Your Name"
-                className="w-full mb-4 px-4 py-3 border rounded-lg"
-              />
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="Email Address"
-                className="w-full mb-4 px-4 py-3 border rounded-lg"
-              />
-              <textarea
-                name="message"
-                required
-                rows={4}
-                placeholder="Tell us about your project..."
-                className="w-full mb-6 px-4 py-3 border rounded-lg"
-              />
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <label
+                  htmlFor="message"
+                  className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  required
+                  rows={4}
+                  placeholder="Tell us about your project..."
+                  className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                />
+              </div>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 rounded-lg flex items-center justify-center gap-2"
+                className="w-full mt-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-4 px-6 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2"
               >
-                <span>{isSubmitting ? 'Sending…' : 'Send Message'}</span>
+                <span>Send Message</span>
                 <Send className="w-5 h-5" />
               </button>
             </form>
