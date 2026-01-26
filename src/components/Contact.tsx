@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 
 const Contact = () => {
   const isContactPage =
     typeof window !== 'undefined' &&
     window.location.pathname === '/contact';
+
+  // Load Google reCAPTCHA script for Netlify reCAPTCHA support
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (document.getElementById('netlify-recaptcha')) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    script.id = 'netlify-recaptcha';
+    document.body.appendChild(script);
+  }, []);
 
   return (
     <section
@@ -26,55 +39,23 @@ const Contact = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Contact Info */}
-          <div>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6">
-              Contact Information
-            </h3>
-
-            <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="space-y-6">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-xl text-white">
               <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                  <Mail className="w-6 h-6 text-white" />
+                <div className="bg-white/20 p-3 rounded-md">
+                  <Mail className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">
-                    Email Us
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    eric@thedynamicrankers.com
-                  </p>
+                  <h4 className="font-semibold">Email Us</h4>
+                  <p className="text-sm">hello@thedynamicrankers.com</p>
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                  <Phone className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">
-                    Call Us
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    +1 (713) 555-0199
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                  <MapPin className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">
-                    Visit Us
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    327 Lancaster St. Houston, TX 77026
-                  </p>
-                </div>
-              </div>
+            <div className="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 sm:p-8 border border-gray-200 dark:border-gray-600">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Quick Response</h3>
+              <p className="text-sm text-gray-600 dark:text-white">We'll get back to you within 24 hours</p>
             </div>
           </div>
 
@@ -147,6 +128,9 @@ const Contact = () => {
                   className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
               </div>
+
+              {/* Netlify reCAPTCHA widget for forms that have reCAPTCHA enabled */}
+              <div className="mt-4" data-netlify-recaptcha="true" />
 
               <button
                 type="submit"
