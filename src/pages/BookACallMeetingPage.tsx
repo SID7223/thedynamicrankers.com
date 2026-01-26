@@ -1,0 +1,73 @@
+import React from "react";
+
+export default function BookACallMeetingPage() {
+  return (
+    <section className="py-20 bg-gray-50 dark:bg-gray-800">
+      <div className="container mx-auto px-4 max-w-xl">
+        <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-6">
+          Book a Call
+        </h1>
+
+        <form
+          name="book-a-call"
+          method="POST"
+          action="/thank-you"
+          data-netlify="true"
+          data-netlify-honeypot="bot-field"
+          className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-lg p-6"
+        >
+          <input type="hidden" name="form-name" value="book-a-call" />
+          <p className="hidden">
+            <label>
+              Don&apos;t fill this out: <input name="bot-field" />
+            </label>
+          </p>
+
+          <label className="block text-sm text-gray-700 dark:text-gray-200 mb-2">
+            Name
+          </label>
+          <input
+            name="name"
+            required
+            className="w-full mb-4 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          />
+
+          <label className="block text-sm text-gray-700 dark:text-gray-200 mb-2">
+            Email
+          </label>
+          <input
+            name="email"
+            type="email"
+            required
+            className="w-full mb-4 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          />
+
+          <label className="block text-sm text-gray-700 dark:text-gray-200 mb-2">
+            Phone
+          </label>
+          <input
+            name="phone"
+            type="tel"
+            className="w-full mb-4 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          />
+
+          <label className="block text-sm text-gray-700 dark:text-gray-200 mb-2">
+            Notes
+          </label>
+          <textarea
+            name="message"
+            rows={4}
+            className="w-full mb-6 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-semibold"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </section>
+  );
+}
