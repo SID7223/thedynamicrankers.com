@@ -32,6 +32,9 @@ const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'));
 const SpecialBookingPage = React.lazy(() => import('./pages/SpecialBookingPage'));
 
+// ✅ ADDED: Message page route target
+const MessagePage = React.lazy(() => import('./pages/MessagePage'));
+
 // CRM Microsite
 const CRMPage = React.lazy(() => import('./pages/CRMPage'));
 const CRMFeatures = React.lazy(() => import('./pages/CRMFeatures'));
@@ -208,6 +211,9 @@ function App() {
             
             <Route path="/career" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+            {/* ✅ ADDED: Message route */}
+            <Route path="/message" element={<MessagePage />} />
             
             {/* Digital Marketing Routes */}
             <Route path="/digital-marketing" element={<DigitalMarketingPage />}>
