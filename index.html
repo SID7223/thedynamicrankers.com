@@ -19,23 +19,42 @@
     <script type="module" src="/src/main.tsx"></script>
     
     <!-- Netlify Forms - Hidden form for detection (book-a-call) -->
-<form name="book-a-call" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
-  <input type="hidden" name="form-name" value="book-a-call" />
-  <input name="bot-field" />
-  <input type="text" name="name" />
-  <input type="email" name="email" />
-  <input type="tel" name="phone" />
-  <textarea name="message"></textarea>
-</form>
+    <form name="book-a-call" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="book-a-call" />
+      <input name="bot-field" />
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <select name="serviceOfInterest">
+        <option value="ai-solutions">AI Solutions</option>
+        <option value="content-creation">Content Creation</option>
+        <option value="website-development">Website Development</option>
+        <option value="customer-support">Customer Support</option>
+        <option value="digital-marketing">Digital Marketing</option>
+        <option value="seo-services">SEO Services</option>
+        <option value="search-engine-marketing">Search Engine Marketing</option>
+        <option value="social-media-marketing">Social Media Marketing</option>
+        <option value="all-services">All Services</option>
+      </select>
+      <input type="text" name="company" />
+      <textarea name="message"></textarea>
+      <select name="timeline">
+        <option value="asap">ASAP</option>
+        <option value="1-month">Within 1 month</option>
+        <option value="3-months">Within 3 months</option>
+        <option value="6-months">Within 6 months</option>
+        <option value="planning">Just planning ahead</option>
+      </select>
+    </form>
     
     <!-- Netlify Forms - Hidden form for detection (message) -->
- <form name="message" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
-  <input type="hidden" name="form-name" value="message" />
-  <input name="bot-field" />
-  <input type="text" name="name" />
-  <input type="email" name="email" />
-  <textarea name="message"></textarea>
-</form>
+    <form name="message" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="message" />
+      <input name="bot-field" />
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
     <!-- Netlify Forms - Hidden form for detection -->
     <form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" data-netlify-recaptcha="true" hidden>
       <input type="hidden" name="form-name" value="contact" />
