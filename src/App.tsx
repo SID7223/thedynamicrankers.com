@@ -133,6 +133,7 @@ const MainPage = () => {
 
   // Determine which components to show based on route
   const isHomePage = location.pathname === '/';
+  const isContactPage = location.pathname === '/contact';
   
   return (
     <>
@@ -146,7 +147,9 @@ const MainPage = () => {
       {/* Show Hero only on homepage */}
       {isHomePage && <Hero />}
       
-      {/* Show Testimonials Landing on homepage */}
+      {/* Show Testimonials Landing on homepage */}      {/* Only show BusinessGrowth and Contact on homepage */}
+      {isHomePage && <BusinessGrowth />}
+      {isHomePage && <Contact />}
       {isHomePage && <TestimonialsLanding />}
       
       {/* Only show BusinessGrowth and Contact on homepage */}
@@ -192,6 +195,7 @@ function App() {
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/contact" element={<MainPage />} />
             
             {/* Service Pages */}
             <Route path="/our-services" element={<OurServicesPage />} />
