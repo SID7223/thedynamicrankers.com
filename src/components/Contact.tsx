@@ -70,7 +70,6 @@ const Contact = () => {
                   <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">eric@thedynamicrankers.com</p>
                 </div>
               </div>
-@@ -50,58 +87,88 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 dark:text-white">Visit Us</h4>
@@ -159,7 +158,7 @@ const Contact = () => {
                     name="email"
                     required
                     className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
-@@ -124,38 +191,39 @@ const Contact = () => {
+
                   <option value="seo">Search Engine Optimization (SEO)</option>
                   <option value="sem">Search Engine Marketing (SEM)</option>
                   <option value="social-media">Social Media Marketing</option>
