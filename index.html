@@ -19,7 +19,7 @@
     <script type="module" src="/src/main.tsx"></script>
     
     <!-- Netlify Forms - Hidden form for detection (book-a-call) -->
-    <form name="book-a-call" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+    <form name="book-a-call" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
       <input type="hidden" name="form-name" value="book-a-call" />
       <input name="bot-field" />
       <input type="text" name="name" />
@@ -48,7 +48,7 @@
     </form>
     
     <!-- Netlify Forms - Hidden form for detection (message) -->
-    <form name="message" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+    <form name="message" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
       <input type="hidden" name="form-name" value="message" />
       <input name="bot-field" />
       <input type="text" name="name" />
@@ -56,7 +56,7 @@
       <textarea name="message"></textarea>
     </form>
     <!-- Netlify Forms - Hidden form for detection -->
-    <form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" data-netlify-recaptcha="true" hidden>
+    <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" data-netlify-recaptcha="true" hidden>
       <input type="hidden" name="form-name" value="contact" />
       <input name="bot-field" />
       <input type="text" name="name" />
