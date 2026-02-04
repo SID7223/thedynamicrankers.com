@@ -1,16 +1,68 @@
 // api/contact.ts
-// Vercel serverless function that accepts POST requests from HTML forms (urlencoded)
-// and from JS (JSON). Sends email via Resend. Uses RESEND_API_KEY and FORMS_TO_EMAIL env vars.
+// Vercel Serverless Function: receives form submissions and emails them via Resend.
+// Works with:
+// - application/json (fetch)
+// - application/x-www-form-urlencoded (plain HTML form)
+// No DB/storage. Includes honeypot spam protection.
 
-import { parse as parseQS } from "querystring";
+type AnyObj = Record<string, any>;
 
-async function getRawBody(req: any) {
-  return new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    req.on("data", (chunk: Buffer) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks)));
-    req.on("error", reject);
-  });
+function escapeHtml(str: string) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function toStringValue(v: any) {
+  if (v == null) return "";
+  if (Array.isArray(v)) return String(v[0] ?? "");
+  return String(v);
+}
+
+function getHeader(req: any, name: string) {
+  const h = req.headers || {};
+  const lower = name.toLowerCase();
+  return toStringValue(h[lower] ?? h[name] ?? "");
+}
+
+async function readBody(req: any): Promise<{ contentType: string; payload: AnyObj }> {
+  const contentType = getHeader(req, "content-type").toLowerCase();
+  const rawText: string = typeof req.text === "function" ? await req.text() : "";
+
+  // JSON
+  if (contentType.includes("application/json")) {
+    try {
+      return { contentType, payload: JSON.parse(rawText || "{}") };
+    } catch {
+      return { contentType, payload: {} };
+    }
+  }
+
+  // HTML form (urlencoded)
+  if (contentType.includes("application/x-www-form-urlencoded")) {
+    const params = new URLSearchParams(rawText);
+    const obj: AnyObj = {};
+    params.forEach((value, key) => {
+      obj[key] = value;
+    });
+    return { contentType, payload: obj };
+  }
+
+  // fallback: try JSON, else urlencoded-like
+  try {
+    return { contentType, payload: JSON.parse(rawText || "{}") };
+  } catch {
+    const params = new URLSearchParams(rawText);
+    const obj: AnyObj = {};
+    params.forEach((value, key) => {
+      obj[key] = value;
+    });
+    return { contentType, payload: obj };
+  }
 }
 
 export default async function handler(req: any, res: any) {
@@ -21,70 +73,42 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  const contentType = (req.headers["content-type"] || "").toLowerCase();
-  let payload: any = {};
+  const { contentType, payload } = await readBody(req);
 
-  try {
-    if (contentType.includes("application/json")) {
-      // Most JS fetch calls
-      payload = await new Promise((resolve, reject) => {
-        let data = "";
-        req.on("data", (chunk: any) => (data += chunk));
-        req.on("end", () => {
-          try {
-            resolve(JSON.parse(data || "{}"));
-          } catch (err) {
-            // fallback: empty
-            resolve({});
-          }
-        });
-        req.on("error", reject);
-      });
-    } else if (contentType.includes("application/x-www-form-urlencoded")) {
-      // Plain HTML form POST
-      const raw = await getRawBody(req);
-      payload = parseQS(raw.toString());
-    } else {
-      // Unknown content-type: try to parse body as text then JSON
-      const raw = await getRawBody(req);
-      const txt = raw.toString();
-      try {
-        payload = JSON.parse(txt || "{}");
-      } catch {
-        payload = parseQS(txt);
-      }
-    }
-  } catch (err) {
-    console.error("Failed to parse request body:", err);
-    res.statusCode = 400;
-    res.end("Bad Request");
-    return;
-  }
+  // Honeypot (spam)
+  const honeypot =
+    toStringValue(payload["bot-field"]) ||
+    toStringValue(payload["bot_field"]) ||
+    toStringValue(payload["hp"]);
 
-  const honeypot = payload["bot-field"] || payload["bot_field"] || payload.hp || "";
+  const redirectTo = toStringValue(payload.redirect) || "/thank-you";
+
   if (honeypot) {
-    // Likely spam - pretend success for forms
-    if (payload.redirect && typeof payload.redirect === "string") {
-      res.writeHead(303, { Location: payload.redirect });
+    // Pretend success for bots
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      res.writeHead(303, { Location: redirectTo });
       res.end();
       return;
     }
     res.statusCode = 200;
-    res.end("OK");
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ ok: true }));
     return;
   }
 
-  const name = (payload.name || "").trim();
-  const email = (payload.email || "").trim();
-  const message = (payload.message || "").trim();
-  const phone = (payload.phone || "").trim();
-  const service = (payload.service || payload.serviceOfInterest || "").trim();
+  const name = toStringValue(payload.name).trim();
+  const email = toStringValue(payload.email).trim();
+  const message = toStringValue(payload.message).trim();
+  const phone = toStringValue(payload.phone).trim();
+  const service = toStringValue(payload.service || payload.serviceOfInterest).trim();
+  const company = toStringValue(payload.company).trim();
+  const industry = toStringValue(payload.industry).trim();
+  const timeline = toStringValue(payload.timeline).trim();
 
   if (!name || !email || !message) {
-    // For HTML forms, redirect back or to /thank-you? We'll return 400 for API JSON use.
-    if (contentType.includes("application/x-www-form-urlencoded") && payload.redirect) {
-      // Non-ideal: redirect to same page without success. We return a 303 to redirect back.
-      res.writeHead(303, { Location: payload.redirect });
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      // For plain forms, still redirect (keeps UX simple)
+      res.writeHead(303, { Location: redirectTo });
       res.end();
       return;
     }
@@ -104,18 +128,18 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  const subject = `New contact form submission from ${name}`;
+  const subject = `New form submission from ${name}`;
   const html = `
-    <h2>New contact form submission</h2>
+    <h2>New form submission</h2>
     <p><strong>Name:</strong> ${escapeHtml(name)}</p>
     <p><strong>Email:</strong> ${escapeHtml(email)}</p>
     ${phone ? `<p><strong>Phone:</strong> ${escapeHtml(phone)}</p>` : ""}
+    ${company ? `<p><strong>Company:</strong> ${escapeHtml(company)}</p>` : ""}
     ${service ? `<p><strong>Service:</strong> ${escapeHtml(service)}</p>` : ""}
+    ${industry ? `<p><strong>Industry:</strong> ${escapeHtml(industry)}</p>` : ""}
+    ${timeline ? `<p><strong>Timeline:</strong> ${escapeHtml(timeline)}</p>` : ""}
     <p><strong>Message:</strong></p>
     <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
-    <hr/>
-    <p>IP: ${req.headers["x-forwarded-for"] || req.socket.remoteAddress || "n/a"}</p>
-    <p>User-Agent: ${escapeHtml(req.headers["user-agent"] || "")}</p>
   `;
 
   try {
@@ -126,6 +150,8 @@ export default async function handler(req: any, res: any) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        // Use Resend default verified sender for now:
+        // Later you can change to no-reply@thedynamicrankers.com after verifying domain in Resend.
         from: "onboarding@resend.dev",
         to: [FORMS_TO_EMAIL],
         subject,
@@ -136,13 +162,14 @@ export default async function handler(req: any, res: any) {
     if (!resendResp.ok) {
       const text = await resendResp.text();
       console.error("Resend API error:", resendResp.status, text);
-      // For HTML form submits, redirect to an error page if desired, else respond 500
-      if (contentType.includes("application/x-www-form-urlencoded") && payload.redirect) {
-        // redirect to the redirect target even on failure (to avoid revealing internals).
-        res.writeHead(303, { Location: payload.redirect });
+
+      if (contentType.includes("application/x-www-form-urlencoded")) {
+        // Keep UX: redirect anyway
+        res.writeHead(303, { Location: redirectTo });
         res.end();
         return;
       }
+
       res.statusCode = 500;
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify({ error: "Failed to send email" }));
@@ -150,8 +177,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // Success
-    if (contentType.includes("application/x-www-form-urlencoded") && payload.redirect) {
-      const redirectTo = payload.redirect || "/thank-you";
+    if (contentType.includes("application/x-www-form-urlencoded")) {
       res.writeHead(303, { Location: redirectTo });
       res.end();
       return;
@@ -160,22 +186,14 @@ export default async function handler(req: any, res: any) {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ ok: true }));
-    return;
   } catch (err) {
     console.error("Unexpected error sending email:", err);
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      res.writeHead(303, { Location: redirectTo });
+      res.end();
+      return;
+    }
     res.statusCode = 500;
     res.end("Server error");
-    return;
   }
-}
-
-function escapeHtml(str: string) {
-  if (!str) return "";
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
 }
