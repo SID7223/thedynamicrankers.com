@@ -43,8 +43,10 @@ function ContactEmailTemplate({
 }
 
 const resendApiKey = process.env.RESEND_API_KEY;
-const resendFromEmail = process.env.RESEND_FROM_EMAIL;
-const resendTargetEmail = process.env.RESEND_TARGET_EMAIL;
+const resendFromEmail =
+  process.env.RESEND_FROM_EMAIL || process.env.CONTACT_FROM_EMAIL;
+const resendTargetEmail =
+  process.env.RESEND_TARGET_EMAIL || process.env.CONTACT_TO_EMAIL;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function handler(req: any, res: any) {
@@ -97,6 +99,3 @@ export default async function handler(req: any, res: any) {
     });
   }
 }
-
-
-
