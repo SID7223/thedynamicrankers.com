@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Resend } from "resend";
 
 interface EmailTemplateProps {
@@ -8,36 +7,39 @@ interface EmailTemplateProps {
   message?: string;
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function ContactEmailTemplate({
   name,
   email,
   phone,
   message,
 }: EmailTemplateProps) {
-  return (
-    <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.4" }}>
-      <h1>New call booking from {name}</h1>
-      <p>
-        <strong>Name:</strong> {name}
-      </p>
-      <p>
-        <strong>Email:</strong> {email}
-      </p>
-      {phone ? (
-        <p>
-          <strong>Phone:</strong> {phone}
-        </p>
-      ) : null}
-      {message ? (
-        <div>
-          <p>
-            <strong>Message:</strong>
-          </p>
-          <p>{message}</p>
-        </div>
-      ) : null}
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safePhone = phone ? escapeHtml(phone) : "";
+  const safeMessage = message ? escapeHtml(message) : "";
+
+  return `
+    <div style="font-family: Arial, sans-serif; line-height: 1.4;">
+      <h1>New call booking from ${safeName}</h1>
+      <p><strong>Name:</strong> ${safeName}</p>
+      <p><strong>Email:</strong> ${safeEmail}</p>
+      ${safePhone ? `<p><strong>Phone:</strong> ${safePhone}</p>` : ""}
+      ${
+        safeMessage
+          ? `<div><p><strong>Message:</strong></p><p>${safeMessage}</p></div>`
+          : ""
+      }
     </div>
-  );
+  `;
 }
 
 const resendApiKey = process.env.RESEND_API_KEY;
@@ -76,9 +78,9 @@ export default async function handler(req: any, res: any) {
       from: resendFromEmail,
       to: [resendTargetEmail],
       subject: `New Contact Form Submission – ${name}`,
-      react: ContactEmailTemplate({
+      html: ContactEmailTemplate({
         name,
-        email
+        email,
         phone,
         message,
       }),
@@ -95,5 +97,6 @@ export default async function handler(req: any, res: any) {
     });
   }
 }
+
 
 
