@@ -1,5 +1,44 @@
+import * as React from "react";
 import { Resend } from "resend";
-import { ContactEmailTemplate } from "../../src/components/ContactEmailTemplate.js";
+
+interface EmailTemplateProps {
+  name: string;
+  email: string;
+  phone?: string;
+  message?: string;
+}
+
+function ContactEmailTemplate({
+  name,
+  email,
+  phone,
+  message,
+}: EmailTemplateProps) {
+  return (
+    <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.4" }}>
+      <h1>New call booking from {name}</h1>
+      <p>
+        <strong>Name:</strong> {name}
+      </p>
+      <p>
+        <strong>Email:</strong> {email}
+      </p>
+      {phone ? (
+        <p>
+          <strong>Phone:</strong> {phone}
+        </p>
+      ) : null}
+      {message ? (
+        <div>
+          <p>
+            <strong>Message:</strong>
+          </p>
+          <p>{message}</p>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resendFromEmail = process.env.RESEND_FROM_EMAIL;
@@ -39,7 +78,7 @@ export default async function handler(req: any, res: any) {
       subject: `New Contact Form Submission – ${name}`,
       react: ContactEmailTemplate({
         name,
-        email,
+        email
         phone,
         message,
       }),
@@ -56,4 +95,5 @@ export default async function handler(req: any, res: any) {
     });
   }
 }
+
 
