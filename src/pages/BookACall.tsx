@@ -52,17 +52,18 @@ const BookACall: React.FC = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
               Schedule Your Free Consultation
             </h2>
-            
-            <form 
-              name="book-a-call" 
+
+            <form
+              name="book-a-call"
               method="POST"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
-              action="/success" 
+              action="/api/contact"
               className="space-y-6"
             >
-              <input type="hidden" name="form-name" value="book-a-call" />
-              <div hidden>
+              {/* redirect so server can send user to the existing success page */}
+              <input type="hidden" name="redirect" value="/success" />
+
+              {/* honeypot (bots fill this; humans won't) */}
+              <div style={{ display: 'none' }}>
                 <label>
                   Don't fill this out if you're human: <input name="bot-field" />
                 </label>
