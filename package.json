@@ -13,6 +13,7 @@
     "@google/generative-ai": "^0.24.1",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.344.0",
+    "resend": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
