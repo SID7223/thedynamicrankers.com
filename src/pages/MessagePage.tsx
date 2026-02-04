@@ -11,12 +11,13 @@ export default function MessagePage() {
         <form
           name="message"
           method="POST"
-          action="/thank-you"
-          data-netlify="true"
-          data-netlify-honeypot="bot-field"
+          action="/api/contact"
           className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-lg p-6"
         >
-          <input type="hidden" name="form-name" value="message" />
+          {/* redirect after successful submission */}
+          <input type="hidden" name="redirect" value="/thank-you" />
+
+          {/* honeypot field for spam protection */}
           <p className="hidden">
             <label>
               Don&apos;t fill this out: <input name="bot-field" />
