@@ -1,14 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import { Resend } from "resend";
 import { ContactEmailTemplate } from "../../src/components/ContactEmailTemplate";
 
-// Safety: ensure API key exists
-const resend = new Resend(process.env.RESEND_API_KEY || "");
+const resendApiKey = process.env.RESEND_API_KEY;
+const resendFromEmail = process.env.RESEND_FROM_EMAIL;
+const resendTargetEmail = process.env.RESEND_TARGET_EMAIL;
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function handler(req: any, res: any) {
   // Allow only POST
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -16,6 +14,13 @@ export default async function handler(
   }
 
   try {
+    if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
+      console.error("Missing Resend configuration.");
+      return res.status(500).json({
+        error: "Email service is not configured",
+      });
+    }
+
     const { name, email, phone, message } = req.body;
 
     // Basic validation
@@ -25,10 +30,12 @@ export default async function handler(
       });
     }
 
+    const resend = new Resend(resendApiKey);
+
     // Send email via Resend
     const result = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL as string,
-      to: [process.env.RESEND_TARGET_EMAIL as string],
+      from: resendFromEmail,
+      to: [resendTargetEmail],
       subject: `New Contact Form Submission – ${name}`,
       react: ContactEmailTemplate({
         name,
