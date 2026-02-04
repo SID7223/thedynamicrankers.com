@@ -126,7 +126,7 @@ export default async function handler(req: any, res: any) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "no-reply@thedynamicrankers.com",
+        from: "onboarding@resend.dev",
         to: [FORMS_TO_EMAIL],
         subject,
         html,
@@ -177,4 +177,5 @@ function escapeHtml(str: string) {
     .replace(/'/g, "&#39;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+
 }
