@@ -2,7 +2,7 @@ import React from "react";
 
 export default function BookACallMeetingPage() {
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-800">
+    <section className="pt-32 pb-20 bg-gray-50 dark:bg-gray-800">
       <div className="container mx-auto px-4 max-w-xl">
         <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-6">
           Book a Call
