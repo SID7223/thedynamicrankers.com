@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CheckCircle, Mail, Send, X } from 'lucide-react';
 
 const Contact = () => {
@@ -7,19 +7,6 @@ const Contact = () => {
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-
-  // Load Google reCAPTCHA script for Netlify reCAPTCHA support
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (document.getElementById('netlify-recaptcha')) return;
-
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    script.defer = true;
-    script.id = 'netlify-recaptcha';
-    document.body.appendChild(script);
-  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,21 +63,20 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Contact Form (Netlify Native) */}
+          {/* Contact Form (Vercel /api/contact) */}
           <div>
             <form
               ref={formRef}
               name="contact"
               method="POST"
-              action="/thank-you"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
+              action="/api/contact"
               onSubmit={handleSubmit}
               className="bg-gray-50 sm:bg-white dark:bg-gray-700 border border-gray-200 sm:border-transparent rounded-xl shadow-md sm:shadow-lg p-4 sm:p-8"
             >
-              {/* Required Netlify fields */}
-              <input type="hidden" name="form-name" value="contact" />
+              {/* redirect after successful submission */}
+              <input type="hidden" name="redirect" value="/thank-you" />
 
+              {/* honeypot field for spam protection */}
               <div className="hidden">
                 <label>
                   Don&apos;t fill this out if you&apos;re human:{' '}
@@ -148,9 +134,6 @@ const Contact = () => {
                   className="w-full px-3 sm:px-4 py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
               </div>
-
-              {/* Netlify reCAPTCHA widget for forms that have reCAPTCHA enabled */}
-              <div className="mt-4" data-netlify-recaptcha="true" />
 
               <button
                 type="submit"
