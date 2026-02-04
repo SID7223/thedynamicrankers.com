@@ -91,7 +91,7 @@ const CRMPage = () => {
         <meta name="keywords" content="CRM, customer relationship management, sales automation, lead management, The Dynamic Rankers" />
         <link rel="canonical" href="https://thedynamicrankers.com/crm" />
       </Helmet>
-      
+
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         {/* CRM-specific Header */}
         <header className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700">
@@ -99,9 +99,9 @@ const CRMPage = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
                 <Link to="/" className="flex items-center space-x-2">
-                  <img 
-                    src="/the copy copy.png" 
-                    alt="The Dynamic Rankers Logo" 
+                  <img
+                    src="/the copy copy.png"
+                    alt="The Dynamic Rankers Logo"
                     className="w-10 h-10 object-contain"
                   />
                   <div>
@@ -110,7 +110,7 @@ const CRMPage = () => {
                   </div>
                 </Link>
               </div>
-              
+
               <nav className="hidden lg:flex items-center space-x-6">
                 <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Features</a>
                 <a href="#industries" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Industries</a>
@@ -135,49 +135,49 @@ const CRMPage = () => {
 
             {/* Mobile Navigation */}
             <div className={`lg:hidden transition-all duration-300 ease-in-out ${
-              isCrmMenuOpen 
-                ? 'max-h-screen opacity-100 mt-4' 
+              isCrmMenuOpen
+                ? 'max-h-screen opacity-100 mt-4'
                 : 'max-h-0 opacity-0 overflow-hidden'
             }`}>
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
                 <nav className="py-2">
-                  <a 
-                    href="#features" 
+                  <a
+                    href="#features"
                     onClick={closeCrmMenu}
                     className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
                   >
                     Features
                   </a>
-                  <a 
-                    href="#industries" 
+                  <a
+                    href="#industries"
                     onClick={closeCrmMenu}
                     className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
                   >
                     Industries
                   </a>
-                  <a 
-                    href="#testimonials" 
+                  <a
+                    href="#testimonials"
                     onClick={closeCrmMenu}
                     className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
                   >
                     Success Stories
                   </a>
-                  <Link 
-                    to="/crm/features" 
+                  <Link
+                    to="/crm/features"
                     onClick={closeCrmMenu}
                     className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
                   >
                     All Features
                   </Link>
-                  <Link 
-                    to="/crm/case-studies" 
+                  <Link
+                    to="/crm/case-studies"
                     onClick={closeCrmMenu}
                     className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
                   >
                     Case Studies
                   </Link>
-                  <a 
-                    href="#demo" 
+                  <a
+                    href="#demo"
                     onClick={closeCrmMenu}
                     className="block mx-4 my-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-center font-medium"
                   >
@@ -198,19 +198,19 @@ const CRMPage = () => {
                   Transform Customer Relationships with Our CRM
                 </h1>
                 <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-                  The Dynamic Rankers CRM solution helps businesses manage leads, automate workflows, 
+                  The Dynamic Rankers CRM solution helps businesses manage leads, automate workflows,
                   and boost sales with AI-powered insights and seamless integrations.
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <a 
+                  <a
                     href="#demo"
                     className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 shadow-lg"
                   >
                     <Play className="w-5 h-5" />
                     <span>Watch Demo</span>
                   </a>
-                  
+
                   <Link
                     to="/book-a-call-meeting"
                     className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center space-x-2"
@@ -251,7 +251,7 @@ const CRMPage = () => {
                   Powerful CRM Features
                 </h2>
                 <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                  Everything you need to manage customer relationships, automate sales processes, 
+                  Everything you need to manage customer relationships, automate sales processes,
                   and grow your business efficiently.
                 </p>
               </div>
@@ -282,7 +282,7 @@ const CRMPage = () => {
                   Industries We Serve
                 </h2>
                 <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                  Our CRM solutions are tailored for specific industry needs, delivering 
+                  Our CRM solutions are tailored for specific industry needs, delivering
                   measurable results across diverse business sectors.
                 </p>
               </div>
@@ -315,7 +315,7 @@ const CRMPage = () => {
                   Client Success Stories
                 </h2>
                 <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                  See how businesses across different industries have transformed their 
+                  See how businesses across different industries have transformed their
                   customer relationships with our CRM solutions.
                 </p>
               </div>
@@ -324,7 +324,7 @@ const CRMPage = () => {
                 {testimonials.map((testimonial, index) => (
                   <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
                     <div className="flex items-center space-x-4 mb-6">
-                      <img 
+                      <img
                         src={testimonial.image}
                         alt={testimonial.name}
                         className="w-16 h-16 rounded-full object-cover"
@@ -340,11 +340,11 @@ const CRMPage = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
                       "{testimonial.text}"
                     </p>
-                    
+
                     <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold inline-block">
                       <CheckCircle className="w-4 h-4 inline mr-2" />
                       {testimonial.results}
@@ -363,7 +363,7 @@ const CRMPage = () => {
                   See Our CRM in Action
                 </h2>
                 <p className="text-xl text-blue-100 mb-12">
-                  Experience the power of our CRM solution with a personalized demo 
+                  Experience the power of our CRM solution with a personalized demo
                   tailored to your industry and business needs.
                 </p>
 
@@ -372,17 +372,15 @@ const CRMPage = () => {
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
                     Request Your Personalized Demo
                   </h3>
-                  
-                  <form 
-                    name="crm-demo-request" 
+
+                  <form
+                    name="crm-demo-request"
                     method="POST"
-                    data-netlify="true"
-                    data-netlify-honeypot="bot-field"
-                    action="/thank-you"
+                    action="/api/contact"
                     className="space-y-6"
                   >
-                    <input type="hidden" name="form-name" value="crm-demo-request" />
-                    <div style={{display: 'none'}}>
+                    <input type="hidden" name="redirect" value="/thank-you" />
+                    <div style={{ display: 'none' }}>
                       <label>
                         Don't fill this out if you're human: <input name="bot-field" />
                       </label>
@@ -544,7 +542,7 @@ const CRMPage = () => {
                       Lead Management Automation
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Automatically capture leads from your website, social media, and advertising campaigns. 
+                      Automatically capture leads from your website, social media, and advertising campaigns.
                       Our CRM scores leads based on behavior and routes them to the right sales team member.
                     </p>
                     <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -568,7 +566,7 @@ const CRMPage = () => {
                       Customer Communication Hub
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Centralize all customer communications including emails, calls, meetings, and social media 
+                      Centralize all customer communications including emails, calls, meetings, and social media
                       interactions in one unified timeline for complete relationship visibility.
                     </p>
                     <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -594,7 +592,7 @@ const CRMPage = () => {
                       Sales Pipeline Management
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Visualize your entire sales process with customizable pipelines. Track deals, 
+                      Visualize your entire sales process with customizable pipelines. Track deals,
                       forecast revenue, and identify bottlenecks to optimize your sales performance.
                     </p>
                     <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -618,7 +616,7 @@ const CRMPage = () => {
                       Marketing Integration
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Connect your CRM with all marketing channels including email campaigns, 
+                      Connect your CRM with all marketing channels including email campaigns,
                       social media, and advertising platforms for complete customer journey tracking.
                     </p>
                     <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
@@ -659,7 +657,7 @@ const CRMPage = () => {
                     AI-Powered Intelligence
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Machine learning algorithms that predict customer behavior, optimize sales processes, 
+                    Machine learning algorithms that predict customer behavior, optimize sales processes,
                     and provide actionable insights for better decision-making.
                   </p>
                 </div>
@@ -672,7 +670,7 @@ const CRMPage = () => {
                     Seamless Integrations
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Connect with 500+ business tools including email platforms, accounting software, 
+                    Connect with 500+ business tools including email platforms, accounting software,
                     marketing automation, and social media management systems.
                   </p>
                 </div>
@@ -685,7 +683,7 @@ const CRMPage = () => {
                     Expert Support
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Round-the-clock technical support, onboarding assistance, and strategic consulting 
+                    Round-the-clock technical support, onboarding assistance, and strategic consulting
                     to ensure your CRM delivers maximum value for your business.
                   </p>
                 </div>
@@ -700,19 +698,19 @@ const CRMPage = () => {
                 Ready to Transform Your Customer Relationships?
               </h2>
               <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                Join hundreds of businesses that have revolutionized their sales processes 
+                Join hundreds of businesses that have revolutionized their sales processes
                 with The Dynamic Rankers CRM. Start your transformation today.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a 
+                <a
                   href="#demo"
                   className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 shadow-lg"
                 >
                   <Play className="w-5 h-5" />
                   <span>Get Free Demo</span>
                 </a>
-                
+
                 <Link
                   to="/book-a-call-meeting"
                   className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center space-x-2"
@@ -731,9 +729,9 @@ const CRMPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <div className="flex items-center space-x-2 mb-4">
-                  <img 
-                    src="/the copy copy.png" 
-                    alt="The Dynamic Rankers Logo" 
+                  <img
+                    src="/the copy copy.png"
+                    alt="The Dynamic Rankers Logo"
                     className="w-8 h-8 object-contain"
                   />
                   <div>
@@ -742,7 +740,7 @@ const CRMPage = () => {
                   </div>
                 </div>
                 <p className="text-gray-400 text-sm">
-                  Transforming customer relationships through intelligent CRM solutions 
+                  Transforming customer relationships through intelligent CRM solutions
                   that drive business growth and operational efficiency.
                 </p>
               </div>
