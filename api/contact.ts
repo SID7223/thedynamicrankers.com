@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { ContactEmailTemplate } from "../../src/components/ContactEmailTemplate";
+import { ContactEmailTemplate } from "../../src/components/ContactEmailTemplate.js";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resendFromEmail = process.env.RESEND_FROM_EMAIL;
@@ -56,3 +56,4 @@ export default async function handler(req: any, res: any) {
     });
   }
 }
+
