@@ -59,8 +59,8 @@ const BookACall: React.FC = () => {
               action="/api/contact"
               className="space-y-6"
             >
-              {/* redirect so server can send user to the existing success page */}
-              <input type="hidden" name="redirect" value="/success" />
+              {/* redirect so server can send user to the existing thank-you page */}
+              <input type="hidden" name="redirect" value="/thank-you" />
 
               {/* honeypot (bots fill this; humans won't) */}
               <div style={{ display: 'none' }}>
