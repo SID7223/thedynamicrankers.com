@@ -3,7 +3,7 @@ import { Calendar, Phone, Send } from 'lucide-react';
 
 const BookACall: React.FC = () => {
   return (
-    <section className="py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+    <section className="pt-32 pb-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 sm:mb-16">
           <div className="flex items-center justify-center mb-4">
