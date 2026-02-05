@@ -66,4 +66,5 @@ const BehavorialData: React.FC = () => {
   );
 };
 
-export default BehavorialData;
+export default BehavioralData;
+
