@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const BehavorialData: React.FC = () => {
+const BehavioralData: React.FC = () => {
   return (
     <>
       <Helmet>
@@ -67,4 +67,5 @@ const BehavorialData: React.FC = () => {
 };
 
 export default BehavioralData;
+
 
