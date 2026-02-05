@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 const Careers: React.FC = () => {
   const [filter, setFilter] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
-  const navigate = useNavigate();
   const jobListings = [
     { id: 1, title: 'Frontend Developer', location: 'Remote', description: 'Develop and maintain user interfaces.' },
     { id: 2, title: 'Backend Developer', location: 'On-site', description: 'Build and manage server-side logic.' },
@@ -19,13 +17,6 @@ const Careers: React.FC = () => {
   const handleApplyClick = (job) => {
     setSelectedJob(job);
     setShowForm(true);
-  };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here (e.g., send data to an API)
-    console.log('Form submitted for job:', selectedJob);
-    // Redirect to /book-a-call after submission
-    navigate('/book-a-call-meeting');
   };
   return (
     <>
@@ -52,20 +43,7 @@ const Careers: React.FC = () => {
             <div className="mb-6">
               <input 
                 type="text" 
-                placeholder="Filter jobs..."
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-4">
-              {filteredJobs.map(job => (
-                <motion.div 
-                  key={job.id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex justify-between items-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+@@ -69,53 +60,64 @@ const Careers: React.FC = () => {
                   transition={{ duration: 0.5 }}
                 >
                   <div>
@@ -91,7 +69,18 @@ const Careers: React.FC = () => {
                 transition={{ duration: 0.5 }}
               >
                 <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">Apply for {selectedJob.title}</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                  name="careers"
+                  method="POST"
+                  action="/api/contact"
+                  className="space-y-4"
+                >
+                  <input type="hidden" name="redirect" value="/thank-you" />
+                  <input
+                    type="hidden"
+                    name="jobTitle"
+                    value={selectedJob.title}
+                  />
                   <div>
                     <label htmlFor="name" className="block text-gray-700 dark:text-gray-300 mb-1">Name</label>
                     <input type="text" id="name" name="name" className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white" required />
@@ -101,12 +90,12 @@ const Careers: React.FC = () => {
                     <input type="email" id="email" name="email" className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white" required />
                   </div>
                   <div>
-                    <label htmlFor="resume" className="block text-gray-700 dark:text-gray-300 mb-1">Resume</label>
-                    <input type="file" id="resume" name="resume" className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white" required />
+                    <label htmlFor="resumeLink" className="block text-gray-700 dark:text-gray-300 mb-1">Resume Link</label>
+                    <input type="url" id="resumeLink" name="resumeLink" className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white" placeholder="https://..." />
                   </div>
                   <div>
-                    <label htmlFor="coverLetter" className="block text-gray-700 dark:text-gray-300 mb-1">Cover Letter</label>
-                    <textarea id="coverLetter" name="coverLetter" rows={4} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white"></textarea>
+                    <label htmlFor="message" className="block text-gray-700 dark:text-gray-300 mb-1">Cover Letter</label>
+                    <textarea id="message" name="message" rows={4} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white" required></textarea>
                   </div>
                   <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">Submit Application</button>
                 </form>
