@@ -43,7 +43,6 @@ const Careers: React.FC = () => {
             <div className="mb-6">
               <input 
                 type="text" 
-@@ -69,53 +60,64 @@ const Careers: React.FC = () => {
                   transition={{ duration: 0.5 }}
                 >
                   <div>
