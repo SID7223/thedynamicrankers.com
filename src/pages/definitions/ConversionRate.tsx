@@ -9,7 +9,7 @@ const ConversionRate: React.FC = () => {
         <meta name="description" content="Learn what conversion rate means in digital marketing and how The Dynamic Rankers optimize every touchpoint to maximize your business conversions and ROI." />
       </Helmet>
       
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 pt-32 pb-12">
         <div className="max-w-3xl mx-auto px-6">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
             <img 
