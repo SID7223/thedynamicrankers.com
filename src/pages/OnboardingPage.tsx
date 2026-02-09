@@ -245,9 +245,9 @@ const OnboardingPage: React.FC = () => {
         />
       </div>
 
-      <div className="flex-1 relative flex items-center justify-center px-4">
-        <div className="absolute top-8 left-0 w-full text-center">
-          <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">
+      <div className="flex-1 relative overflow-y-auto px-4 py-12 md:py-0 flex items-start md:items-center justify-center">
+        <div className="absolute top-4 md:top-8 left-0 w-full text-center pointer-events-none">
+          <span className="text-[10px] md:text-sm font-medium text-gray-400 uppercase tracking-widest">
             Step {step} of 4
           </span>
         </div>
@@ -261,16 +261,16 @@ const OnboardingPage: React.FC = () => {
             animate="center"
             exit="exit"
             transition={pageTransition}
-            className="w-full max-w-2xl"
+            className="w-full max-w-2xl py-8"
           >
             {step === 1 && (
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Identity & Authority</h1>
-                  <p className="text-gray-500 dark:text-gray-400 text-lg">Tell us a bit about yourself and your organization.</p>
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Identity & Authority</h1>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">Tell us a bit about yourself and your organization.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
                       <Building2 className="w-4 h-4" /> Organization Name
@@ -352,25 +352,25 @@ const OnboardingPage: React.FC = () => {
             )}
 
             {step === 2 && (
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Primary Intent</h1>
-                  <p className="text-gray-500 dark:text-gray-400 text-lg">What best describes why you’re reaching out?</p>
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Primary Intent</h1>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">What best describes why you’re reaching out?</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   {(Object.keys(PATH_CONTENT) as Path[]).map((key) => (
                     <button
                       key={key}
                       onClick={() => updateData({ primaryIntent: key, refinement: '', closing: '' })}
-                      className={`p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.02] ${
+                      className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.02] ${
                         data.primaryIntent === key
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                           : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-xl font-semibold">{PATH_CONTENT[key].label}</span>
+                        <span className="text-lg md:text-xl font-semibold">{PATH_CONTENT[key].label}</span>
                         {data.primaryIntent === key && <Check className="w-6 h-6" />}
                       </div>
                     </button>
@@ -380,27 +380,27 @@ const OnboardingPage: React.FC = () => {
             )}
 
             {step === 3 && data.primaryIntent && (
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Refinement</h1>
-                  <p className="text-gray-500 dark:text-gray-400 text-lg">
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Refinement</h1>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
                     {PATH_CONTENT[data.primaryIntent].page3.question}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-3 md:gap-4">
                   {PATH_CONTENT[data.primaryIntent].page3.options.map((option) => (
                     <button
                       key={option}
                       onClick={() => updateData({ refinement: option })}
-                      className={`p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
+                      className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.refinement === option
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                           : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-xl font-semibold">{option}</span>
+                        <span className="text-lg md:text-xl font-semibold">{option}</span>
                         {data.refinement === option && <Check className="w-6 h-6" />}
                       </div>
                     </button>
@@ -410,27 +410,27 @@ const OnboardingPage: React.FC = () => {
             )}
 
             {step === 4 && data.primaryIntent && (
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Closing Filter</h1>
-                  <p className="text-gray-500 dark:text-gray-400 text-lg">
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Closing Filter</h1>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
                     {PATH_CONTENT[data.primaryIntent].page4.question}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-3 md:gap-4">
                   {PATH_CONTENT[data.primaryIntent].page4.options.map((option) => (
                     <button
                       key={option}
                       onClick={() => updateData({ closing: option })}
-                      className={`p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
+                      className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.closing === option
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                           : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-xl font-semibold">{option}</span>
+                        <span className="text-lg md:text-xl font-semibold">{option}</span>
                         {data.closing === option && <Check className="w-6 h-6" />}
                       </div>
                     </button>
@@ -439,11 +439,11 @@ const OnboardingPage: React.FC = () => {
               </div>
             )}
 
-            <div className="mt-12 flex justify-center">
+            <div className="mt-8 md:mt-12 flex justify-center pb-8 md:pb-0">
               <button
                 disabled={!canProceed() || isSubmitting}
                 onClick={handleNext}
-                className={`flex items-center space-x-2 px-12 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform ${
+                className={`flex items-center space-x-2 px-8 md:px-12 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform ${
                   canProceed() && !isSubmitting
                     ? 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.05] shadow-lg shadow-blue-500/25'
                     : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'

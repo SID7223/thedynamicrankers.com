@@ -157,22 +157,6 @@ const MainPage = () => {
   );
 };
 
-// Hook to detect desktop screen size
-const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = React.useState(false);
-  
-  React.useEffect(() => {
-    const checkScreenSize = () => {
-      setIsDesktop(window.innerWidth >= 768);
-    };
-    
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-  
-  return isDesktop;
-};
 
 function App() {
   const location = useLocation(); // New addition to track URL
@@ -188,7 +172,7 @@ function App() {
         {/* Only render global Header if NOT on a CRM page or Onboarding page */}
         {!isCrmPage && !isOnboardingPage && <Header />}
         
-        <DarkModeToggle />
+        {!isOnboardingPage && <DarkModeToggle />}
         
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
