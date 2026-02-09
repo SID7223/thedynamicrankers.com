@@ -133,12 +133,18 @@ const OnboardingPage: React.FC = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
+      // Map intent key to label for human-readable notifications
+      const submissionData = {
+        ...data,
+        primaryIntent: data.primaryIntent ? PATH_CONTENT[data.primaryIntent].label : data.primaryIntent
+      };
+
       const response = await fetch('/api/onboarding', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(submissionData),
       });
 
       if (response.ok) {
@@ -421,7 +427,7 @@ const OnboardingPage: React.FC = () => {
                 <div className="text-center space-y-2">
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Schedule Strategy Call</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
-                    Select a time that works best for your team.
+                    Pick a slot in our calendar below, then confirm it here.
                   </p>
                 </div>
 
@@ -447,7 +453,7 @@ const OnboardingPage: React.FC = () => {
                     className="w-full max-w-md mx-auto block p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
                     placeholder="e.g. Feb 15, 2:00 PM PKT"
                   />
-                  <p className="text-[10px] text-gray-400">Please paste the time you booked in the calendar above.</p>
+                  <p className="text-[10px] text-gray-400">Our team will manually confirm this slot on the calendar once you submit the form.</p>
                 </div>
               </div>
             )}
