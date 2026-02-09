@@ -31,6 +31,7 @@ const Careers = React.lazy(() => import('./pages/Careers'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'));
 const SpecialBookingPage = React.lazy(() => import('./pages/SpecialBookingPage'));
+const OnboardingPage = React.lazy(() => import('./pages/OnboardingPage'));
 
 // ✅ ADDED: Message page route target
 const MessagePage = React.lazy(() => import('./pages/MessagePage'));
@@ -174,18 +175,18 @@ const useIsDesktop = () => {
 };
 
 function App() {
-  const isDesktop = useIsDesktop();
   const location = useLocation(); // New addition to track URL
   
   // New logic to check if current route is part of the CRM section
-  const isCrmPage = location.pathname.startsWith('/crm'); 
+  const isCrmPage = location.pathname.startsWith('/crm');
+  const isOnboardingPage = location.pathname === '/onboarding';
   
   return (
     <>
       <ScrollToTop />
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-        {/* Only render global Header if NOT on a CRM page */}
-        {!isCrmPage && <Header />}
+        {/* Only render global Header if NOT on a CRM page or Onboarding page */}
+        {!isCrmPage && !isOnboardingPage && <Header />}
         
         <DarkModeToggle />
         
@@ -271,11 +272,14 @@ function App() {
             <Route path="/crm/features" element={<CRMFeatures />} />
             <Route path="/crm/industries" element={<CRMIndustries />} />
             <Route path="/crm/case-studies" element={<CRMCaseStudies />} />
+
+            {/* Onboarding Funnel */}
+            <Route path="/onboarding" element={<OnboardingPage />} />
           </Routes>
         </Suspense>
         
-        <Footer />
-        <AIAssistant />
+        {!isOnboardingPage && <Footer />}
+        {!isOnboardingPage && <AIAssistant />}
       </div>
     </>
   );
