@@ -245,7 +245,7 @@ const OnboardingPage: React.FC = () => {
         />
       </div>
 
-      <div className="flex-1 relative overflow-y-auto px-4 py-12 md:py-0 flex items-start md:items-center justify-center">
+      <div className="flex-1 relative overflow-y-auto px-4 pt-36 pb-12 md:py-0 flex items-start md:items-center justify-center">
         <div className="absolute top-4 md:top-8 left-0 w-full text-center pointer-events-none">
           <span className="text-[10px] md:text-sm font-medium text-gray-400 uppercase tracking-widest">
             Step {step} of 4

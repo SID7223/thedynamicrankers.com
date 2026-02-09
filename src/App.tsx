@@ -172,7 +172,7 @@ function App() {
         {/* Only render global Header if NOT on a CRM page or Onboarding page */}
         {!isCrmPage && !isOnboardingPage && <Header />}
         
-        {!isOnboardingPage && <DarkModeToggle />}
+        <DarkModeToggle />
         
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
