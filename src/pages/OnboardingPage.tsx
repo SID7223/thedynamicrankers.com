@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { Check, ChevronRight, Loader2, Calendar, Building2, Briefcase, MapPin, User, Mail, Phone } from 'lucide-react';
+import { Check, ChevronRight, Loader2, Building2, Briefcase, MapPin, User, Mail, Phone } from 'lucide-react';
 
 // Types
 type Path = 'A' | 'B' | 'C' | 'D';
@@ -195,7 +195,7 @@ const OnboardingPage: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen h-screen flex items-center justify-center bg-white dark:bg-gray-900 overflow-hidden px-4">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 px-4 py-8">
         <Helmet>
           <title>Thank You | Dynamic Rankers</title>
           <meta name="robots" content="noindex, nofollow" />
@@ -203,26 +203,34 @@ const OnboardingPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full text-center space-y-8 p-8 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700"
+          className="max-w-5xl w-full text-center space-y-6 p-6 md:p-10 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center"
         >
-          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto">
-            <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+            <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
           </div>
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Thank You!</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Your onboarding data has been successfully submitted. We're excited to start this journey with you.
+          <div className="space-y-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Thank You!</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-lg mx-auto">
+              Your onboarding data has been successfully submitted. Please schedule your strategy call below to get started.
             </p>
           </div>
-          <a
-            href="https://calendly.com/dynamicrankers"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center space-x-2 w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-blue-500/25"
-          >
-            <Calendar className="w-5 h-5" />
-            <span>Schedule Your Strategy Call</span>
-          </a>
+
+          <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner h-[450px] md:h-[650px] relative">
+            <iframe
+              src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Asia%2FKarachi&showPrint=0&src=ZXJpY0B0aGVkeW5hbWljcmFua2Vycy5jb20&src=ZW4ucGsjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043"
+              style={{ border: 0 }}
+              className="absolute inset-0 w-full h-full"
+              frameBorder="0"
+              scrolling="no"
+              title="Google Calendar"
+            ></iframe>
+          </div>
+
+          <div className="pt-4">
+            <p className="text-xs text-gray-500 dark:text-gray-500">
+              Can't see the calendar? <a href="mailto:eric@thedynamicrankers.com" className="text-blue-500 hover:underline">Contact us directly</a>
+            </p>
+          </div>
         </motion.div>
       </div>
     );
