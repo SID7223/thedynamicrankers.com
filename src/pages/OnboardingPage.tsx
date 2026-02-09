@@ -17,6 +17,8 @@ interface OnboardingData {
   primaryIntent: Path | '';
   refinement: string;
   closing: string;
+  scheduledMeeting: string;
+  communicationChannel: string;
 }
 
 const STORAGE_KEY = 'dr_onboarding_data';
@@ -84,6 +86,8 @@ const OnboardingPage: React.FC = () => {
     primaryIntent: '',
     refinement: '',
     closing: '',
+    scheduledMeeting: '',
+    communicationChannel: '',
   });
 
   // Security Check
@@ -119,7 +123,7 @@ const OnboardingPage: React.FC = () => {
   }, [data, step, isSubmitted]);
 
   const handleNext = () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep((prev) => prev + 1);
     } else {
       handleSubmit();
@@ -183,19 +187,21 @@ const OnboardingPage: React.FC = () => {
   const isStep1Valid = data.orgName && data.industry && data.location && data.role && data.email && data.phone;
   const isStep2Valid = data.primaryIntent !== '';
   const isStep3Valid = data.refinement !== '';
-  const isStep4Valid = data.closing !== '';
+  const isStep4Valid = data.scheduledMeeting !== '';
+  const isStep5Valid = data.communicationChannel !== '';
 
   const canProceed = () => {
     if (step === 1) return isStep1Valid;
     if (step === 2) return isStep2Valid;
     if (step === 3) return isStep3Valid;
     if (step === 4) return isStep4Valid;
+    if (step === 5) return isStep5Valid;
     return false;
   };
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 px-4 py-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-8">
         <Helmet>
           <title>Thank You | Dynamic Rankers</title>
           <meta name="robots" content="noindex, nofollow" />
@@ -203,34 +209,27 @@ const OnboardingPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-5xl w-full text-center space-y-6 p-6 md:p-10 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 flex flex-col items-center"
+          className="max-w-2xl w-full text-center space-y-6 p-8 md:p-12 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col items-center"
         >
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-            <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
+          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+            <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
           </div>
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Thank You!</h1>
-            <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-lg mx-auto">
-              Your onboarding data has been successfully submitted. Please schedule your strategy call below to get started.
+          <div className="space-y-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Success!</h1>
+            <p className="text-gray-800 dark:text-gray-200 text-lg md:text-xl font-medium">
+              Your onboarding journey has officially begun. We've received your data and scheduled meeting details.
+            </p>
+            <p className="text-gray-600 dark:text-gray-400">
+              A confirmation email has been sent to your inbox. We look forward to our strategy call!
             </p>
           </div>
 
-          <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner h-[450px] md:h-[650px] relative">
-            <iframe
-              src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Asia%2FKarachi&showPrint=0&src=ZXJpY0B0aGVkeW5hbWljcmFua2Vycy5jb20&src=ZW4ucGsjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043"
-              style={{ border: 0 }}
-              className="absolute inset-0 w-full h-full"
-              frameBorder="0"
-              scrolling="no"
-              title="Google Calendar"
-            ></iframe>
-          </div>
-
-          <div className="pt-4">
-            <p className="text-xs text-gray-500 dark:text-gray-500">
-              Can't see the calendar? <a href="mailto:eric@thedynamicrankers.com" className="text-blue-500 hover:underline">Contact us directly</a>
-            </p>
-          </div>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
+          >
+            Return to Homepage
+          </button>
         </motion.div>
       </div>
     );
@@ -244,11 +243,11 @@ const OnboardingPage: React.FC = () => {
       </Helmet>
 
       {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-100 dark:bg-gray-800 z-50">
+      <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 z-50">
         <motion.div
           className="h-full bg-blue-600"
           initial={{ width: '0%' }}
-          animate={{ width: `${(step / 4) * 100}%` }}
+          animate={{ width: `${(step / 5) * 100}%` }}
           transition={{ duration: 0.5 }}
         />
       </div>
@@ -256,7 +255,7 @@ const OnboardingPage: React.FC = () => {
       <div className="flex-1 relative overflow-y-auto px-4 pt-36 pb-12 md:py-0 flex items-start md:items-center justify-center">
         <div className="absolute top-4 md:top-8 left-0 w-full text-center pointer-events-none">
           <span className="text-[10px] md:text-sm font-medium text-gray-400 uppercase tracking-widest">
-            Step {step} of 4
+            Step {step} of 5
           </span>
         </div>
 
@@ -287,7 +286,7 @@ const OnboardingPage: React.FC = () => {
                       type="text"
                       value={data.orgName}
                       onChange={(e) => updateData({ orgName: e.target.value })}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
                       placeholder="e.g. Acme Corp"
                     />
                   </div>
@@ -299,7 +298,7 @@ const OnboardingPage: React.FC = () => {
                       type="text"
                       value={data.industry}
                       onChange={(e) => updateData({ industry: e.target.value })}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
                       placeholder="e.g. Technology"
                     />
                   </div>
@@ -311,7 +310,7 @@ const OnboardingPage: React.FC = () => {
                       type="text"
                       value={data.location}
                       onChange={(e) => updateData({ location: e.target.value })}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
                       placeholder="e.g. New York, USA"
                     />
                   </div>
@@ -322,7 +321,7 @@ const OnboardingPage: React.FC = () => {
                     <select
                       value={data.role}
                       onChange={(e) => updateData({ role: e.target.value })}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none text-gray-900 dark:text-white"
                     >
                       <option value="">Select your role</option>
                       <option value="Owner">Owner</option>
@@ -339,7 +338,7 @@ const OnboardingPage: React.FC = () => {
                       type="email"
                       value={data.email}
                       onChange={(e) => updateData({ email: e.target.value })}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
                       placeholder="e.g. hello@acme.com"
                     />
                   </div>
@@ -351,7 +350,7 @@ const OnboardingPage: React.FC = () => {
                       type="tel"
                       value={data.phone}
                       onChange={(e) => updateData({ phone: e.target.value })}
-                      className="w-full p-4 bg-gray-50 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
                       placeholder="e.g. +1 (555) 000-0000"
                     />
                   </div>
@@ -374,7 +373,7 @@ const OnboardingPage: React.FC = () => {
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.02] ${
                         data.primaryIntent === key
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                          : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
@@ -404,7 +403,7 @@ const OnboardingPage: React.FC = () => {
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.refinement === option
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                          : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
@@ -417,29 +416,65 @@ const OnboardingPage: React.FC = () => {
               </div>
             )}
 
-            {step === 4 && data.primaryIntent && (
+            {step === 4 && (
               <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Closing Filter</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Schedule Strategy Call</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
-                    {PATH_CONTENT[data.primaryIntent].page4.question}
+                    Select a time that works best for your team.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 md:gap-4">
-                  {PATH_CONTENT[data.primaryIntent].page4.options.map((option) => (
+                <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-400 dark:border-gray-600 shadow-xl h-[400px] md:h-[500px] relative">
+                  <iframe
+                    src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Asia%2FKarachi&showPrint=0&src=ZXJpY0B0aGVkeW5hbWljcmFua2Vycy5jb20&src=ZW4ucGsjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043"
+                    style={{ border: 0 }}
+                    className="absolute inset-0 w-full h-full"
+                    frameBorder="0"
+                    scrolling="no"
+                    title="Google Calendar"
+                  ></iframe>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 justify-center">
+                    Confirmed Appointment Time
+                  </label>
+                  <input
+                    type="text"
+                    value={data.scheduledMeeting}
+                    onChange={(e) => updateData({ scheduledMeeting: e.target.value })}
+                    className="w-full max-w-md mx-auto block p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
+                    placeholder="e.g. Feb 15, 2:00 PM PKT"
+                  />
+                  <p className="text-[10px] text-gray-400">Please paste the time you booked in the calendar above.</p>
+                </div>
+              </div>
+            )}
+
+            {step === 5 && (
+              <div className="space-y-6 md:space-y-8">
+                <div className="text-center space-y-2">
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Communication Channel</h1>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
+                    How would you like to connect for our meeting?
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 md:gap-4 max-w-md mx-auto w-full">
+                  {["Zoom Meeting", "Google Meet", "WhatsApp / Phone"].map((option) => (
                     <button
                       key={option}
-                      onClick={() => updateData({ closing: option })}
+                      onClick={() => updateData({ communicationChannel: option })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
-                        data.closing === option
+                        data.communicationChannel === option
                           ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                          : 'border-transparent bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
                         <span className="text-lg md:text-xl font-semibold">{option}</span>
-                        {data.closing === option && <Check className="w-6 h-6" />}
+                        {data.communicationChannel === option && <Check className="w-6 h-6" />}
                       </div>
                     </button>
                   ))}
@@ -464,7 +499,7 @@ const OnboardingPage: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <span>{step === 4 ? 'Complete Onboarding' : 'Continue'}</span>
+                    <span>{step === 5 ? 'Complete Onboarding' : 'Continue'}</span>
                     <ChevronRight className="w-5 h-5" />
                   </>
                 )}
