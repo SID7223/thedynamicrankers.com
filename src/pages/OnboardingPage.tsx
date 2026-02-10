@@ -17,7 +17,6 @@ interface OnboardingData {
   primaryIntent: Path | '';
   refinement: string;
   closing: string;
-  scheduledMeeting: string;
   communicationChannel: string;
 }
 
@@ -86,7 +85,6 @@ const OnboardingPage: React.FC = () => {
     primaryIntent: '',
     refinement: '',
     closing: '',
-    scheduledMeeting: '',
     communicationChannel: '',
   });
 
@@ -193,14 +191,13 @@ const OnboardingPage: React.FC = () => {
   const isStep1Valid = data.orgName && data.industry && data.location && data.role && data.email && data.phone;
   const isStep2Valid = data.primaryIntent !== '';
   const isStep3Valid = data.refinement !== '';
-  const isStep4Valid = data.scheduledMeeting !== '';
   const isStep5Valid = data.communicationChannel !== '';
 
   const canProceed = () => {
     if (step === 1) return isStep1Valid;
     if (step === 2) return isStep2Valid;
     if (step === 3) return isStep3Valid;
-    if (step === 4) return isStep4Valid;
+    if (step === 4) return true; // Step 4 is scheduling, user proceeds after booking
     if (step === 5) return isStep5Valid;
     return false;
   };
@@ -248,8 +245,8 @@ const OnboardingPage: React.FC = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {/* Translucent Favicon/Logo */}
-      <div className="absolute top-12 left-6 z-10 opacity-20 pointer-events-none">
+      {/* Translucent Favicon/Logo - Fixed and padded down */}
+      <div className="fixed top-20 left-6 z-50 opacity-20 pointer-events-none">
         <img src="/favicon.svg" alt="Company Logo" className="w-12 h-12 grayscale brightness-0 dark:invert" />
       </div>
 
@@ -263,8 +260,8 @@ const OnboardingPage: React.FC = () => {
         />
       </div>
 
-      <div className="flex-1 relative overflow-y-auto px-4 pt-36 pb-12 md:py-0 flex items-start md:items-center justify-center">
-        <div className="absolute top-4 md:top-8 left-0 w-full text-center pointer-events-none">
+      <div className="flex-1 relative overflow-y-auto px-4 pt-36 pb-12 md:pt-32 md:pb-12 flex items-start justify-center">
+        <div className="fixed top-4 md:top-8 left-0 w-full text-center pointer-events-none z-40">
           <span className="text-[10px] md:text-sm font-medium text-gray-400 uppercase tracking-widest">
             Step {step} of 5
           </span>
@@ -428,15 +425,15 @@ const OnboardingPage: React.FC = () => {
             )}
 
             {step === 4 && (
-              <div className="space-y-6 md:space-y-8">
+              <div className="space-y-4 md:space-y-6">
                 <div className="text-center space-y-2">
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Schedule Strategy Call</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
-                    Pick a slot in our calendar below, then confirm it here.
+                    Pick a slot in our calendar below to book your strategy session.
                   </p>
                 </div>
 
-                <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-400 dark:border-gray-600 shadow-xl h-[600px] relative">
+                <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-400 dark:border-gray-600 shadow-xl h-[550px] md:h-[650px] relative">
                   <iframe
                     src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1cI5oxmj_DipnWQk67oGJmZcueJzKRyuSLi1szOdiHaQeBSUsxg7a4cQz5SDhodV0Cdz-Xjf0Q?gv=true"
                     style={{ border: 0 }}
@@ -444,20 +441,6 @@ const OnboardingPage: React.FC = () => {
                     frameBorder="0"
                     title="Google Calendar Appointment Scheduling"
                   ></iframe>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 justify-center">
-                    Confirmed Appointment Time
-                  </label>
-                  <input
-                    type="text"
-                    value={data.scheduledMeeting}
-                    onChange={(e) => updateData({ scheduledMeeting: e.target.value })}
-                    className="w-full max-w-md mx-auto block p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark dark:text-white transition-all placeholder-gray-500"
-                    placeholder="e.g. Feb 15, 2:00 PM PKT"
-                  />
-                  <p className="text-[10px] text-gray-400">Please confirm the slot you selected in the calendar above.</p>
                 </div>
               </div>
             )}

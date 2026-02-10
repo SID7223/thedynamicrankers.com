@@ -10,7 +10,6 @@ interface OnboardingData {
   primaryIntent: string;
   refinement: string;
   closing: string;
-  scheduledMeeting: string;
   communicationChannel: string;
 }
 
