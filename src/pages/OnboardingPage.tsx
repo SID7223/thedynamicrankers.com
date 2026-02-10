@@ -22,6 +22,7 @@ interface OnboardingData {
 
 const STORAGE_KEY = 'dr_onboarding_data';
 const STEP_KEY = 'dr_onboarding_step';
+const VERIFIED_KEY = 'dr_onboarding_verified';
 
 const PATH_CONTENT = {
   A: {
@@ -75,6 +76,7 @@ const OnboardingPage: React.FC = () => {
   const [step, setStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [data, setData] = useState<OnboardingData>({
     orgName: '',
     industry: '',
@@ -92,7 +94,11 @@ const OnboardingPage: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    if (token !== 'DR_2024_PREMIUM') {
+    const isAlreadyVerified = sessionStorage.getItem(VERIFIED_KEY) === 'true';
+
+    if (token === 'DR_2024_PREMIUM') {
+      sessionStorage.setItem(VERIFIED_KEY, 'true');
+    } else if (!isAlreadyVerified) {
       navigate('/');
     }
   }, [navigate]);
@@ -110,15 +116,16 @@ const OnboardingPage: React.FC = () => {
         setStep(stepNum);
       }
     }
+    setIsLoaded(true);
   }, []);
 
   // Save to sessionStorage
   useEffect(() => {
-    if (!isSubmitted) {
+    if (isLoaded && !isSubmitted) {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       sessionStorage.setItem(STEP_KEY, step.toString());
     }
-  }, [data, step, isSubmitted]);
+  }, [data, step, isSubmitted, isLoaded]);
 
   const handleNext = () => {
     if (step < 5) {
