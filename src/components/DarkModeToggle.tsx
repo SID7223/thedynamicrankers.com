@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const DarkModeToggle = () => {
+  const location = useLocation();
+  const isOnboarding = location.pathname === '/onboarding';
   const [isDark, setIsDark] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -48,7 +51,7 @@ const DarkModeToggle = () => {
 
   return (
     <div 
-      className={`fixed top-20 right-6 z-40 transition-all duration-500 ease-out ${
+      className={`fixed ${isOnboarding ? 'top-4 md:top-6' : 'top-20'} right-6 z-[110] transition-all duration-500 ease-out ${
         isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
       }`}
     >

@@ -246,27 +246,37 @@ const OnboardingPage: React.FC = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      {/* Translucent Favicon/Logo - Fixed and padded down */}
-      <div className="fixed top-20 left-6 z-50 opacity-20 pointer-events-none">
-        <img src="/favicon.svg" alt="Company Logo" className="w-12 h-12 grayscale brightness-0 dark:invert" />
-      </div>
-
-      {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 z-50">
-        <motion.div
-          className="h-full bg-accent-light dark:bg-accent-dark"
-          initial={{ width: '0%' }}
-          animate={{ width: `${(step / 5) * 100}%` }}
-          transition={{ duration: 0.5 }}
-        />
-      </div>
-
-      <div className="flex-1 relative overflow-y-auto px-4 pt-36 pb-12 md:pt-32 md:pb-12 flex items-start justify-center">
-        <div className="fixed top-4 md:top-8 left-0 w-full text-center pointer-events-none z-40">
-          <span className="text-[10px] md:text-sm font-medium text-gray-400 uppercase tracking-widest">
-            Step {step} of 5
-          </span>
+      {/* Consolidated Funnel Header */}
+      <header className="fixed top-0 left-0 w-full z-[100] bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50">
+        {/* Progress Bar */}
+        <div className="w-full h-1 bg-gray-200 dark:bg-gray-800">
+          <motion.div
+            className="h-full bg-accent-light dark:bg-accent-dark"
+            initial={{ width: '0%' }}
+            animate={{ width: `${(step / 5) * 100}%` }}
+            transition={{ duration: 0.5 }}
+          />
         </div>
+
+        <div className="relative h-16 md:h-20 flex items-center justify-center px-6">
+          {/* Logo - Fixed position in header */}
+          <div className="absolute left-6 md:left-12">
+            <img src="/favicon.svg" alt="Company Logo" className="w-8 h-8 md:w-10 md:h-10 opacity-30 grayscale brightness-0 dark:invert" />
+          </div>
+
+          {/* Step Status Indicator */}
+          <div className="text-center">
+            <span className="text-[10px] md:text-xs font-bold text-accent-light dark:text-accent-dark uppercase tracking-[0.3em]">
+              Step {step} of 5
+            </span>
+          </div>
+
+          {/* Placeholder for Dark Mode Toggle (positioned via component) */}
+          <div className="absolute right-6 md:right-12 w-10" />
+        </div>
+      </header>
+
+      <div className="flex-1 relative overflow-y-auto px-4 pt-24 pb-12 md:pt-32 md:pb-12 flex items-start justify-center">
 
         <AnimatePresence mode="wait" custom={step}>
           <motion.div
