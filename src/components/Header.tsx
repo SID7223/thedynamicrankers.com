@@ -99,8 +99,8 @@ const Header = () => {
     }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-4" onClick={closeMenu}>
-            <div className="squircle w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-black transition-all duration-300 flex-shrink-0">
+          <Link to="/" className="flex items-center space-x-4 group" onClick={closeMenu}>
+            <div className="squircle w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-black transition-all duration-300 flex-shrink-0 group-hover:scale-110">
               <img
                 src="/the copy copy.png"
                 alt="The Dynamic Rankers Logo"
@@ -123,7 +123,7 @@ const Header = () => {
               >
                 <Link
                   to={item.path}
-                  className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800 ${location.pathname.startsWith(item.path) && item.path !== '/' ? 'text-blue-600 bg-blue-50 dark:bg-gray-800' : ''}`}
+                  className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-gray-700 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800 ${location.pathname.startsWith(item.path) && item.path !== '/' ? 'text-blue-600 bg-blue-50 dark:bg-gray-800' : ''}`}
                 >
                   <span>{item.label}</span>
                   {item.subItems && (
@@ -145,7 +145,7 @@ const Header = () => {
                         <Link
                           key={index}
                           to={subItem.path}
-                          className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-500 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={closeMenu}
                         >
                           {subItem.label}
@@ -188,7 +188,7 @@ const Header = () => {
                       className={`flex-1 px-4 py-3 text-sm font-medium transition-colors duration-200 ${
                         location.pathname.startsWith(item.path) && item.path !== '/' 
                           ? 'text-blue-600 bg-blue-50 dark:bg-gray-700' 
-                          : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700'
+                          : 'text-gray-700 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       {item.label}
@@ -217,7 +217,7 @@ const Header = () => {
                           <Link
                             key={index}
                             to={subItem.path}
-                            className="block px-8 py-3 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600 transition-colors duration-200"
+                            className="block px-8 py-3 text-sm text-gray-600 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600 transition-colors duration-200"
                             onClick={closeMenu}
                           >
                             {subItem.label}

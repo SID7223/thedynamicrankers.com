@@ -11,6 +11,7 @@ interface Message {
 
 const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -28,6 +29,15 @@ const AIAssistant = () => {
   }, [messages]);
 
   useEffect(() => {
+    const handleScroll = () => {
+      // Show chat button after scrolling 400px (roughly after hero)
+      setIsVisible(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
     if (isOpen && !hasGreeted) {
       // Initialize service only when chat is opened
       if (!geminiService) {
@@ -40,16 +50,6 @@ const AIAssistant = () => {
       setHasGreeted(true);
     }
   }, [isOpen, hasGreeted, geminiService]);
-
-  const addBotMessage = (text: string) => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text,
-      sender: 'bot',
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, newMessage]);
-  };
 
   const addUserMessage = (text: string) => {
     const newMessage: Message = {
@@ -407,7 +407,9 @@ const AIAssistant = () => {
   return (
     <>
       {/* Chat Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 transform ${
+        isVisible || isOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-50 pointer-events-none'
+      }`}>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`w-14 h-14 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 ${
