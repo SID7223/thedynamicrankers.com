@@ -99,17 +99,15 @@ const Header = () => {
     }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2" onClick={closeMenu}>
-            <img 
-              src="/the copy copy.png" 
-              alt="The Dynamic Rankers Logo" 
-              className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
-                !document.documentElement.classList.contains('dark')
-                  ? 'brightness-0' 
-                  : ''
-              }`}
-            />
-            <span className={`text-lg sm:text-xl font-bold text-gray-800 dark:text-white`}>
+          <Link to="/" className="flex items-center space-x-4" onClick={closeMenu}>
+            <div className="squircle w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-black transition-all duration-300 flex-shrink-0">
+              <img
+                src="/the copy copy.png"
+                alt="The Dynamic Rankers Logo"
+                className="w-6 h-6 sm:w-8 sm:h-8 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
+              />
+            </div>
+            <span className="text-lg sm:text-2xl font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
               The Dynamic Rankers
             </span>
           </Link>
