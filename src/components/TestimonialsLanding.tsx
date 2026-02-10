@@ -38,9 +38,9 @@ const TestimonialsLanding = () => {
 
   const stats = [
     { number: "300%", label: "Average Traffic Increase" },
-    { number: "4-6x", label: "Return on Investment" },
-    { number: "90%", label: "Client Retention Rate" },
-    { number: "24hrs", label: "Response Time" }
+    { number: "24/7", label: "Customer Support" },
+    { number: "100%", label: "Client Satisfaction" },
+    { number: "50+", label: "Projects Completed" }
   ];
 
   return (
