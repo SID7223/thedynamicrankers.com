@@ -262,7 +262,7 @@ function App() {
           </Routes>
         </Suspense>
         
-        {!isOnboardingPage && <Footer />}
+        {!isCrmPage && !isOnboardingPage && <Footer />}
         {!isOnboardingPage && <AIAssistant />}
       </div>
     </>
