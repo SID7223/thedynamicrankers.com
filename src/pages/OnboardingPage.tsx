@@ -134,7 +134,8 @@ const OnboardingPage: React.FC = () => {
       // Map intent key to label for human-readable notifications
       const submissionData = {
         ...data,
-        primaryIntent: data.primaryIntent ? PATH_CONTENT[data.primaryIntent].label : data.primaryIntent
+        primaryIntent: data.primaryIntent ? PATH_CONTENT[data.primaryIntent].label : data.primaryIntent,
+        appointmentType: "ERIC WILLIAM | 30-Minute Strategy"
       };
 
       const response = await fetch('/api/onboarding', {
