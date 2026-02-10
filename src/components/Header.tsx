@@ -107,10 +107,9 @@ const Header = () => {
                 className="w-6 h-6 sm:w-8 sm:h-8 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
               />
             </div>
-           <span className="text-sm sm:text-base font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
-            The Dynamic Rankers
+            <span className="text-lg sm:text-2xl font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
+              The Dynamic Rankers
             </span>
-
           </Link>
 
           {/* Desktop Navigation */}
