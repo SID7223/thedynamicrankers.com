@@ -38,8 +38,7 @@ const Hero = () => {
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#0a0d36] dark:text-white mb-6 leading-tight">
               Elevate Your
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-4">
-                Digital Presence
-              </span>
+                Digital Presence   </span>
             </h1>
 
             <p className="text-lg sm:text-xl md:text-2xl text-[#0a0d36] dark:text-white mb-8 leading-relaxed px-4 glare-text [--glare-color:#0a0d36] dark:[--glare-color:white]">
