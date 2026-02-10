@@ -212,7 +212,7 @@ const OnboardingPage: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark px-4 py-8">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 px-4 py-8">
         <Helmet>
           <title>Thank You | Dynamic Rankers</title>
           <meta name="robots" content="noindex, nofollow" />
@@ -226,8 +226,8 @@ const OnboardingPage: React.FC = () => {
             <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
           </div>
           <div className="space-y-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Success!</h1>
-            <p className="text-gray-800 dark:text-gray-200 text-lg md:text-xl font-medium">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#0a0d36] dark:text-white">Success!</h1>
+            <p className="text-[#0a0d36] dark:text-gray-200 text-lg md:text-xl font-medium">
               Your onboarding journey has officially begun. We've received your data and scheduled meeting details.
             </p>
             <p className="text-gray-600 dark:text-gray-400">
@@ -247,14 +247,14 @@ const OnboardingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen h-screen bg-background-light dark:bg-background-dark overflow-hidden flex flex-col font-sans relative">
+    <div className="min-h-screen h-screen bg-white dark:bg-gray-900 overflow-hidden flex flex-col font-sans relative">
       <Helmet>
         <title>Onboarding | Dynamic Rankers</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       {/* Consolidated Funnel Header */}
-      <header className="fixed top-0 left-0 w-full z-[100] bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50">
+      <header className="fixed top-0 left-0 w-full z-[100] bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50">
         {/* Progress Bar */}
         <div className="w-full h-1 bg-gray-200 dark:bg-gray-800">
           <motion.div
@@ -299,13 +299,13 @@ const OnboardingPage: React.FC = () => {
             {step === 1 && (
               <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Identity & Authority</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-[#0a0d36] dark:text-white">Identity & Authority</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">Tell us a bit about yourself and your organization.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-[#0a0d36]/80 dark:text-gray-300 flex items-center gap-2">
                       <Building2 className="w-4 h-4" /> Organization Name
                     </label>
                     <input
@@ -317,7 +317,7 @@ const OnboardingPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-[#0a0d36]/80 dark:text-gray-300 flex items-center gap-2">
                       <Briefcase className="w-4 h-4" /> Industry
                     </label>
                     <input
@@ -329,7 +329,7 @@ const OnboardingPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-[#0a0d36]/80 dark:text-gray-300 flex items-center gap-2">
                       <MapPin className="w-4 h-4" /> Location
                     </label>
                     <input
@@ -341,13 +341,13 @@ const OnboardingPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-[#0a0d36]/80 dark:text-gray-300 flex items-center gap-2">
                       <User className="w-4 h-4" /> Your Role
                     </label>
                     <select
                       value={data.role}
                       onChange={(e) => updateData({ role: e.target.value })}
-                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none text-gray-900 dark:text-white"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all appearance-none text-[#0a0d36] dark:text-white"
                     >
                       <option value="">Select your role</option>
                       <option value="Owner">Owner</option>
@@ -357,7 +357,7 @@ const OnboardingPage: React.FC = () => {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-[#0a0d36]/80 dark:text-gray-300 flex items-center gap-2">
                       <Mail className="w-4 h-4" /> Contact Email
                     </label>
                     <input
@@ -369,7 +369,7 @@ const OnboardingPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="text-sm font-medium text-[#0a0d36]/80 dark:text-gray-300 flex items-center gap-2">
                       <Phone className="w-4 h-4" /> Contact Phone / WhatsApp
                     </label>
                     <input
@@ -387,7 +387,7 @@ const OnboardingPage: React.FC = () => {
             {step === 2 && (
               <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Primary Intent</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-[#0a0d36] dark:text-white">Primary Intent</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">What best describes why you’re reaching out?</p>
                 </div>
 
@@ -398,8 +398,8 @@ const OnboardingPage: React.FC = () => {
                       onClick={() => updateData({ primaryIntent: key, refinement: '', closing: '' })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.02] ${
                         data.primaryIntent === key
-                          ? 'border-accent-light dark:border-accent-dark bg-surface-light dark:bg-surface-dark text-accent-light dark:text-accent-dark'
-                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          ? 'border-accent-light dark:border-accent-dark bg-blue-50 dark:bg-surface-dark text-accent-light dark:text-accent-dark'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-[#0a0d36] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
@@ -415,7 +415,7 @@ const OnboardingPage: React.FC = () => {
             {step === 3 && data.primaryIntent && (
               <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Refinement</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-[#0a0d36] dark:text-white">Refinement</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
                     {PATH_CONTENT[data.primaryIntent].page3.question}
                   </p>
@@ -428,8 +428,8 @@ const OnboardingPage: React.FC = () => {
                       onClick={() => updateData({ refinement: option })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.refinement === option
-                          ? 'border-accent-light dark:border-accent-dark bg-surface-light dark:bg-surface-dark text-accent-light dark:text-accent-dark'
-                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          ? 'border-accent-light dark:border-accent-dark bg-blue-50 dark:bg-surface-dark text-accent-light dark:text-accent-dark'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-[#0a0d36] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">
@@ -445,7 +445,7 @@ const OnboardingPage: React.FC = () => {
             {step === 4 && (
               <div className="space-y-4 md:space-y-6">
                 <div className="text-center space-y-2">
-                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Schedule Strategy Call</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-[#0a0d36] dark:text-white">Schedule Strategy Call</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
                     Pick a slot in our calendar below to book your strategy session.
                   </p>
@@ -466,7 +466,7 @@ const OnboardingPage: React.FC = () => {
             {step === 5 && (
               <div className="space-y-6 md:space-y-8">
                 <div className="text-center space-y-2">
-                  <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white">Communication Channel</h1>
+                  <h1 className="text-2xl md:text-4xl font-bold text-[#0a0d36] dark:text-white">Communication Channel</h1>
                   <p className="text-gray-500 dark:text-gray-400 text-sm md:text-lg px-4">
                     How would you like to connect for our meeting?
                   </p>
@@ -479,8 +479,8 @@ const OnboardingPage: React.FC = () => {
                       onClick={() => updateData({ communicationChannel: option })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.communicationChannel === option
-                          ? 'border-accent-light dark:border-accent-dark bg-surface-light dark:bg-surface-dark text-accent-light dark:text-accent-dark'
-                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          ? 'border-accent-light dark:border-accent-dark bg-blue-50 dark:bg-surface-dark text-accent-light dark:text-accent-dark'
+                          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-[#0a0d36] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       <div className="flex justify-between items-center">

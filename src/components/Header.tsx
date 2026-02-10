@@ -90,12 +90,12 @@ const Header = () => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-white dark:bg-gray-900 shadow-lg py-3 sm:py-4' 
-        : 'bg-gradient-to-b from-black/20 via-black/10 to-transparent sm:bg-transparent py-4 sm:py-6'
+        ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-3 sm:py-4'
+        : 'bg-transparent py-4 sm:py-6'
     }`} style={{
-      transform: isScrolled ? 'translateY(0)' : location.pathname === '/' ? 'translateY(-100%)' : 'translateY(0)',
-      opacity: isScrolled ? 1 : location.pathname === '/' ? 0 : 1,
-      pointerEvents: isScrolled ? 'auto' : location.pathname === '/' ? 'none' : 'auto'
+      transform: 'translateY(0)',
+      opacity: 1,
+      pointerEvents: 'auto'
     }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
@@ -104,14 +104,12 @@ const Header = () => {
               src="/the copy copy.png" 
               alt="The Dynamic Rankers Logo" 
               className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
-                isScrolled && !document.documentElement.classList.contains('dark') 
+                !document.documentElement.classList.contains('dark')
                   ? 'brightness-0' 
                   : ''
               }`}
             />
-            <span className={`text-lg sm:text-xl font-bold ${
-              isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
-            }`}>
+            <span className={`text-lg sm:text-xl font-bold text-gray-800 dark:text-white`}>
               The Dynamic Rankers
             </span>
           </Link>
@@ -127,11 +125,7 @@ const Header = () => {
               >
                 <Link
                   to={item.path}
-                  className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
-                    isScrolled 
-                      ? 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800' 
-                      : 'text-white hover:text-blue-200 hover:bg-white/10'
-                  } ${location.pathname.startsWith(item.path) && item.path !== '/' ? 'text-blue-600 bg-blue-50 dark:bg-gray-800' : ''}`}
+                  className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800 ${location.pathname.startsWith(item.path) && item.path !== '/' ? 'text-blue-600 bg-blue-50 dark:bg-gray-800' : ''}`}
                 >
                   <span>{item.label}</span>
                   {item.subItems && (
@@ -172,9 +166,9 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className={`w-6 h-6 ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} />
+              <X className={`w-6 h-6 text-gray-800 dark:text-white`} />
             ) : (
-              <Menu className={`w-6 h-6 ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} />
+              <Menu className={`w-6 h-6 text-gray-800 dark:text-white`} />
             )}
           </button>
         </div>
