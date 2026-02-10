@@ -108,7 +108,7 @@ const OnboardingPage: React.FC = () => {
     }
     if (savedStep) {
       const stepNum = parseInt(savedStep);
-      if (stepNum >= 1 && stepNum <= 4) {
+      if (stepNum >= 1 && stepNum <= 5) {
         setStep(stepNum);
       }
     }
@@ -207,7 +207,7 @@ const OnboardingPage: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-8">
+      <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark px-4 py-8">
         <Helmet>
           <title>Thank You | Dynamic Rankers</title>
           <meta name="robots" content="noindex, nofollow" />
@@ -232,7 +232,7 @@ const OnboardingPage: React.FC = () => {
 
           <button
             onClick={() => navigate('/')}
-            className="mt-4 px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
+            className="mt-4 px-8 py-3 bg-accent-light dark:bg-accent-dark text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-accent-light/25"
           >
             Return to Homepage
           </button>
@@ -242,16 +242,21 @@ const OnboardingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen h-screen bg-white dark:bg-gray-900 overflow-hidden flex flex-col font-sans">
+    <div className="min-h-screen h-screen bg-background-light dark:bg-background-dark overflow-hidden flex flex-col font-sans relative">
       <Helmet>
         <title>Onboarding | Dynamic Rankers</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
+      {/* Translucent Favicon/Logo */}
+      <div className="absolute top-12 left-6 z-10 opacity-20 pointer-events-none">
+        <img src="/favicon.svg" alt="Company Logo" className="w-12 h-12 grayscale brightness-0 dark:invert" />
+      </div>
+
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 z-50">
         <motion.div
-          className="h-full bg-blue-600"
+          className="h-full bg-accent-light dark:bg-accent-dark"
           initial={{ width: '0%' }}
           animate={{ width: `${(step / 5) * 100}%` }}
           transition={{ duration: 0.5 }}
@@ -292,7 +297,7 @@ const OnboardingPage: React.FC = () => {
                       type="text"
                       value={data.orgName}
                       onChange={(e) => updateData({ orgName: e.target.value })}
-                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
+                      className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark dark:text-white transition-all placeholder-gray-500"
                       placeholder="e.g. Acme Corp"
                     />
                   </div>
@@ -378,7 +383,7 @@ const OnboardingPage: React.FC = () => {
                       onClick={() => updateData({ primaryIntent: key, refinement: '', closing: '' })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.02] ${
                         data.primaryIntent === key
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                          ? 'border-accent-light dark:border-accent-dark bg-surface-light dark:bg-surface-dark text-accent-light dark:text-accent-dark'
                           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -408,7 +413,7 @@ const OnboardingPage: React.FC = () => {
                       onClick={() => updateData({ refinement: option })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.refinement === option
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                          ? 'border-accent-light dark:border-accent-dark bg-surface-light dark:bg-surface-dark text-accent-light dark:text-accent-dark'
                           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -431,14 +436,13 @@ const OnboardingPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-400 dark:border-gray-600 shadow-xl h-[400px] md:h-[500px] relative">
+                <div className="w-full bg-white rounded-2xl overflow-hidden border border-gray-400 dark:border-gray-600 shadow-xl h-[600px] relative">
                   <iframe
-                    src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=Asia%2FKarachi&showPrint=0&src=ZXJpY0B0aGVkeW5hbWljcmFua2Vycy5jb20&src=ZW4ucGsjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23039be5&color=%230b8043"
+                    src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1cI5oxmj_DipnWQk67oGJmZcueJzKRyuSLi1szOdiHaQeBSUsxg7a4cQz5SDhodV0Cdz-Xjf0Q?gv=true"
                     style={{ border: 0 }}
                     className="absolute inset-0 w-full h-full"
                     frameBorder="0"
-                    scrolling="no"
-                    title="Google Calendar"
+                    title="Google Calendar Appointment Scheduling"
                   ></iframe>
                 </div>
 
@@ -450,10 +454,10 @@ const OnboardingPage: React.FC = () => {
                     type="text"
                     value={data.scheduledMeeting}
                     onChange={(e) => updateData({ scheduledMeeting: e.target.value })}
-                    className="w-full max-w-md mx-auto block p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:text-white transition-all placeholder-gray-500"
+                    className="w-full max-w-md mx-auto block p-4 bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark dark:text-white transition-all placeholder-gray-500"
                     placeholder="e.g. Feb 15, 2:00 PM PKT"
                   />
-                  <p className="text-[10px] text-gray-400">Our team will manually confirm this slot on the calendar once you submit the form.</p>
+                  <p className="text-[10px] text-gray-400">Please confirm the slot you selected in the calendar above.</p>
                 </div>
               </div>
             )}
@@ -474,7 +478,7 @@ const OnboardingPage: React.FC = () => {
                       onClick={() => updateData({ communicationChannel: option })}
                       className={`p-4 md:p-6 text-left rounded-2xl border-2 transition-all duration-300 transform hover:scale-[1.01] ${
                         data.communicationChannel === option
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                          ? 'border-accent-light dark:border-accent-dark bg-surface-light dark:bg-surface-dark text-accent-light dark:text-accent-dark'
                           : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -494,7 +498,7 @@ const OnboardingPage: React.FC = () => {
                 onClick={handleNext}
                 className={`flex items-center space-x-2 px-8 md:px-12 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg transition-all duration-300 transform ${
                   canProceed() && !isSubmitting
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.05] shadow-lg shadow-blue-500/25'
+                    ? 'bg-accent-light dark:bg-accent-dark text-white hover:opacity-90 hover:scale-[1.05] shadow-lg shadow-accent-light/25'
                     : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                 }`}
               >
