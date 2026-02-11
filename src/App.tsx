@@ -81,6 +81,22 @@ const BrandIdentity = React.lazy(() => import('./pages/definitions/BrandIdentity
 const VisualStorytelling = React.lazy(() => import('./pages/definitions/VisualStorytelling'));
 const SalesPsychology = React.lazy(() => import('./pages/definitions/SalesPsychology'));
 const ContentOptimization = React.lazy(() => import('./pages/definitions/ContentOptimization'));
+const BehavioralData = React.lazy(() => import('./pages/definitions/BehavioralData'));
+const BrandConsistency = React.lazy(() => import('./pages/definitions/BrandConsistency'));
+const ColorGrading = React.lazy(() => import('./pages/definitions/ColorGrading'));
+const ContentPillars = React.lazy(() => import('./pages/definitions/ContentPillars'));
+const EditorialSeo = React.lazy(() => import('./pages/definitions/EditorialSeo'));
+const InteractiveUx = React.lazy(() => import('./pages/definitions/InteractiveUx'));
+const JavascriptAutomation = React.lazy(() => import('./pages/definitions/JavascriptAutomation'));
+const MotionGraphics = React.lazy(() => import('./pages/definitions/MotionGraphics'));
+const OnPageOptimization = React.lazy(() => import('./pages/definitions/OnPageOptimization'));
+const PredictiveAnalytics = React.lazy(() => import('./pages/definitions/PredictiveAnalytics'));
+const SemanticSearch = React.lazy(() => import('./pages/definitions/SemanticSearch'));
+const ServerResponseTime = React.lazy(() => import('./pages/definitions/ServerResponseTime'));
+const StructuredData = React.lazy(() => import('./pages/definitions/StructuredData'));
+const TechnicalSiteAudit = React.lazy(() => import('./pages/definitions/TechnicalSiteAudit'));
+const VisualHierarchy = React.lazy(() => import('./pages/definitions/VisualHierarchy'));
+const Cdn = React.lazy(() => import('./pages/definitions/cdn'));
 
 // Loading component for lazy-loaded routes
 const LoadingSpinner = () => (
@@ -247,6 +263,32 @@ function App() {
             <Route path="/definitions/visual-storytelling" element={<VisualStorytelling />} />
             <Route path="/definitions/sales-psychology" element={<SalesPsychology />} />
             <Route path="/definitions/content-optimization" element={<ContentOptimization />} />
+            <Route path="/definitions/behavioral-data" element={<BehavioralData />} />
+            <Route path="/definitions/brand-consistency" element={<BrandConsistency />} />
+            <Route path="/definitions/color-grading" element={<ColorGrading />} />
+            <Route path="/definitions/content-pillars" element={<ContentPillars />} />
+            <Route path="/definitions/editorial-seo" element={<EditorialSeo />} />
+            <Route path="/definitions/interactive-ux" element={<InteractiveUx />} />
+            <Route path="/definitions/javascript-automation" element={<JavascriptAutomation />} />
+            <Route path="/definitions/motion-graphics" element={<MotionGraphics />} />
+            <Route path="/definitions/on-page-optimization" element={<OnPageOptimization />} />
+            <Route path="/definitions/predictive-analytics" element={<PredictiveAnalytics />} />
+            <Route path="/definitions/semantic-search" element={<SemanticSearch />} />
+            <Route path="/definitions/server-response-time" element={<ServerResponseTime />} />
+            <Route path="/definitions/structured-data" element={<StructuredData />} />
+            <Route path="/definitions/technical-seo-audit" element={<TechnicalSiteAudit />} />
+            <Route path="/definitions/visual-hierarchy" element={<VisualHierarchy />} />
+            <Route path="/definitions/cdn" element={<Cdn />} />
+            <Route path="/definitions/meta-structure" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/page-indexing" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/responsive-layout" element={<OnPageOptimization />} />
+            <Route path="/definitions/engagement-rate" element={<OnlineEngagement />} />
+            <Route path="/definitions/platform-targeting" element={<AudienceTargeting />} />
+            <Route path="/definitions/bid-strategy" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/conversion-funnel" element={<ConversionRate />} />
+            <Route path="/definitions/24-7-service" element={<CustomerSupportPage />} />
+            <Route path="/definitions/ticket-resolution" element={<CustomerSupportPage />} />
+            <Route path="/definitions/interactive-design" element={<InteractiveUx />} />
             <Route path="/book-a-call-meeting" element={<BookACall />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="/special-booking" element={<SpecialBookingPage />} />

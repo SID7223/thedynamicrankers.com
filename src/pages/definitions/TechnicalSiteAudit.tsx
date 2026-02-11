@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const TechnicalSetAudit: React.FC = () => {
+const TechnicalSiteAudit: React.FC = () => {
   return (
     <>
       <Helmet>
@@ -66,4 +66,4 @@ const TechnicalSetAudit: React.FC = () => {
   );
 };
 
-export default TechnicalSetAudit;
+export default TechnicalSiteAudit;
