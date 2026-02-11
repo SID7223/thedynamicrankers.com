@@ -22,7 +22,7 @@ const Contact = () => {
   return (
     <section
       id="contact"
-      className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300"
+      className="py-20 bg-gray-50 dark:bg-[#02020b] dark:from-transparent dark:to-transparent transition-colors duration-300"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 sm:mb-16">
