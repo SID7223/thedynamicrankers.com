@@ -10,7 +10,7 @@ const VisualStorytelling = () => {
         <meta name="keywords" content="visual storytelling, narrative design, visual communication, The Dynamic Rankers" />
       </Helmet>
       
-      <div className="p-8">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
             Visual Storytelling
