@@ -8,6 +8,15 @@
   --y: 50%;
 }
 
+/* Set global scale to 90% for desktop view */
+@media (min-width: 1024px) {
+  html {
+    zoom: 0.9;
+    -moz-transform: scale(0.9);
+    -moz-transform-origin: top center;
+  }
+}
+
 /* ===== Background Color Animation Based on Mouse Movement ===== */
 body {
   background: radial-gradient(
