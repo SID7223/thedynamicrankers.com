@@ -66,4 +66,5 @@ const TechnicalSetAudit: React.FC = () => {
   );
 };
 
-export default TechnicalSetAudit;
+export default TechnicalSeoAudit;
+
