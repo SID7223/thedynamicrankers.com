@@ -35,9 +35,9 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex flex-col items-center justify-center min-h-screen pt-20 sm:pt-0">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#0a0d36] dark:text-white mb-2 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#0a0d36] dark:text-white mb-4 leading-tight">
               Elevate Your
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block">
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-2">
                 Digital Presence
               </span>
             </h1>
