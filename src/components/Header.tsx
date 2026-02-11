@@ -104,7 +104,7 @@ const Header = () => {
               <img
                 src="/the copy copy.png"
                 alt="The Dynamic Rankers Logo"
-                className="w-6 h-6 sm:w-8 sm:h-8 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
+                className="w-5 h-5 sm:w-6 sm:h-6 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
               />
             </div>
             <span className="text-base sm:text-lg font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
