@@ -32,7 +32,7 @@ const Hero = () => {
       </div>
 
       {/* Main content */}
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-6 relative z-14">
         <div className="text-center max-w-4xl mx-auto">
           <div className="flex flex-col items-center justify-center min-h-screen pt-20 sm:pt-0">
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-[#0a0d36] dark:text-white mb-2 leading-tight">
@@ -67,10 +67,10 @@ const Hero = () => {
 
             {/* Trust Indicators */}
             <div className="mt-8 text-center">
-              <p className="text-[#0a0d36] dark:text-gray-300 mb-6 font-medium opacity-80">
+              <p className="text-[#0a0d36] dark:text-gray-300 mb-8 font-medium opacity-80">
                 Trusted by businesses across the USA
               </p>
-              <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-12 opacity-60">
+              <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-20 opacity-60">
                 <div className="text-sm sm:text-base font-semibold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
                   Pro Chicago Painters
                 </div>
