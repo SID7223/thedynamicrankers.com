@@ -31,25 +31,31 @@ const Hero = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 opacity-[0.05] dark:opacity-10 rounded-full filter blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      {/* Main content */}
-      <div className="container mx-auto px-6 relative z-10 flex-grow flex flex-col items-center justify-center pt-32">
+      {/* Header Spacer - For symmetrical distance */}
+      <div className="h-24 sm:h-32"></div>
+
+      {/* Top Flexible Space */}
+      <div className="flex-grow" />
+
+      {/* Main content - Centered in remaining space */}
+      <div className="container mx-auto px-6 relative z-10 flex flex-col items-center justify-center">
         <div className="text-center max-w-5xl mx-auto">
-          <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold text-[#0a0d36] dark:text-white mb-8 leading-tight">
+          <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-[#0a0d36] dark:text-white mb-10 leading-[1.1] tracking-tight">
             Elevate Your
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block pb-4">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent block mt-2 pb-4">
               Digital Presence
             </span>
           </h1>
 
-          <p className="text-xl sm:text-2xl md:text-3xl text-[#0a0d36] dark:text-white mb-12 leading-relaxed px-4 glare-text dark:[--glare-color:white]">
+          <p className="text-xl sm:text-2xl md:text-3xl text-[#0a0d36] dark:text-white mb-16 leading-relaxed px-4 glare-text dark:[--glare-color:white]">
             Universal digital solutions for effortless growth and market dominance.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto px-4">
+          <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto px-4">
             <Link
               to="/book-a-call-meeting"
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-10 py-5 rounded-full font-semibold text-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-10 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3 shadow-2xl hover:shadow-blue-500/25"
             >
               <span>Get Started Today</span>
               <ArrowRight className="w-6 h-6" />
@@ -57,7 +63,7 @@ const Hero = () => {
 
             <Link
               to="/our-services"
-              className="w-full sm:w-auto border-2 border-[#0a0d36] dark:border-white text-[#0a0d36] dark:text-white hover:bg-[#0a0d36] dark:hover:bg-white hover:text-white dark:hover:text-gray-900 px-10 py-5 rounded-full font-semibold text-xl transition-all duration-300 flex items-center justify-center space-x-2"
+              className="w-full sm:w-auto border-2 border-[#0a0d36] dark:border-white text-[#0a0d36] dark:text-white hover:bg-[#0a0d36] dark:hover:bg-white hover:text-white dark:hover:text-gray-900 px-10 py-5 rounded-full font-bold text-xl transition-all duration-300 flex items-center justify-center space-x-3"
             >
               <Play className="w-6 h-6" />
               <span>View Our Services</span>
@@ -66,23 +72,26 @@ const Hero = () => {
         </div>
       </div>
 
+      {/* Bottom Flexible Space */}
+      <div className="flex-grow" />
+
       {/* Trust Indicators - Positioned at bottom */}
-      <div className="container mx-auto px-6 relative z-10 pb-12 mt-8">
+      <div className="container mx-auto px-6 relative z-10 pb-12">
         <div className="text-center">
-          <p className="text-[#0a0d36] dark:text-gray-300 mb-6 font-medium opacity-80">
+          <p className="text-[#0a0d36] dark:text-gray-300 mb-8 text-xl font-medium opacity-80 tracking-wide">
             Trusted by businesses across the USA
           </p>
-          <div className="flex flex-col items-center gap-2 opacity-60">
-            <div className="text-base sm:text-lg font-semibold text-[#0a0d36] dark:text-gray-400">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-y-4 md:gap-x-16 opacity-70">
+            <div className="text-lg sm:text-xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
               Pro Chicago Painters
             </div>
-            <div className="text-base sm:text-lg font-semibold text-[#0a0d36] dark:text-gray-400">
+            <div className="text-lg sm:text-xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
               Champion Roofing
             </div>
-            <div className="text-base sm:text-lg font-semibold text-[#0a0d36] dark:text-gray-400">
+            <div className="text-lg sm:text-xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
               GoLoadUp Baltimore
             </div>
-            <div className="text-base sm:text-lg font-semibold text-[#0a0d36] dark:text-gray-400">
+            <div className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-400">
               + 50 More Businesses
             </div>
           </div>
