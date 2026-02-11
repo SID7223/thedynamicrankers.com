@@ -44,7 +44,7 @@ const TestimonialsLanding = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:bg-[#06080D] dark:from-transparent dark:to-transparent transition-colors duration-300">
+    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:bg-[#02030b] dark:from-transparent dark:to-transparent transition-colors duration-300">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
