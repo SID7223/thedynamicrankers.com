@@ -276,7 +276,7 @@ function App() {
             <Route path="/definitions/semantic-search" element={<SemanticSearch />} />
             <Route path="/definitions/server-response-time" element={<ServerResponseTime />} />
             <Route path="/definitions/structured-data" element={<StructuredData />} />
-            <Route path="/definitions/technical-seo-audit" element={<TechnicalSiteAudit />} />
+            <Route path="/definitions/technical-seo-audit" element={<TechnicalSeoAudit />} />
             <Route path="/definitions/visual-hierarchy" element={<VisualHierarchy />} />
             <Route path="/definitions/cdn" element={<Cdn />} />
             <Route path="/definitions/meta-structure" element={<SearchEngineOptimization />} />
