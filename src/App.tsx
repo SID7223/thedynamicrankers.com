@@ -94,7 +94,7 @@ const PredictiveAnalytics = React.lazy(() => import('./pages/definitions/Predict
 const SemanticSearch = React.lazy(() => import('./pages/definitions/SemanticSearch'));
 const ServerResponseTime = React.lazy(() => import('./pages/definitions/ServerResponseTime'));
 const StructuredData = React.lazy(() => import('./pages/definitions/StructuredData'));
-const TechnicalSiteAudit = React.lazy(() => import('./pages/definitions/TechnicalSiteAudit'));
+const TechnicalSeoAudit = React.lazy(() => import('./pages/definitions/TechnicalSeoAudit'));
 const VisualHierarchy = React.lazy(() => import('./pages/definitions/VisualHierarchy'));
 const Cdn = React.lazy(() => import('./pages/definitions/cdn'));
 
