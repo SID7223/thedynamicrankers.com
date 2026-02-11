@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const StucturedData: React.FC = () => {
+const StructuredData: React.FC = () => {
   return (
     <>
       <Helmet>
@@ -66,4 +66,5 @@ const StucturedData: React.FC = () => {
   );
 };
 
-export default StucturedData;
+export default StructuredData;
+
