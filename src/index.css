@@ -10,10 +10,8 @@
 
 /* Set global scale to 90% for desktop view */
 @media (min-width: 1024px) {
-  html {
+  .main-content-wrapper {
     zoom: 0.9;
-    -moz-transform: scale(0.9);
-    -moz-transform-origin: top center;
   }
 }
 

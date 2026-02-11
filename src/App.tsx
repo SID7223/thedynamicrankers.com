@@ -184,10 +184,8 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-        {/* Only render global Header if NOT on a CRM page or Onboarding page */}
-        {!isCrmPage && !isOnboardingPage && <Header />}
-        
+      {!isCrmPage && !isOnboardingPage && <Header />}
+      <div className="main-content-wrapper min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <DarkModeToggle />
         
         <Suspense fallback={<LoadingSpinner />}>

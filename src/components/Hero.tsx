@@ -38,17 +38,17 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto px-4">
             <Link
               to="/book-a-call-meeting"
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-10 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3 shadow-2xl hover:shadow-blue-500/25"
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-12 py-6 rounded-full font-bold text-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3 shadow-2xl hover:shadow-blue-500/25"
             >
               <span>Get Started Today</span>
-              <ArrowRight className="w-6 h-6" />
+              <ArrowRight className="w-8 h-8" />
             </Link>
 
             <Link
               to="/our-services"
-              className="w-full sm:w-auto border-2 border-[#0a0d36] dark:border-white text-[#0a0d36] dark:text-white hover:bg-[#0a0d36] dark:hover:bg-white hover:text-white dark:hover:text-gray-900 px-10 py-5 rounded-full font-bold text-xl transition-all duration-300 flex items-center justify-center space-x-3"
+              className="w-full sm:w-auto border-2 border-[#0a0d36] dark:border-white text-[#0a0d36] dark:text-white hover:bg-[#0a0d36] dark:hover:bg-white hover:text-white dark:hover:text-gray-900 px-12 py-6 rounded-full font-bold text-2xl transition-all duration-300 flex items-center justify-center space-x-3"
             >
-              <Play className="w-6 h-6" />
+              <Play className="w-8 h-8" />
               <span>View Our Services</span>
             </Link>
           </div>
@@ -65,16 +65,16 @@ const Hero = () => {
             Trusted by businesses across the USA
           </p>
           <div className="flex flex-col md:flex-row justify-center items-center gap-y-4 md:gap-x-16 opacity-70">
-            <div className="text-lg sm:text-xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
+            <div className="text-xl sm:text-2xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
               Pro Chicago Painters
             </div>
-            <div className="text-lg sm:text-xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
+            <div className="text-xl sm:text-2xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
               Champion Roofing
             </div>
-            <div className="text-lg sm:text-xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
+            <div className="text-xl sm:text-2xl font-bold text-[#0a0d36] dark:text-gray-400 hover:opacity-100 transition-opacity">
               GoLoadUp Baltimore
             </div>
-            <div className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-400">
+            <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
               + 50 More Businesses
             </div>
           </div>
