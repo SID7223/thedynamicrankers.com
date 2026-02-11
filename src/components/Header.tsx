@@ -5,27 +5,16 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileDropdowns, setMobileDropdowns] = useState<{ [key: string]: boolean }>({});
   const location = useLocation();
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-      setIsScrolling(true);
-
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        setIsScrolling(false);
-      }, 200);
+      setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timeout);
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const closeMenu = () => {
@@ -100,23 +89,25 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolling
-        ? 'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-md py-4'
-        : isScrolled
-          ? 'bg-white dark:bg-gray-900 shadow-lg py-4'
-          : 'bg-transparent py-4'
-    }`}>
+      isScrolled 
+        ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-1.5 sm:py-2'
+        : 'bg-transparent py-3 sm:py-3'
+    }`} style={{
+      transform: 'translateY(0)',
+      opacity: 1,
+      pointerEvents: 'auto'
+    }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-4 group" onClick={closeMenu}>
-            <div className="squircle w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-black transition-all duration-300 flex-shrink-0 group-hover:scale-110">
+            <div className="squircle w-8 h-8 sm:w-9 sm:h-9 bg-white dark:bg-black transition-all duration-300 flex-shrink-0 group-hover:scale-110">
               <img
                 src="/the copy copy.png"
                 alt="The Dynamic Rankers Logo"
-                className="w-6 h-6 sm:w-8 sm:h-8 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
+                className="w-5 h-5 sm:w-6 sm:h-6 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
               />
             </div>
-            <span className="text-lg sm:text-2xl font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
+            <span className="text-base sm:text-lg font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
               The Dynamic Rankers
             </span>
           </Link>
