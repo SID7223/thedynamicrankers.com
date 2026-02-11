@@ -5,27 +5,16 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileDropdowns, setMobileDropdowns] = useState<{ [key: string]: boolean }>({});
   const location = useLocation();
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-      setIsScrolling(true);
-
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        setIsScrolling(false);
-      }, 200);
+      setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timeout);
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const closeMenu = () => {
@@ -100,12 +89,14 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolling
-        ? 'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-md py-4'
-        : isScrolled
-          ? 'bg-white dark:bg-gray-900 shadow-lg py-4'
-          : 'bg-transparent py-4'
-    }`}>
+      isScrolled 
+        ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-3 sm:py-4'
+        : 'bg-transparent py-4 sm:py-6'
+    }`} style={{
+      transform: 'translateY(0)',
+      opacity: 1,
+      pointerEvents: 'auto'
+    }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-4 group" onClick={closeMenu}>
