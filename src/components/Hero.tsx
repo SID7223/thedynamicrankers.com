@@ -6,25 +6,8 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-500"
+      className="min-h-screen lg:min-h-[112vh] flex flex-col items-center justify-center relative overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-500"
     >
-      <style>
-        {`
-          @keyframes shine {
-            0% { background-position: -100% 0; }
-            100% { background-position: 200% 0; }
-          }
-          .dark .glare-text {
-            background: linear-gradient(90deg, var(--glare-color) 0%, var(--glare-color) 45%, #ffffff 50%, var(--glare-color) 55%, var(--glare-color) 100%);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: shine 6s linear infinite;
-          }
-        `}
-      </style>
-
       {/* Blurred glows (toned down for light mode) */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500 opacity-[0.05] dark:opacity-10 rounded-full filter blur-3xl animate-pulse"></div>
@@ -35,7 +18,7 @@ const Hero = () => {
       <div className="h-24 sm:h-32"></div>
 
       {/* Top Flexible Space */}
-      <div className="flex-grow" />
+      <div className="flex-grow min-h-[50px] lg:min-h-[100px]" />
 
       {/* Main content - Centered in remaining space */}
       <div className="container mx-auto px-6 relative z-10 flex flex-col items-center justify-center">
@@ -47,7 +30,7 @@ const Hero = () => {
             </span>
           </h1>
 
-          <p className="text-xl sm:text-2xl md:text-3xl text-[#0a0d36] dark:text-white mb-16 leading-relaxed px-4 glare-text dark:[--glare-color:white]">
+          <p className="text-xl sm:text-2xl md:text-3xl text-[#0a0d36] dark:text-white mb-16 leading-relaxed px-4 pb-2">
             Universal digital solutions for effortless growth and market dominance.
           </p>
 
@@ -72,11 +55,11 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Bottom Flexible Space */}
-      <div className="flex-grow" />
+      {/* Bottom Flexible Space - Increased for prominence */}
+      <div className="flex-grow min-h-[100px]" />
 
       {/* Trust Indicators - Positioned at bottom */}
-      <div className="container mx-auto px-6 relative z-10 pb-12">
+      <div className="container mx-auto px-6 relative z-10 pb-20">
         <div className="text-center">
           <p className="text-[#0a0d36] dark:text-gray-300 mb-8 text-xl font-medium opacity-80 tracking-wide">
             Trusted by businesses across the USA
