@@ -1,14 +1,11 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Users, BarChart3, Zap, Shield, ArrowRight, CheckCircle, Star, Play, Menu, X } from 'lucide-react';
+import { Users, BarChart3, Zap, Shield, ArrowRight, CheckCircle, Star, Play } from 'lucide-react';
+import CRMHeader from '../components/CRMHeader';
+import CRMFooter from '../components/CRMFooter';
 
 const CRMPage = () => {
-  const [isCrmMenuOpen, setIsCrmMenuOpen] = React.useState(false);
-
-  const closeCrmMenu = () => {
-    setIsCrmMenuOpen(false);
-  };
 
   const features = [
     {
@@ -93,103 +90,9 @@ const CRMPage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-        {/* CRM-specific Header */}
-        <header className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <Link to="/" className="flex items-center space-x-2">
-                  <img
-                    src="/the copy copy.png"
-                    alt="The Dynamic Rankers Logo"
-                    className="w-10 h-10 object-contain"
-                  />
-                  <div>
-                    <span className="text-xl font-bold text-gray-800 dark:text-white">The Dynamic Rankers</span>
-                    <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">CRM Solutions</div>
-                  </div>
-                </Link>
-              </div>
+        <CRMHeader />
 
-              <nav className="hidden lg:flex items-center space-x-6">
-                <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Features</a>
-                <a href="#industries" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Industries</a>
-                <a href="#testimonials" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Success Stories</a>
-                <Link to="/crm/features" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">All Features</Link>
-                <Link to="/crm/case-studies" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 font-medium">Case Studies</Link>
-                <a href="#demo" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">Request Demo</a>
-              </nav>
-
-              {/* Mobile Menu Button */}
-              <button
-                className="lg:hidden"
-                onClick={() => setIsCrmMenuOpen(!isCrmMenuOpen)}
-              >
-                {isCrmMenuOpen ? (
-                  <X className="w-6 h-6 text-gray-800 dark:text-white" />
-                ) : (
-                  <Menu className="w-6 h-6 text-gray-800 dark:text-white" />
-                )}
-              </button>
-            </div>
-
-            {/* Mobile Navigation */}
-            <div className={`lg:hidden transition-all duration-300 ease-in-out ${
-              isCrmMenuOpen
-                ? 'max-h-screen opacity-100 mt-4'
-                : 'max-h-0 opacity-0 overflow-hidden'
-            }`}>
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-                <nav className="py-2">
-                  <a
-                    href="#features"
-                    onClick={closeCrmMenu}
-                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
-                  >
-                    Features
-                  </a>
-                  <a
-                    href="#industries"
-                    onClick={closeCrmMenu}
-                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
-                  >
-                    Industries
-                  </a>
-                  <a
-                    href="#testimonials"
-                    onClick={closeCrmMenu}
-                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
-                  >
-                    Success Stories
-                  </a>
-                  <Link
-                    to="/crm/features"
-                    onClick={closeCrmMenu}
-                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
-                  >
-                    All Features
-                  </Link>
-                  <Link
-                    to="/crm/case-studies"
-                    onClick={closeCrmMenu}
-                    className="block px-4 py-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 font-medium transition-colors duration-200"
-                  >
-                    Case Studies
-                  </Link>
-                  <a
-                    href="#demo"
-                    onClick={closeCrmMenu}
-                    className="block mx-4 my-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-center font-medium"
-                  >
-                    Request Demo
-                  </a>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main>
+        <main className="pt-20">
           {/* Hero Section */}
           <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
             <div className="container mx-auto px-4">
@@ -723,56 +626,7 @@ const CRMPage = () => {
           </section>
         </main>
 
-        {/* CRM-specific Footer */}
-        <footer className="bg-gray-900 dark:bg-black text-white py-12">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <div className="flex items-center space-x-2 mb-4">
-                  <img
-                    src="/the copy copy.png"
-                    alt="The Dynamic Rankers Logo"
-                    className="w-8 h-8 object-contain"
-                  />
-                  <div>
-                    <span className="text-lg font-bold">The Dynamic Rankers</span>
-                    <div className="text-sm text-blue-400">CRM Solutions</div>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Transforming customer relationships through intelligent CRM solutions
-                  that drive business growth and operational efficiency.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-4">CRM Solutions</h3>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-                  <li><a href="#industries" className="hover:text-white transition-colors">Industries</a></li>
-                  <li><a href="#testimonials" className="hover:text-white transition-colors">Success Stories</a></li>
-                  <li><a href="#demo" className="hover:text-white transition-colors">Request Demo</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Main Website</h3>
-                <ul className="space-y-2 text-sm text-gray-400">
-                  <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                  <li><Link to="/our-services" className="hover:text-white transition-colors">All Services</Link></li>
-                  <li><Link to="/digital-marketing" className="hover:text-white transition-colors">Digital Marketing</Link></li>
-                  <li><Link to="/book-a-call-meeting" className="hover:text-white transition-colors">Contact Us</Link></li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-              <p className="text-sm text-gray-400">
-                © 2025 The Dynamic Rankers. All rights reserved. | CRM Solutions Division
-              </p>
-            </div>
-          </div>
-        </footer>
+        <CRMFooter />
       </div>
     </>
   );

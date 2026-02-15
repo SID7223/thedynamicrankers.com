@@ -50,7 +50,7 @@ const BusinessGrowth = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 transition-colors duration-300">
+    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:bg-[#02030b] dark:from-transparent dark:to-transparent transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 px-2">

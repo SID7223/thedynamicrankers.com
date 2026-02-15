@@ -5,6 +5,8 @@ import {
   Home, Heart, ShoppingCart, Briefcase, Factory, 
   Laptop, DollarSign, GraduationCap, CheckCircle, ArrowRight 
 } from 'lucide-react';
+import CRMHeader from '../components/CRMHeader';
+import CRMFooter from '../components/CRMFooter';
 
 const CRMIndustries = () => {
   const industries = [
@@ -127,6 +129,7 @@ const CRMIndustries = () => {
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <CRMHeader />
         <main className="pt-20">
           {/* Hero Section */}
           <section className="py-20 bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
@@ -236,6 +239,7 @@ const CRMIndustries = () => {
             </div>
           </section>
         </main>
+        <CRMFooter />
       </div>
     </>
   );

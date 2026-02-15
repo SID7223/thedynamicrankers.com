@@ -38,13 +38,13 @@ const TestimonialsLanding = () => {
 
   const stats = [
     { number: "300%", label: "Average Traffic Increase" },
-    { number: "4-6x", label: "Return on Investment" },
-    { number: "90%", label: "Client Retention Rate" },
-    { number: "24hrs", label: "Response Time" }
+    { number: "24/7", label: "Customer Support" },
+    { number: "100%", label: "Client Satisfaction" },
+    { number: "50+", label: "Projects Completed" }
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 transition-colors duration-300">
+    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:bg-[#060820] dark:from-transparent dark:to-transparent transition-colors duration-300">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
@@ -162,7 +162,7 @@ const TestimonialsLanding = () => {
             Ready to Join Our Success Stories?
           </h3>
           <p className="text-lg mb-8 max-w-2xl mx-auto">
-            These results aren't accidents—they're the outcome of proven strategies, 
+            These results aren't accidents. They're the outcome of proven strategies,
             dedicated execution, and partnership with businesses that are serious about growth.
           </p>
           
@@ -181,31 +181,6 @@ const TestimonialsLanding = () => {
             >
               <span>View All Services</span>
             </Link>
-          </div>
-          
-          <p className="text-sm text-blue-100 mt-6">
-            🔥 Limited Time: Free comprehensive digital marketing audit for new clients
-          </p>
-        </div>
-
-        {/* Trust Indicators */}
-        <div className="mt-16 text-center">
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Trusted by businesses across the USA
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
-            <div className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-              Pro Chicago Painters
-            </div>
-            <div className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-              Champion Roofing
-            </div>
-            <div className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-              GoLoadUp Baltimore
-            </div>
-            <div className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-              + 50 More Businesses
-            </div>
           </div>
         </div>
       </div>
