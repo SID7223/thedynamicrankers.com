@@ -11,10 +11,11 @@ interface OnboardingData {
   refinement: string;
   communicationChannel: string;
   appointmentType?: string;
+  closing?: string;
 }
 
 function escapeHtml(value: any) {
-  if (typeof value !== 'string') return String(value || '');
+  if (typeof value !== "string") return String(value || "");
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -26,22 +27,25 @@ function escapeHtml(value: any) {
 function OnboardingEmailTemplate(data: OnboardingData) {
   return `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #1a1a1a; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+      
       <div style="background-color: #4f46e5; padding: 24px; text-align: center;">
         <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Onboarding Submission</h1>
       </div>
 
       <div style="padding: 32px; background-color: #ffffff;">
 
-        <!-- Section: Appointment -->
+        <!-- Appointment Section -->
         <div style="margin-bottom: 32px; padding: 16px; background-color: #f5f3ff; border-left: 4px solid #7c3aed; border-radius: 4px;">
           <h2 style="margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #6d28d9;">Confirmed Appointment</h2>
           <p style="margin: 8px 0 0; font-size: 18px; font-weight: bold; color: #1e1b4b;">
-            ${escapeHtml(data.appointmentType || 'ERIC WILLIAM | 30-Minute Strategy')}
+            ${escapeHtml(data.appointmentType || "ERIC WILLIAM | 30-Minute Strategy")}
           </p>
-          <p style="margin: 4px 0 0; font-size: 12px; color: #5b21b6;">Booked via Google Calendar Appointment Scheduling</p>
+          <p style="margin: 4px 0 0; font-size: 12px; color: #5b21b6;">
+            Booked via Google Calendar Appointment Scheduling
+          </p>
         </div>
 
-        <!-- Section: Client Info -->
+        <!-- Client Info -->
         <div style="margin-bottom: 32px;">
           <h2 style="font-size: 16px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; color: #374151;">Client Information</h2>
           <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
@@ -63,7 +67,11 @@ function OnboardingEmailTemplate(data: OnboardingData) {
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #6b7280;">Email</td>
-              <td style="padding: 8px 0; font-weight: 500;"><a href="mailto:${escapeHtml(data.email)}" style="color: #4f46e5; text-decoration: none;">${escapeHtml(data.email)}</a></td>
+              <td style="padding: 8px 0; font-weight: 500;">
+                <a href="mailto:${escapeHtml(data.email)}" style="color: #4f46e5; text-decoration: none;">
+                  ${escapeHtml(data.email)}
+                </a>
+              </td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #6b7280;">Phone / WhatsApp</td>
@@ -72,7 +80,7 @@ function OnboardingEmailTemplate(data: OnboardingData) {
           </table>
         </div>
 
-        <!-- Section: Strategic Intent -->
+        <!-- Strategic Intent -->
         <div style="margin-bottom: 8px;">
           <h2 style="font-size: 16px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; color: #374151;">Strategic Intent</h2>
           <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
@@ -98,6 +106,7 @@ function OnboardingEmailTemplate(data: OnboardingData) {
           This is an automated notification from the Dynamic Rankers Onboarding Engine.
         </p>
       </div>
+
     </div>
   `;
 }
@@ -116,7 +125,6 @@ export default async function handler(req: any, res: any) {
 
   try {
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
-      console.error("Missing Resend configuration.");
       return res.status(500).json({
         error: "Email service is not configured",
       });
@@ -140,7 +148,7 @@ export default async function handler(req: any, res: any) {
     });
 
     if (result.error) {
-        return res.status(500).json({ error: result.error.message });
+      return res.status(500).json({ error: result.error.message });
     }
 
     return res.status(200).json({
