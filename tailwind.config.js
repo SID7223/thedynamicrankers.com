@@ -1,6 +1,5 @@
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+export default {
   darkMode: 'class', // Enables class-based dark mode
   content: [
     './src/**/*.{js,ts,jsx,tsx}', // Adjust according to your project structure
@@ -35,9 +34,18 @@ const config: Config = {
           '50%': { backgroundColor: 'var(--tw-bg-opacity-dark)' },
         },
       },
+      borderRadius: {
+        'none': '0',
+        'sm': '0.25rem',
+        'DEFAULT': '0.5rem',
+        'md': '0.75rem',
+        'lg': '1rem',
+        'xl': '1.5rem',
+        '2xl': '2rem',
+        '3xl': '3rem',
+        'full': '9999px',
+      },
     },
   },
   plugins: [],
 };
-
-export default config;

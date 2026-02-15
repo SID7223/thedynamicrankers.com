@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { 
   Users, Database, BarChart3, Zap, Shield, Globe, 
   MessageSquare, Calendar, FileText, Target, 
-  TrendingUp, Clock, CheckCircle 
+  TrendingUp, Clock, CheckCircle, Play, ArrowRight
 } from 'lucide-react';
+import CRMHeader from '../components/CRMHeader';
+import CRMFooter from '../components/CRMFooter';
 
 const CRMFeatures = () => {
   const coreFeatures = [
@@ -89,6 +91,7 @@ const CRMFeatures = () => {
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <CRMHeader />
         <main className="pt-20">
           {/* Hero Section */}
           <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
@@ -272,6 +275,7 @@ const CRMFeatures = () => {
             </div>
           </section>
         </main>
+        <CRMFooter />
       </div>
     </>
   );
