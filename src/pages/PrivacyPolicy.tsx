@@ -16,10 +16,10 @@ const PrivacyPolicy: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy - The Dynamic Rankers</title>
-        <meta name="description" content="Read our privacy policy." />
-        <meta property="og:title" content="Privacy Policy - The Dynamic Rankers" />
-        <meta property="og:description" content="Read our privacy policy." />
+        <title>Your Privacy and Data Security | The Dynamic Rankers</title>
+        <meta name="description" content="Read our privacy policy to understand how we protect your data. At The Dynamic Rankers, we prioritize security and transparency in everything we do." />
+        <meta property="og:title" content="Your Privacy and Data Security | The Dynamic Rankers" />
+        <meta property="og:description" content="Read our privacy policy to understand how we protect your data. At The Dynamic Rankers, we prioritize security and transparency in everything we do." />
         <meta property="og:type" content="website" />
       </Helmet>
       

@@ -6,9 +6,11 @@ const AIWebAutomation = () => {
   return (
     <>
       <Helmet>
-        <title>AI Web Automation | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' expert approach to AI Web Automation with clear visuals and smart automation." />
-        <meta name="keywords" content="AI web automation, workflow automation, process optimization, The Dynamic Rankers" />
+        <title>Scale Faster with AI-Powered Web Automation | The Dynamic Rankers</title>
+        <meta name="description" content="Eliminate repetitive tasks and optimize your digital operations with AI web automation. We build smart systems that work around the clock to grow your business." />
+        <meta property="og:title" content="Scale Faster with AI-Powered Web Automation | The Dynamic Rankers" />
+        <meta property="og:description" content="Eliminate repetitive tasks and optimize your digital operations with AI web automation. We build smart systems that work around the clock to grow your business." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

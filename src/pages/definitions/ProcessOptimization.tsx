@@ -5,11 +5,11 @@ const ProcessOptimization: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Process Optimization Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Process optimization involves analyzing and improving business workflows to maximize efficiency, reduce costs, and enhance quality."
-        />
+        <title>Process Optimization Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Process optimization involves analyzing and improving business workflows to maximize efficiency, reduce costs, and enhance quality." />
+        <meta property="og:title" content="Process Optimization Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Process optimization involves analyzing and improving business workflows to maximize efficiency, reduce costs, and enhance quality." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

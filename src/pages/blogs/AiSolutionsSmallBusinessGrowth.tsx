@@ -9,6 +9,9 @@ const AiSolutionsSmallBusinessGrowth: React.FC = () => {
       <Helmet>
         <title>How AI Solutions are Redefining Small Business Growth | The Dynamic Rankers</title>
         <meta name="description" content="Discover why How AI Solutions are Redefining Small Business Growth is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="How AI Solutions are Redefining Small Business Growth | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why How AI Solutions are Redefining Small Business Growth is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

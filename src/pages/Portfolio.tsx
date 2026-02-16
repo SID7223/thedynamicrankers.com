@@ -45,8 +45,11 @@ const Portfolio: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Portfolio - The Dynamic Rankers</title>
-        <meta name="description" content="Explore our successful projects in web development, SEO, and CRM solutions." />
+        <title>Our Success Stories and Case Studies | The Dynamic Rankers</title>
+        <meta name="description" content="See how we have helped businesses achieve record-breaking growth. Explore our portfolio of high-performance websites and successful digital marketing campaigns." />
+        <meta property="og:title" content="Our Success Stories and Case Studies | The Dynamic Rankers" />
+        <meta property="og:description" content="See how we have helped businesses achieve record-breaking growth. Explore our portfolio of high-performance websites and successful digital marketing campaigns." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

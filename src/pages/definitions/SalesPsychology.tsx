@@ -5,11 +5,11 @@ const SalesPsychology: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Sales Psychology Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Sales psychology applies behavioral science principles to understand and influence consumer decision-making processes."
-        />
+        <title>Sales Psychology Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Sales psychology applies behavioral science principles to understand and influence consumer decision-making processes." />
+        <meta property="og:title" content="Sales Psychology Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Sales psychology applies behavioral science principles to understand and influence consumer decision-making processes." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

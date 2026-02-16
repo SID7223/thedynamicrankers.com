@@ -76,9 +76,11 @@ const CRMCaseStudies = () => {
   return (
     <>
       <Helmet>
-        <title>CRM Case Studies - The Dynamic Rankers</title>
-        <meta name="description" content="Real CRM success stories from businesses across industries. See how The Dynamic Rankers CRM delivers measurable results and transforms operations." />
-        <meta name="keywords" content="CRM case studies, CRM success stories, customer testimonials, business results, The Dynamic Rankers" />
+        <title>Real Results: CRM Success Stories | The Dynamic Rankers</title>
+        <meta name="description" content="See how businesses like yours have achieved record growth with our CRM. Explore case studies of improved sales efficiency and customer satisfaction." />
+        <meta property="og:title" content="Real Results: CRM Success Stories | The Dynamic Rankers" />
+        <meta property="og:description" content="See how businesses like yours have achieved record growth with our CRM. Explore case studies of improved sales efficiency and customer satisfaction." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">

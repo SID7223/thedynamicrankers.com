@@ -6,9 +6,11 @@ const AISEOEnhancement = () => {
   return (
     <>
       <Helmet>
-        <title>AI SEO Enhancement | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on AI SEO Enhancement with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="AI SEO enhancement, semantic search, on-page optimization, The Dynamic Rankers" />
+        <title>Dominate Search Rankings with AI-Powered SEO | The Dynamic Rankers</title>
+        <meta name="description" content="Stay ahead of the algorithm with AI-enhanced SEO strategies. We use machine learning to optimize your site for the future of search, ensuring long-term visibility." />
+        <meta property="og:title" content="Dominate Search Rankings with AI-Powered SEO | The Dynamic Rankers" />
+        <meta property="og:description" content="Stay ahead of the algorithm with AI-enhanced SEO strategies. We use machine learning to optimize your site for the future of search, ensuring long-term visibility." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

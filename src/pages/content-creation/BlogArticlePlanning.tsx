@@ -5,9 +5,11 @@ const BlogArticlePlanning = () => {
   return (
     <>
       <Helmet>
-        <title>Blog Article Planning | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on Blog Article Planning with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="blog planning, content pillars, editorial SEO, The Dynamic Rankers" />
+        <title>Strategic Blog Article Planning | The Dynamic Rankers</title>
+        <meta name="description" content="Build authority and drive organic traffic with a data-driven blog strategy. We plan content that ranks on Google and provides real value to your audience." />
+        <meta property="og:title" content="Strategic Blog Article Planning | The Dynamic Rankers" />
+        <meta property="og:description" content="Build authority and drive organic traffic with a data-driven blog strategy. We plan content that ranks on Google and provides real value to your audience." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

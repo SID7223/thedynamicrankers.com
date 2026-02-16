@@ -5,11 +5,11 @@ const InteractiveUx: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Interactive UX Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Interactive UX combines visual feedback, micro interactions, and responsive interface behavior to keep users engaged and moving toward clear goals."
-        />
+        <title>Interactive UX Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Interactive UX combines visual feedback, micro interactions, and responsive interface behavior to keep users engaged and moving toward clear goals." />
+        <meta property="og:title" content="Interactive UX Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Interactive UX combines visual feedback, micro interactions, and responsive interface behavior to keep users engaged and moving toward clear goals." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

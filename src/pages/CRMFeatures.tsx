@@ -85,9 +85,11 @@ const CRMFeatures = () => {
   return (
     <>
       <Helmet>
-        <title>CRM Features - The Dynamic Rankers</title>
-        <meta name="description" content="Explore comprehensive CRM features including lead management, sales automation, analytics, and integrations. Transform your customer relationships with The Dynamic Rankers." />
-        <meta name="keywords" content="CRM features, lead management, sales automation, customer management, The Dynamic Rankers" />
+        <title>Advanced CRM Features for Sales Success | The Dynamic Rankers</title>
+        <meta name="description" content="Explore the powerful features of our AI-driven CRM. From automated lead capture to predictive sales analytics, we provide the tools you need to dominate your market." />
+        <meta property="og:title" content="Advanced CRM Features for Sales Success | The Dynamic Rankers" />
+        <meta property="og:description" content="Explore the powerful features of our AI-driven CRM. From automated lead capture to predictive sales analytics, we provide the tools you need to dominate your market." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">

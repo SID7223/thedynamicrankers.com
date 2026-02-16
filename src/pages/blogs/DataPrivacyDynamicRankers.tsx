@@ -9,6 +9,9 @@ const DataPrivacyDynamicRankers: React.FC = () => {
       <Helmet>
         <title>Data Privacy in the Age of Dynamic Rankers | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Data Privacy in the Age of Dynamic Rankers is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Data Privacy in the Age of Dynamic Rankers | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Data Privacy in the Age of Dynamic Rankers is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

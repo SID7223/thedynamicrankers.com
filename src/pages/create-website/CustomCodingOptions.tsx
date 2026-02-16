@@ -5,9 +5,11 @@ const CustomCodingOptions = () => {
   return (
     <>
       <Helmet>
-        <title>Custom Coding Options | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on Custom Coding Options with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="custom coding, JavaScript automation, interactive UX, The Dynamic Rankers" />
+        <title>Tailor-Made Solutions with Custom Coding | The Dynamic Rankers</title>
+        <meta name="description" content="Go beyond templates with custom web development. We build unique features and robust architectures tailored specifically to your business goals." />
+        <meta property="og:title" content="Tailor-Made Solutions with Custom Coding | The Dynamic Rankers" />
+        <meta property="og:description" content="Go beyond templates with custom web development. We build unique features and robust architectures tailored specifically to your business goals." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

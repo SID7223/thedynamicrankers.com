@@ -33,9 +33,12 @@ const DigitalMarketingPage = () => {
   return (
     <>
       <Helmet>
-        <title>Digital Marketing Services USA - The Dynamic Rankers</title>
-        <meta name="description" content="Professional digital marketing services in USA. Boost your online presence with SEO, SEM, social media marketing, and comprehensive digital strategies from The Dynamic Rankers." />
-        <meta name="keywords" content="digital marketing, USA, SEO, SEM, social media marketing, The Dynamic Rankers" />
+        <title>Grow Your Business with Expert Digital Marketing | The Dynamic Rankers</title>
+        <meta name="description" content="Unlock exponential growth with precision digital marketing solutions. From targeted SEO to AI-powered social strategies, we help USA businesses dominate their industry and convert traffic into revenue." />
+        <meta property="og:title" content="Grow Your Business with Expert Digital Marketing | The Dynamic Rankers" />
+        <meta property="og:description" content="Unlock exponential growth with precision digital marketing solutions. From targeted SEO to AI-powered social strategies, we help USA businesses dominate their industry and convert traffic into revenue." />
+        <meta property="og:type" content="website" />
+        <meta name="keywords" content="digital marketing, USA, SEO, SEM, social media marketing, business growth, The Dynamic Rankers" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

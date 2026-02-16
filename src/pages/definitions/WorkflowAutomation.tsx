@@ -5,11 +5,11 @@ const WorkflowAutomation: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Workflow Automation Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Workflow automation uses technology to streamline repetitive business processes, reducing manual effort and increasing efficiency."
-        />
+        <title>Workflow Automation Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Workflow automation uses technology to streamline repetitive business processes, reducing manual effort and increasing efficiency." />
+        <meta property="og:title" content="Workflow Automation Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Workflow automation uses technology to streamline repetitive business processes, reducing manual effort and increasing efficiency." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

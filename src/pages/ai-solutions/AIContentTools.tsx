@@ -6,9 +6,11 @@ const AIContentTools = () => {
   return (
     <>
       <Helmet>
-        <title>AI Content Tools | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on AI Content Tools with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="AI content tools, content automation, natural language generation, The Dynamic Rankers" />
+        <title>Generate High-Impact Content with AI Tools | The Dynamic Rankers</title>
+        <meta name="description" content="Revolutionize your content strategy with AI-driven tools. Generate SEO-optimized blogs, social posts, and marketing copy with Apple-level precision and efficiency." />
+        <meta property="og:title" content="Generate High-Impact Content with AI Tools | The Dynamic Rankers" />
+        <meta property="og:description" content="Revolutionize your content strategy with AI-driven tools. Generate SEO-optimized blogs, social posts, and marketing copy with Apple-level precision and efficiency." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

@@ -6,9 +6,11 @@ const AIMarketingInsights = () => {
   return (
     <>
       <Helmet>
-        <title>AI Marketing Insights | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on AI Marketing Insights with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="AI marketing insights, behavioral data, predictive analytics, The Dynamic Rankers" />
+        <title>Make Data-Driven Decisions with AI Insights | The Dynamic Rankers</title>
+        <meta name="description" content="Gain deep market clarity with AI-powered marketing insights. We use advanced analytics to predict trends and optimize your strategy for maximum performance." />
+        <meta property="og:title" content="Make Data-Driven Decisions with AI Insights | The Dynamic Rankers" />
+        <meta property="og:description" content="Gain deep market clarity with AI-powered marketing insights. We use advanced analytics to predict trends and optimize your strategy for maximum performance." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

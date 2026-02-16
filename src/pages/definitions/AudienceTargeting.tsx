@@ -5,8 +5,11 @@ const AudienceTargeting: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Audience Targeting Definition | The Dynamic Rankers</title>
+        <title>Audience Targeting Explained | The Dynamic Rankers</title>
         <meta name="description" content="Learn what audience targeting means in digital marketing. The Dynamic Rankers explain how precise targeting drives better results and higher ROI." />
+        <meta property="og:title" content="Audience Targeting Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Learn what audience targeting means in digital marketing. The Dynamic Rankers explain how precise targeting drives better results and higher ROI." />
+        <meta property="og:type" content="article" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-20">

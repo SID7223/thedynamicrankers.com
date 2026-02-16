@@ -5,11 +5,11 @@ const BrandIdentity: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Brand Identity Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Brand identity encompasses the visual and conceptual elements that distinguish your business and create memorable customer experiences."
-        />
+        <title>Brand Identity Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Brand identity encompasses the visual and conceptual elements that distinguish your business and create memorable customer experiences." />
+        <meta property="og:title" content="Brand Identity Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Brand identity encompasses the visual and conceptual elements that distinguish your business and create memorable customer experiences." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

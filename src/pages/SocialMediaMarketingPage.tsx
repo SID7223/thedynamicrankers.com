@@ -6,9 +6,12 @@ const SocialMediaMarketingPage = () => {
   return (
     <>
       <Helmet>
-        <title>Social Media Marketing | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' Social Media Marketing service with performance visuals and clean design." />
-        <meta name="keywords" content="social media marketing, engagement rate, platform targeting, audience building, The Dynamic Rankers" />
+        <title>Build a Loyal Audience with Social Media Marketing | The Dynamic Rankers</title>
+        <meta name="description" content="Transform your social presence into a revenue-generating engine. We create high-impact social media strategies that build brand loyalty and drive engagement across all platforms." />
+        <meta property="og:title" content="Build a Loyal Audience with Social Media Marketing | The Dynamic Rankers" />
+        <meta property="og:description" content="Transform your social presence into a revenue-generating engine. We create high-impact social media strategies that build brand loyalty and drive engagement across all platforms." />
+        <meta property="og:type" content="website" />
+        <meta name="keywords" content="social media marketing, brand loyalty, engagement, Facebook marketing, Instagram marketing, The Dynamic Rankers" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

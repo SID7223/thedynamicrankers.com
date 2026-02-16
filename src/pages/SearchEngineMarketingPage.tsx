@@ -6,9 +6,12 @@ const SearchEngineMarketingPage = () => {
   return (
     <>
       <Helmet>
-        <title>Search Engine Marketing | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' Search Engine Marketing service with performance visuals and clean design." />
-        <meta name="keywords" content="search engine marketing, Google Ads, PPC optimization, conversion funnel, The Dynamic Rankers" />
+        <title>Maximize ROI with Precision Search Engine Marketing | The Dynamic Rankers</title>
+        <meta name="description" content="Dominate search results with expert SEM and PPC management. Our AI-optimized Google Ads campaigns drive high-quality traffic and deliver measurable results for your bottom line." />
+        <meta property="og:title" content="Maximize ROI with Precision Search Engine Marketing | The Dynamic Rankers" />
+        <meta property="og:description" content="Dominate search results with expert SEM and PPC management. Our AI-optimized Google Ads campaigns drive high-quality traffic and deliver measurable results for your bottom line." />
+        <meta property="og:type" content="website" />
+        <meta name="keywords" content="SEM, PPC, Google Ads, search engine marketing, digital advertising, The Dynamic Rankers" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
