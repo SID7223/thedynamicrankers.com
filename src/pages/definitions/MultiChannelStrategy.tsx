@@ -5,8 +5,11 @@ const MultiChannelStrategy: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Multi-Channel Strategy Definition | The Dynamic Rankers</title>
+        <title>Multi-Channel Strategy Explained | The Dynamic Rankers</title>
         <meta name="description" content="Discover what multi-channel strategy means and how The Dynamic Rankers create cohesive marketing campaigns across all digital platforms." />
+        <meta property="og:title" content="Multi-Channel Strategy Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover what multi-channel strategy means and how The Dynamic Rankers create cohesive marketing campaigns across all digital platforms." />
+        <meta property="og:type" content="article" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 py-12">

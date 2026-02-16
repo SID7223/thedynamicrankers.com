@@ -5,11 +5,11 @@ const BrandConsistency: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Brand Consistency Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Brand consistency ensures your tone, visuals, and messaging remain aligned across website, ads, sales collateral, and support channels."
-        />
+        <title>Brand Consistency Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Brand consistency ensures your tone, visuals, and messaging remain aligned across website, ads, sales collateral, and support channels." />
+        <meta property="og:title" content="Brand Consistency Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Brand consistency ensures your tone, visuals, and messaging remain aligned across website, ads, sales collateral, and support channels." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

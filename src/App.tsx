@@ -205,10 +205,12 @@ const MainPage = () => {
   return (
     <>
       <Helmet>
-        <title>
-          The Dynamic Rankers - Digital Marketing & Web Development
-        </title>
-        <meta name="description" content="Professional digital marketing and SEO services to boost your online presence. Get higher rankings and more traffic with The Dynamic Rankers." />
+        <title>{isHomePage ? "Dominate Your Market | The Dynamic Rankers" : "The Dynamic Rankers | Elite Digital Solutions"}</title>
+        <meta name="description" content={isHomePage ? "Elevate your online presence with The Dynamic Rankers. We specialize in high-conversion web development, precision SEO, and AI-driven digital marketing solutions for USA businesses." : "Professional digital marketing and web development services to boost your online presence and drive growth."} />
+        <meta property="og:title" content={isHomePage ? "Dominate Your Market | The Dynamic Rankers" : "The Dynamic Rankers | Elite Digital Solutions"} />
+        <meta property="og:description" content={isHomePage ? "Elevate your online presence with The Dynamic Rankers. We specialize in high-conversion web development, precision SEO, and AI-driven digital marketing solutions for USA businesses." : "Professional digital marketing and web development services to boost your online presence and drive growth."} />
+        <meta property="og:image" content="https://thedynamicrankers.com/the%20copy%20copy.png" />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       {/* Show Hero only on homepage */}

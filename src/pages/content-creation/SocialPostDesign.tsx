@@ -5,9 +5,11 @@ const SocialPostDesign = () => {
   return (
     <>
       <Helmet>
-        <title>Social Post Design | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on Social Post Design with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="social media design, visual hierarchy, brand consistency, The Dynamic Rankers" />
+        <title>Eye-Catching Social Post Design | The Dynamic Rankers</title>
+        <meta name="description" content="Stop the scroll with high-impact social media designs. We create visuals that represent your brand perfectly and encourage interaction across all social channels." />
+        <meta property="og:title" content="Eye-Catching Social Post Design | The Dynamic Rankers" />
+        <meta property="og:description" content="Stop the scroll with high-impact social media designs. We create visuals that represent your brand perfectly and encourage interaction across all social channels." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

@@ -5,8 +5,11 @@ const SearchEngineOptimization: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Search Engine Optimization Definition | The Dynamic Rankers</title>
+        <title>Search Engine Optimization Explained | The Dynamic Rankers</title>
         <meta name="description" content="Learn what Search Engine Optimization (SEO) means and how The Dynamic Rankers use advanced SEO strategies to boost your Google rankings and drive organic traffic." />
+        <meta property="og:title" content="Search Engine Optimization Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Learn what Search Engine Optimization (SEO) means and how The Dynamic Rankers use advanced SEO strategies to boost your Google rankings and drive organic traffic." />
+        <meta property="og:type" content="article" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 pt-32 pb-12">

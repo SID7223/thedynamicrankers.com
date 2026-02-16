@@ -35,10 +35,10 @@ const AboutUs: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>About Us - Your Website Name</title>
-        <meta name="description" content="Learn more about our company and mission." />
-        <meta property="og:title" content="About Us - Your Website Name" />
-        <meta property="og:description" content="Learn more about our company and mission." />
+        <title>Our Mission and Team | The Dynamic Rankers</title>
+        <meta name="description" content="Discover the story behind The Dynamic Rankers. We are a team of passionate digital experts dedicated to helping businesses scale through innovation and data-driven strategy." />
+        <meta property="og:title" content="Our Mission and Team | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover the story behind The Dynamic Rankers. We are a team of passionate digital experts dedicated to helping businesses scale through innovation and data-driven strategy." />
         <meta property="og:type" content="website" />
       </Helmet>
 

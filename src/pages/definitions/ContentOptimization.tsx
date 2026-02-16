@@ -5,11 +5,11 @@ const ContentOptimization: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Content Optimization Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Content optimization involves refining written and visual content to improve search engine rankings, user engagement, and conversion rates."
-        />
+        <title>Content Optimization Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Content optimization involves refining written and visual content to improve search engine rankings, user engagement, and conversion rates." />
+        <meta property="og:title" content="Content Optimization Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Content optimization involves refining written and visual content to improve search engine rankings, user engagement, and conversion rates." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

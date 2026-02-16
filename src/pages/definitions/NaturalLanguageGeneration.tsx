@@ -5,11 +5,11 @@ const NaturalLanguageGeneration: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Natural Language Generation Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Natural Language Generation (NLG) is AI technology that converts data into human-readable text for compelling digital marketing content."
-        />
+        <title>Natural Language Generation Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Natural Language Generation (NLG) is AI technology that converts data into human-readable text for compelling digital marketing content." />
+        <meta property="og:title" content="Natural Language Generation Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Natural Language Generation (NLG) is AI technology that converts data into human-readable text for compelling digital marketing content." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

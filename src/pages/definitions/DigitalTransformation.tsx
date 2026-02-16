@@ -5,8 +5,11 @@ const DigitalTransformation: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Digital Transformation Definition | The Dynamic Rankers</title>
+        <title>Digital Transformation Explained | The Dynamic Rankers</title>
         <meta name="description" content="Learn what digital transformation means and how The Dynamic Rankers guide businesses through comprehensive digital evolution strategies." />
+        <meta property="og:title" content="Digital Transformation Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Learn what digital transformation means and how The Dynamic Rankers guide businesses through comprehensive digital evolution strategies." />
+        <meta property="og:type" content="article" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">

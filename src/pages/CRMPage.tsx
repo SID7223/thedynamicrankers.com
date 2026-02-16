@@ -83,10 +83,11 @@ const CRMPage = () => {
   return (
     <>
       <Helmet>
-        <title>CRM Solutions - The Dynamic Rankers</title>
-        <meta name="description" content="Powerful CRM solutions that transform customer relationships and drive business growth. Manage leads, automate workflows, and boost sales with The Dynamic Rankers CRM." />
-        <meta name="keywords" content="CRM, customer relationship management, sales automation, lead management, The Dynamic Rankers" />
-        <link rel="canonical" href="https://thedynamicrankers.com/crm" />
+        <title>Intelligent CRM Solutions for Modern Sales | The Dynamic Rankers</title>
+        <meta name="description" content="Streamline your sales process and build stronger relationships with our AI-powered CRM. Automate lead management, track performance, and grow your revenue faster." />
+        <meta property="og:title" content="Intelligent CRM Solutions for Modern Sales | The Dynamic Rankers" />
+        <meta property="og:description" content="Streamline your sales process and build stronger relationships with our AI-powered CRM. Automate lead management, track performance, and grow your revenue faster." />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

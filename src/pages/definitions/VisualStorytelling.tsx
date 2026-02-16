@@ -5,11 +5,11 @@ const VisualStorytelling: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Visual Storytelling Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Visual storytelling combines compelling narratives with powerful imagery to create emotional connections and convey complex messages instantly."
-        />
+        <title>Visual Storytelling Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Visual storytelling combines compelling narratives with powerful imagery to create emotional connections and convey complex messages instantly." />
+        <meta property="og:title" content="Visual Storytelling Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Visual storytelling combines compelling narratives with powerful imagery to create emotional connections and convey complex messages instantly." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

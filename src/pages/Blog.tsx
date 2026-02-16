@@ -443,8 +443,11 @@ const Blog: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Blog & Insights - The Dynamic Rankers</title>
-        <meta name="description" content="Read the latest insights on SEO, CRM automation, and digital marketing strategies from The Dynamic Rankers." />
+        <title>Expert Insights on Digital Growth and SEO | The Dynamic Rankers</title>
+        <meta name="description" content="Stay ahead of the competition with the latest insights on SEO, AI solutions, and digital marketing trends. Read our blog for actionable strategies to scale your business." />
+        <meta property="og:title" content="Expert Insights on Digital Growth and SEO | The Dynamic Rankers" />
+        <meta property="og:description" content="Stay ahead of the competition with the latest insights on SEO, AI solutions, and digital marketing trends. Read our blog for actionable strategies to scale your business." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

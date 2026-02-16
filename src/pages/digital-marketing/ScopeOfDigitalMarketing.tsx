@@ -6,9 +6,11 @@ const ScopeOfDigitalMarketing = () => {
   return (
     <>
       <Helmet>
-        <title>Scope of Digital Marketing - The Dynamic Rankers USA</title>
-        <meta name="description" content="Understand the full scope and potential of digital marketing for USA businesses. Explore opportunities with The Dynamic Rankers." />
-        <meta name="keywords" content="scope of digital marketing, digital marketing opportunities, USA, The Dynamic Rankers" />
+        <title>Maximize Your Market Reach | The Dynamic Rankers</title>
+        <meta name="description" content="Explore the full scope of digital marketing and how it can transform your business. Learn how to leverage multiple channels to reach your ideal audience and scale effectively." />
+        <meta property="og:title" content="Maximize Your Market Reach | The Dynamic Rankers" />
+        <meta property="og:description" content="Explore the full scope of digital marketing and how it can transform your business. Learn how to leverage multiple channels to reach your ideal audience and scale effectively." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

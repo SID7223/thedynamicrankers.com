@@ -5,11 +5,11 @@ const TechnicalSeoAudit: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Technical Site Audit Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="A technical site audit evaluates crawlability, performance, indexing, and architecture issues that limit visibility, trust, and conversion performance."
-        />
+        <title>Technical Site Audit Explained | The Dynamic Rankers</title>
+        <meta name="description" content="A technical site audit evaluates crawlability, performance, indexing, and architecture issues that limit visibility, trust, and conversion performance." />
+        <meta property="og:title" content="Technical Site Audit Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="A technical site audit evaluates crawlability, performance, indexing, and architecture issues that limit visibility, trust, and conversion performance." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">
@@ -67,4 +67,3 @@ const TechnicalSeoAudit: React.FC = () => {
 };
 
 export default TechnicalSeoAudit;
-
