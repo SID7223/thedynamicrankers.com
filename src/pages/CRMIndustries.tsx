@@ -5,6 +5,8 @@ import {
   Home, Heart, ShoppingCart, Briefcase, Factory, 
   Laptop, DollarSign, GraduationCap, CheckCircle, ArrowRight 
 } from 'lucide-react';
+import CRMHeader from '../components/CRMHeader';
+import CRMFooter from '../components/CRMFooter';
 
 const CRMIndustries = () => {
   const industries = [
@@ -121,12 +123,15 @@ const CRMIndustries = () => {
   return (
     <>
       <Helmet>
-        <title>CRM for Industries - The Dynamic Rankers</title>
-        <meta name="description" content="Industry-specific CRM solutions for real estate, healthcare, e-commerce, professional services, and more. Tailored features for your business needs." />
-        <meta name="keywords" content="industry CRM, real estate CRM, healthcare CRM, e-commerce CRM, professional services CRM, The Dynamic Rankers" />
+        <title>Tailored CRM Solutions for Every Industry | The Dynamic Rankers</title>
+        <meta name="description" content="Our CRM is built to adapt to your specific industry needs. Whether you are in real estate, finance, or retail, we help you manage customer relationships with ease." />
+        <meta property="og:title" content="Tailored CRM Solutions for Every Industry | The Dynamic Rankers" />
+        <meta property="og:description" content="Our CRM is built to adapt to your specific industry needs. Whether you are in real estate, finance, or retail, we help you manage customer relationships with ease." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <CRMHeader />
         <main className="pt-20">
           {/* Hero Section */}
           <section className="py-20 bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
@@ -236,6 +241,7 @@ const CRMIndustries = () => {
             </div>
           </section>
         </main>
+        <CRMFooter />
       </div>
     </>
   );

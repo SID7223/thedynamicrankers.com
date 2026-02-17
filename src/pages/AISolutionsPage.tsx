@@ -33,9 +33,11 @@ const AISolutionsPage = () => {
   return (
     <>
       <Helmet>
-        <title>AI Solutions for Business - The Dynamic Rankers USA</title>
-        <meta name="description" content="Revolutionary AI solutions for businesses in USA. Automate processes, enhance content creation, and boost marketing with AI technology from The Dynamic Rankers." />
-        <meta name="keywords" content="AI solutions, artificial intelligence, USA, automation, AI marketing, The Dynamic Rankers" />
+        <title>Future-Proof Your Business with AI Solutions | The Dynamic Rankers</title>
+        <meta name="description" content="Leverage the power of Artificial Intelligence to automate your workflows and gain a competitive edge. From custom AI tools to automated marketing, we bring the future to your business today." />
+        <meta property="og:title" content="Future-Proof Your Business with AI Solutions | The Dynamic Rankers" />
+        <meta property="og:description" content="Leverage the power of Artificial Intelligence to automate your workflows and gain a competitive edge. From custom AI tools to automated marketing, we bring the future to your business today." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

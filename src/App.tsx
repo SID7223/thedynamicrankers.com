@@ -81,6 +81,22 @@ const BrandIdentity = React.lazy(() => import('./pages/definitions/BrandIdentity
 const VisualStorytelling = React.lazy(() => import('./pages/definitions/VisualStorytelling'));
 const SalesPsychology = React.lazy(() => import('./pages/definitions/SalesPsychology'));
 const ContentOptimization = React.lazy(() => import('./pages/definitions/ContentOptimization'));
+const BehavioralData = React.lazy(() => import('./pages/definitions/BehavioralData'));
+const BrandConsistency = React.lazy(() => import('./pages/definitions/BrandConsistency'));
+const ColorGrading = React.lazy(() => import('./pages/definitions/ColorGrading'));
+const ContentPillars = React.lazy(() => import('./pages/definitions/ContentPillars'));
+const EditorialSeo = React.lazy(() => import('./pages/definitions/EditorialSeo'));
+const InteractiveUx = React.lazy(() => import('./pages/definitions/InteractiveUx'));
+const JavascriptAutomation = React.lazy(() => import('./pages/definitions/JavascriptAutomation'));
+const MotionGraphics = React.lazy(() => import('./pages/definitions/MotionGraphics'));
+const OnPageOptimization = React.lazy(() => import('./pages/definitions/OnPageOptimization'));
+const PredictiveAnalytics = React.lazy(() => import('./pages/definitions/PredictiveAnalytics'));
+const SemanticSearch = React.lazy(() => import('./pages/definitions/SemanticSearch'));
+const ServerResponseTime = React.lazy(() => import('./pages/definitions/ServerResponseTime'));
+const StructuredData = React.lazy(() => import('./pages/definitions/StructuredData'));
+const TechnicalSeoAudit = React.lazy(() => import('./pages/definitions/TechnicalSeoAudit'));
+const VisualHierarchy = React.lazy(() => import('./pages/definitions/VisualHierarchy'));
+const Cdn = React.lazy(() => import('./pages/definitions/cdn'));
 
 const EvolutionHyperPersonalizedUx2026 = React.lazy(() => import('./pages/blogs/EvolutionHyperPersonalizedUx2026'));
 const AiSolutionsSmallBusinessGrowth = React.lazy(() => import('./pages/blogs/AiSolutionsSmallBusinessGrowth'));
@@ -189,10 +205,12 @@ const MainPage = () => {
   return (
     <>
       <Helmet>
-        <title>
-          The Dynamic Rankers - Digital Marketing & Web Development
-        </title>
-        <meta name="description" content="Professional digital marketing and SEO services to boost your online presence. Get higher rankings and more traffic with The Dynamic Rankers." />
+        <title>{isHomePage ? "Dominate Your Market | The Dynamic Rankers" : "The Dynamic Rankers | Elite Digital Solutions"}</title>
+        <meta name="description" content={isHomePage ? "Elevate your online presence with The Dynamic Rankers. We specialize in high-conversion web development, precision SEO, and AI-driven digital marketing solutions for USA businesses." : "Professional digital marketing and web development services to boost your online presence and drive growth."} />
+        <meta property="og:title" content={isHomePage ? "Dominate Your Market | The Dynamic Rankers" : "The Dynamic Rankers | Elite Digital Solutions"} />
+        <meta property="og:description" content={isHomePage ? "Elevate your online presence with The Dynamic Rankers. We specialize in high-conversion web development, precision SEO, and AI-driven digital marketing solutions for USA businesses." : "Professional digital marketing and web development services to boost your online presence and drive growth."} />
+        <meta property="og:image" content="https://thedynamicrankers.com/the%20copy%20copy.png" />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       {/* Show Hero only on homepage */}
@@ -219,11 +237,9 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-        {/* Only render global Header if NOT on a CRM page or Onboarding page */}
-        {!isCrmPage && !isOnboardingPage && <Header />}
-        
-        {!isOnboardingPage && <DarkModeToggle />}
+      {!isCrmPage && !isOnboardingPage && <Header />}
+      <div className="main-content-wrapper min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+        <DarkModeToggle />
         
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
@@ -348,6 +364,32 @@ function App() {
             <Route path="/definitions/visual-storytelling" element={<VisualStorytelling />} />
             <Route path="/definitions/sales-psychology" element={<SalesPsychology />} />
             <Route path="/definitions/content-optimization" element={<ContentOptimization />} />
+            <Route path="/definitions/behavioral-data" element={<BehavioralData />} />
+            <Route path="/definitions/brand-consistency" element={<BrandConsistency />} />
+            <Route path="/definitions/color-grading" element={<ColorGrading />} />
+            <Route path="/definitions/content-pillars" element={<ContentPillars />} />
+            <Route path="/definitions/editorial-seo" element={<EditorialSeo />} />
+            <Route path="/definitions/interactive-ux" element={<InteractiveUx />} />
+            <Route path="/definitions/javascript-automation" element={<JavascriptAutomation />} />
+            <Route path="/definitions/motion-graphics" element={<MotionGraphics />} />
+            <Route path="/definitions/on-page-optimization" element={<OnPageOptimization />} />
+            <Route path="/definitions/predictive-analytics" element={<PredictiveAnalytics />} />
+            <Route path="/definitions/semantic-search" element={<SemanticSearch />} />
+            <Route path="/definitions/server-response-time" element={<ServerResponseTime />} />
+            <Route path="/definitions/structured-data" element={<StructuredData />} />
+            <Route path="/definitions/technical-seo-audit" element={<TechnicalSeoAudit />} />
+            <Route path="/definitions/visual-hierarchy" element={<VisualHierarchy />} />
+            <Route path="/definitions/cdn" element={<Cdn />} />
+            <Route path="/definitions/meta-structure" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/page-indexing" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/responsive-layout" element={<OnPageOptimization />} />
+            <Route path="/definitions/engagement-rate" element={<OnlineEngagement />} />
+            <Route path="/definitions/platform-targeting" element={<AudienceTargeting />} />
+            <Route path="/definitions/bid-strategy" element={<SearchEngineOptimization />} />
+            <Route path="/definitions/conversion-funnel" element={<ConversionRate />} />
+            <Route path="/definitions/24-7-service" element={<CustomerSupportPage />} />
+            <Route path="/definitions/ticket-resolution" element={<CustomerSupportPage />} />
+            <Route path="/definitions/interactive-design" element={<InteractiveUx />} />
             <Route path="/book-a-call-meeting" element={<BookACall />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="/special-booking" element={<SpecialBookingPage />} />
@@ -363,7 +405,7 @@ function App() {
           </Routes>
         </Suspense>
         
-        {!isOnboardingPage && <Footer />}
+        {!isCrmPage && !isOnboardingPage && <Footer />}
         {!isOnboardingPage && <AIAssistant />}
       </div>
     </>

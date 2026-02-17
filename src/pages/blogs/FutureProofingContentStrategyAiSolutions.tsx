@@ -9,6 +9,9 @@ const FutureProofingContentStrategyAiSolutions: React.FC = () => {
       <Helmet>
         <title>Future Proofing Your Content Strategy with AI Solutions | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Future Proofing Your Content Strategy with AI Solutions is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Future Proofing Your Content Strategy with AI Solutions | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Future Proofing Your Content Strategy with AI Solutions is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

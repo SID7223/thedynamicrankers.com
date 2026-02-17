@@ -6,9 +6,11 @@ const OurServicesPage = () => {
   return (
     <>
       <Helmet>
-        <title>Our Services | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' Our Services with performance visuals and clean design." />
-        <meta name="keywords" content="digital services, web development, SEO, social media marketing, The Dynamic Rankers" />
+        <title>Comprehensive Digital Growth Services | The Dynamic Rankers</title>
+        <meta name="description" content="Explore our full suite of digital marketing and web development services. We provide the expertise you need to grow your business and dominate your online market." />
+        <meta property="og:title" content="Comprehensive Digital Growth Services | The Dynamic Rankers" />
+        <meta property="og:description" content="Explore our full suite of digital marketing and web development services. We provide the expertise you need to grow your business and dominate your online market." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

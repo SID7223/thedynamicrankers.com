@@ -5,9 +5,11 @@ const SEOFoundationSetup = () => {
   return (
     <>
       <Helmet>
-        <title>SEO Foundation Setup | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on SEO Foundation Setup with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="SEO foundation, structured data, technical SEO audit, The Dynamic Rankers" />
+        <title>Built-In SEO for Maximum Visibility | The Dynamic Rankers</title>
+        <meta name="description" content="Dont wait for launch to think about SEO. We build every website with a solid SEO foundation, ensuring you rank higher and faster from day one." />
+        <meta property="og:title" content="Built-In SEO for Maximum Visibility | The Dynamic Rankers" />
+        <meta property="og:description" content="Dont wait for launch to think about SEO. We build every website with a solid SEO foundation, ensuring you rank higher and faster from day one." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

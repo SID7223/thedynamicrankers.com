@@ -9,6 +9,9 @@ const EthicsOfAi2026DeepDive: React.FC = () => {
       <Helmet>
         <title>The Ethics of AI in 2026: A Deep Dive | The Dynamic Rankers</title>
         <meta name="description" content="Discover why The Ethics of AI in 2026: A Deep Dive is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="The Ethics of AI in 2026: A Deep Dive | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why The Ethics of AI in 2026: A Deep Dive is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

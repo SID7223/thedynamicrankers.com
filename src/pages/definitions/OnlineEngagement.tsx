@@ -5,8 +5,11 @@ const OnlineEngagement: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Online Engagement Definition | The Dynamic Rankers</title>
+        <title>Online Engagement Explained | The Dynamic Rankers</title>
         <meta name="description" content="Discover what online engagement means and how The Dynamic Rankers create meaningful interactions that drive business growth through strategic digital marketing." />
+        <meta property="og:title" content="Online Engagement Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover what online engagement means and how The Dynamic Rankers create meaningful interactions that drive business growth through strategic digital marketing." />
+        <meta property="og:type" content="article" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 pt-32 pb-12">

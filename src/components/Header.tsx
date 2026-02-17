@@ -90,28 +90,24 @@ const Header = () => {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? 'bg-white dark:bg-gray-900 shadow-lg py-3 sm:py-4' 
-        : 'bg-gradient-to-b from-black/20 via-black/10 to-transparent sm:bg-transparent py-4 sm:py-6'
+        ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg py-1.5 sm:py-2'
+        : 'bg-transparent py-3 sm:py-3'
     }`} style={{
-      transform: isScrolled ? 'translateY(0)' : location.pathname === '/' ? 'translateY(-100%)' : 'translateY(0)',
-      opacity: isScrolled ? 1 : location.pathname === '/' ? 0 : 1,
-      pointerEvents: isScrolled ? 'auto' : location.pathname === '/' ? 'none' : 'auto'
+      transform: 'translateY(0)',
+      opacity: 1,
+      pointerEvents: 'auto'
     }}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2" onClick={closeMenu}>
-            <img 
-              src="/the copy copy.png" 
-              alt="The Dynamic Rankers Logo" 
-              className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
-                isScrolled && !document.documentElement.classList.contains('dark') 
-                  ? 'brightness-0' 
-                  : ''
-              }`}
-            />
-            <span className={`text-lg sm:text-xl font-bold ${
-              isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'
-            }`}>
+          <Link to="/" className="flex items-center space-x-4 group" onClick={closeMenu}>
+            <div className="squircle w-8 h-8 sm:w-9 sm:h-9 bg-white dark:bg-black transition-all duration-300 flex-shrink-0 group-hover:scale-110">
+              <img
+                src="/the copy copy.png"
+                alt="The Dynamic Rankers Logo"
+                className="w-5 h-5 sm:w-6 sm:h-6 object-contain transition-all duration-300 brightness-0 dark:brightness-100"
+              />
+            </div>
+            <span className="text-base sm:text-lg font-bold text-black dark:text-white transition-colors duration-300 whitespace-nowrap">
               The Dynamic Rankers
             </span>
           </Link>
@@ -127,11 +123,7 @@ const Header = () => {
               >
                 <Link
                   to={item.path}
-                  className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
-                    isScrolled 
-                      ? 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800' 
-                      : 'text-white hover:text-blue-200 hover:bg-white/10'
-                  } ${location.pathname.startsWith(item.path) && item.path !== '/' ? 'text-blue-600 bg-blue-50 dark:bg-gray-800' : ''}`}
+                  className={`flex items-center space-x-1 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 text-gray-700 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-800 ${location.pathname.startsWith(item.path) && item.path !== '/' ? 'text-blue-600 bg-blue-50 dark:bg-gray-800' : ''}`}
                 >
                   <span>{item.label}</span>
                   {item.subItems && (
@@ -153,7 +145,7 @@ const Header = () => {
                         <Link
                           key={index}
                           to={subItem.path}
-                          className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="block px-4 py-3 text-sm text-gray-700 dark:text-gray-500 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={closeMenu}
                         >
                           {subItem.label}
@@ -172,9 +164,9 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className={`w-6 h-6 ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} />
+              <X className={`w-6 h-6 text-gray-800 dark:text-white`} />
             ) : (
-              <Menu className={`w-6 h-6 ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} />
+              <Menu className={`w-6 h-6 text-gray-800 dark:text-white`} />
             )}
           </button>
         </div>
@@ -196,7 +188,7 @@ const Header = () => {
                       className={`flex-1 px-4 py-3 text-sm font-medium transition-colors duration-200 ${
                         location.pathname.startsWith(item.path) && item.path !== '/' 
                           ? 'text-blue-600 bg-blue-50 dark:bg-gray-700' 
-                          : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700'
+                          : 'text-gray-700 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700'
                       }`}
                     >
                       {item.label}
@@ -225,7 +217,7 @@ const Header = () => {
                           <Link
                             key={index}
                             to={subItem.path}
-                            className="block px-8 py-3 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600 transition-colors duration-200"
+                            className="block px-8 py-3 text-sm text-gray-600 dark:text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600 transition-colors duration-200"
                             onClick={closeMenu}
                           >
                             {subItem.label}

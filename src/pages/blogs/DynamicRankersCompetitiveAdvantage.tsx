@@ -9,6 +9,9 @@ const DynamicRankersCompetitiveAdvantage: React.FC = () => {
       <Helmet>
         <title>The Dynamic Rankers Approach to Competitive Advantage | The Dynamic Rankers</title>
         <meta name="description" content="Discover why The Dynamic Rankers Approach to Competitive Advantage is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="The Dynamic Rankers Approach to Competitive Advantage | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why The Dynamic Rankers Approach to Competitive Advantage is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

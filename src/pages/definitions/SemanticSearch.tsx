@@ -5,11 +5,11 @@ const SemanticSearch: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Semantic Search Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Semantic search improves visibility by helping search engines understand context, relationships, and meaning behind a query. It moves strategy from keyword stuffing to intent focused content design."
-        />
+        <title>Semantic Search Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Semantic search improves visibility by helping search engines understand context, relationships, and meaning behind a query. It moves strategy from keyword stuffing to intent focused content design." />
+        <meta property="og:title" content="Semantic Search Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Semantic search improves visibility by helping search engines understand context, relationships, and meaning behind a query. It moves strategy from keyword stuffing to intent focused content design." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

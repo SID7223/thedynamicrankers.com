@@ -5,9 +5,11 @@ const VideoEditingServices = () => {
   return (
     <>
       <Helmet>
-        <title>Video Editing Services | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on Video Editing Services with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="video editing, motion graphics, color grading, The Dynamic Rankers" />
+        <title>Pro Video Editing for Maximum Impact | The Dynamic Rankers</title>
+        <meta name="description" content="Capture your audiences attention with stunning video content. We provide professional video editing that brings your brand to life and drives social media growth." />
+        <meta property="og:title" content="Pro Video Editing for Maximum Impact | The Dynamic Rankers" />
+        <meta property="og:description" content="Capture your audiences attention with stunning video content. We provide professional video editing that brings your brand to life and drives social media growth." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">
