@@ -114,20 +114,30 @@ export const onRequestPost = async (context: {
 }) => {
   const { env, request } = context;
 
-  const resendApiKey = env.RESEND_API_KEY;
-  const resendFromEmail = env.RESEND_FROM_EMAIL || env.CONTACT_FROM_EMAIL;
-  const resendTargetEmail = env.RESEND_TARGET_EMAIL || env.CONTACT_TO_EMAIL;
-
   try {
+    const resendApiKey = env.RESEND_API_KEY;
+    const resendFromEmail = env.RESEND_FROM_EMAIL || env.CONTACT_FROM_EMAIL;
+    const resendTargetEmail = env.RESEND_TARGET_EMAIL || env.CONTACT_TO_EMAIL;
+
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
-      console.error("Missing Resend configuration.");
-      return new Response(JSON.stringify({ error: "Email service is not configured" }), {
+      return new Response(JSON.stringify({
+        error: "Email service is not configured",
+        details: "Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or RESEND_TARGET_EMAIL in environment variables."
+      }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const data = await request.json() as OnboardingData;
+    let data: OnboardingData;
+    try {
+      data = await request.json();
+    } catch (e) {
+      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     if (!data.email || !data.orgName) {
       return new Response(JSON.stringify({ error: "Email and Organization Name are required" }), {
@@ -146,7 +156,10 @@ export const onRequestPost = async (context: {
     });
 
     if (result.error) {
-      return new Response(JSON.stringify({ error: result.error.message }), {
+      return new Response(JSON.stringify({
+        error: "Resend error",
+        details: result.error.message
+      }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
@@ -159,9 +172,11 @@ export const onRequestPost = async (context: {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
-    console.error("Onboarding API error:", error);
-    return new Response(JSON.stringify({ error: "Failed to process onboarding data" }), {
+  } catch (error: any) {
+    return new Response(JSON.stringify({
+      error: "Failed to process onboarding data",
+      details: error.message || String(error)
+    }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
