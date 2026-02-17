@@ -1,12 +1,5 @@
 import { Resend } from "resend";
 
-interface EmailTemplateProps {
-  name: string;
-  email: string;
-  phone?: string;
-  message?: string;
-}
-
 interface ContactRequestBody {
   name: string;
   email: string;
@@ -28,7 +21,7 @@ function ContactEmailTemplate({
   email,
   phone,
   message,
-}: EmailTemplateProps) {
+}: { name: string; email: string; phone?: string; message: string }) {
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
   const safePhone = phone ? escapeHtml(phone) : "";
@@ -61,23 +54,33 @@ export const onRequestPost = async (context: {
 }) => {
   const { env, request } = context;
 
-  const resendApiKey = env.RESEND_API_KEY;
-  const resendFromEmail = env.RESEND_FROM_EMAIL || env.CONTACT_FROM_EMAIL;
-  const resendTargetEmail = env.RESEND_TARGET_EMAIL || env.CONTACT_TO_EMAIL;
-
   try {
+    const resendApiKey = env.RESEND_API_KEY;
+    const resendFromEmail = env.RESEND_FROM_EMAIL || env.CONTACT_FROM_EMAIL;
+    const resendTargetEmail = env.RESEND_TARGET_EMAIL || env.CONTACT_TO_EMAIL;
+
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
-      console.error("Missing Resend configuration.");
-      return new Response(JSON.stringify({ error: "Email service is not configured" }), {
+      return new Response(JSON.stringify({
+        error: "Email service is not configured",
+        details: "Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or RESEND_TARGET_EMAIL in environment variables."
+      }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const body = await request.json() as ContactRequestBody;
+    let body: ContactRequestBody;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const { name, email, phone, message } = body;
 
-    // Basic validation
     if (!name || !email || !message) {
       return new Response(JSON.stringify({ error: "Name, email, and message are required" }), {
         status: 400,
@@ -87,18 +90,22 @@ export const onRequestPost = async (context: {
 
     const resend = new Resend(resendApiKey);
 
-    // Send email via Resend
     const result = await resend.emails.send({
       from: resendFromEmail,
       to: [resendTargetEmail],
       subject: `New Contact Form Submission – ${name}`,
-      html: ContactEmailTemplate({
-        name,
-        email,
-        phone,
-        message,
-      }),
+      html: ContactEmailTemplate({ name, email, phone, message }),
     });
+
+    if (result.error) {
+      return new Response(JSON.stringify({
+        error: "Resend error",
+        details: result.error.message
+      }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     return new Response(JSON.stringify({
       success: true,
@@ -107,9 +114,11 @@ export const onRequestPost = async (context: {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
-    console.error("Contact API error:", error);
-    return new Response(JSON.stringify({ error: "Failed to send message" }), {
+  } catch (error: any) {
+    return new Response(JSON.stringify({
+      error: "Failed to send message",
+      details: error.message || String(error)
+    }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
