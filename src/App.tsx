@@ -6,11 +6,17 @@ import DarkModeToggle from './components/DarkModeToggle';
 import AIAssistant from './components/AIAssistant';
 import ScrollToTop from './components/ScrollToTop';
 
-// Lazy load pages
+// Lazy load components for the Home page
 const Hero = lazy(() => import('./components/Hero'));
+const About = lazy(() => import('./components/About'));
+const BusinessGrowth = lazy(() => import('./components/BusinessGrowth'));
+const TestimonialsLanding = lazy(() => import('./components/TestimonialsLanding'));
+const ContactSection = lazy(() => import('./components/Contact'));
+
+// Lazy load other pages
 const AboutUs = lazy(() => import('./pages/AboutUs'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
-const Contact = lazy(() => import('./Contact'));
+const ContactPage = lazy(() => import('./Contact'));
 const Careers = lazy(() => import('./pages/Careers'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const MessagePage = lazy(() => import('./pages/MessagePage'));
@@ -115,6 +121,17 @@ const FutureOfWebsitesAccessibilityCompliance = lazy(() => import('./pages/blogs
 const AiSolutionsModernAgriculture2026 = lazy(() => import('./pages/blogs/AiSolutionsModernAgriculture2026'));
 const EmbracingFutureDynamicRankers = lazy(() => import('./pages/blogs/EmbracingFutureDynamicRankers'));
 
+// Home Page Component
+const HomePage = () => (
+  <>
+    <Hero />
+    <About />
+    <BusinessGrowth />
+    <TestimonialsLanding />
+    <ContactSection />
+  </>
+);
+
 function App() {
   const location = useLocation();
   const isCrmPage = location.pathname.startsWith('/crm');
@@ -130,10 +147,10 @@ function App() {
         
         <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
           <Routes>
-            <Route path="/" element={<Hero />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/career" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/message" element={<MessagePage />} />
