@@ -62,24 +62,36 @@ export const onRequestPost = async (context: {
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
       return new Response(JSON.stringify({
         error: "Email service is not configured",
-        details: "Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or RESEND_TARGET_EMAIL in environment variables."
+        details: "Missing environment variables."
       }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    let body: ContactRequestBody;
-    try {
-      body = await request.json();
-    } catch (e) {
-      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    let name = "";
+    let email = "";
+    let phone = "";
+    let message = "";
+    let redirectUrl = "";
 
-    const { name, email, phone, message } = body;
+    const contentType = request.headers.get("content-type") || "";
+
+    if (contentType.includes("application/json")) {
+      const body = await request.json() as any;
+      name = body.name;
+      email = body.email;
+      phone = body.phone || "";
+      message = body.message;
+      redirectUrl = body.redirect;
+    } else {
+      const formData = await request.formData();
+      name = formData.get("name")?.toString() || "";
+      email = formData.get("email")?.toString() || "";
+      phone = formData.get("phone")?.toString() || "";
+      message = formData.get("message")?.toString() || "";
+      redirectUrl = formData.get("redirect")?.toString() || "";
+    }
 
     if (!name || !email || !message) {
       return new Response(JSON.stringify({ error: "Name, email, and message are required" }), {
@@ -105,6 +117,10 @@ export const onRequestPost = async (context: {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
+    }
+
+    if (redirectUrl && !contentType.includes("application/json")) {
+      return Response.redirect(new URL(redirectUrl, request.url).toString(), 303);
     }
 
     return new Response(JSON.stringify({

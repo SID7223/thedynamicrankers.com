@@ -122,7 +122,7 @@ export const onRequestPost = async (context: {
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
       return new Response(JSON.stringify({
         error: "Email service is not configured",
-        details: "Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or RESEND_TARGET_EMAIL in environment variables."
+        details: "Missing environment variables."
       }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -130,13 +130,24 @@ export const onRequestPost = async (context: {
     }
 
     let data: OnboardingData;
-    try {
+    const contentType = request.headers.get("content-type") || "";
+
+    if (contentType.includes("application/json")) {
       data = await request.json();
-    } catch (e) {
-      return new Response(JSON.stringify({ error: "Invalid JSON in request body" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    } else {
+      const formData = await request.formData();
+      data = {
+        orgName: formData.get("orgName")?.toString() || "",
+        industry: formData.get("industry")?.toString() || "",
+        location: formData.get("location")?.toString() || "",
+        role: formData.get("role")?.toString() || "",
+        email: formData.get("email")?.toString() || "",
+        phone: formData.get("phone")?.toString() || "",
+        primaryIntent: formData.get("primaryIntent")?.toString() || "",
+        refinement: formData.get("refinement")?.toString() || "",
+        communicationChannel: formData.get("communicationChannel")?.toString() || "",
+        appointmentType: formData.get("appointmentType")?.toString() || undefined,
+      };
     }
 
     if (!data.email || !data.orgName) {
