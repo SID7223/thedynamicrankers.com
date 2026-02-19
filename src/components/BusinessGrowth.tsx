@@ -1,6 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Users, DollarSign, Target } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
 const BusinessGrowth = () => {
   const growthData = [
@@ -12,19 +21,6 @@ const BusinessGrowth = () => {
     { month: 'Month 6', value: 80 },
     { month: 'Month 7', value: 80 }
   ];
-
-  // Create SVG path for the line
-  const createPath = () => {
-    const width = 100;
-    const height = 100;
-    // Only use first 7 data points (index 0-6) to stop at M7
-    const points = growthData.slice(0, 7).map((data, index) => {
-      const x = (index / 6) * (width * 0.875); // 7/8 of the width to stop at M7
-      const y = height - data.value;
-      return `${x},${y}`;
-    });
-    return `M ${points.join(' L ')}`;
-  };
 
   const benefits = [
     {
@@ -63,79 +59,61 @@ const BusinessGrowth = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Growth Chart */}
+          {/* Enhanced Growth Chart using Recharts */}
           <div className="bg-gray-50 sm:bg-white dark:bg-gray-800 border border-gray-200 sm:border-transparent rounded-2xl shadow-lg sm:shadow-xl p-4 sm:p-8">
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
               Average Business Growth Timeline
             </h3>
             
-            <div className="relative h-48 sm:h-80 p-2 sm:p-4">
-              {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 dark:text-gray-400 pr-2 sm:pr-4">
-                <span>100%</span>
-                <span>80%</span>
-                <span>60%</span>
-                <span>40%</span>
-                <span>20%</span>
-                <span>0%</span>
-              </div>
-              
-              {/* Chart area */}
-              <div className="ml-6 sm:ml-12 h-full relative">
-                {/* Grid lines */}
-                <div className="absolute inset-0">
-                  {[0, 20, 40, 60, 80, 100].map((value) => (
-                    <div
-                      key={value}
-                      className="absolute w-full border-t border-gray-200 dark:border-gray-600"
-                      style={{ bottom: `${value}%` }}
-                    ></div>
-                  ))}
-                </div>
-                
-                {/* Line Graph */}
-                <div className="absolute inset-0">
-                  <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    {/* Line path */}
-                    <path
-                      d={createPath()}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      className="text-blue-500 dark:text-purple-400 transition-colors duration-300"
-                      style={{
-                        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
-                        strokeDasharray: '1000',
-                        strokeDashoffset: '1000',
-                        animation: 'drawLineEased 15s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite',
-                        animationDelay: '0s',
-                        animationIterationCount: 'infinite',
-                        animationDirection: 'normal',
-                        animationFillMode: 'forwards'
-                      }}
-                    />
-                  </svg>
-                </div>
-                
-                {/* X-axis labels */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-between pt-2">
-                  {[
-                    { month: 'Month 1' },
-                    { month: 'Month 2' },
-                    { month: 'Month 3' },
-                    { month: 'Month 4' },
-                    { month: 'Month 5' },
-                    { month: 'Month 6' },
-                    { month: 'Month 7' },
-                    { month: 'Month 8' }
-                  ].map((data, index) => (
-                    <span key={index} className="text-xs text-gray-600 dark:text-gray-400 text-center" style={{ fontSize: '10px' }}>
-                      {data.month.replace('Month ', 'M')}
-                    </span>
-                  ))}
-                </div>
-              </div>
+            <div className="h-48 sm:h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={growthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="currentColor"
+                    className="text-gray-200 dark:text-gray-700"
+                  />
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9CA3AF', fontSize: 10 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    domain={[0, 100]}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#9CA3AF', fontSize: 10 }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#fff'
+                    }}
+                    itemStyle={{ color: '#60A5FA' }}
+                    cursor={{ stroke: '#3B82F6', strokeWidth: 2 }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#3B82F6"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorValue)"
+                    animationDuration={2000}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
             
             <div className="mt-6 text-center">
