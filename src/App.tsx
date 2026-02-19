@@ -167,7 +167,7 @@ const MainPage = () => {
     // Handle smooth scrolling to specific sections for home page
     const scrollToSection = () => {
       let sectionId = '';
-      
+
       switch (location.pathname) {
         case '/':
           sectionId = 'home';
@@ -187,7 +187,7 @@ const MainPage = () => {
         setTimeout(() => {
           const element = document.getElementById(sectionId);
           if (element) {
-            element.scrollIntoView({ 
+            element.scrollIntoView({
               behavior: 'smooth',
               block: 'start'
             });
@@ -195,13 +195,13 @@ const MainPage = () => {
         }, 100);
       }
     };
-    
+
     scrollToSection();
   }, [location.pathname]);
 
   // Determine which components to show based on route
   const isHomePage = location.pathname === '/';
-  
+
   return (
     <>
       <Helmet>
@@ -212,13 +212,13 @@ const MainPage = () => {
         <meta property="og:image" content="https://thedynamicrankers.com/the%20copy%20copy.png" />
         <meta property="og:type" content="website" />
       </Helmet>
-      
+
       {/* Show Hero only on homepage */}
       {isHomePage && <Hero />}
-      
+
       {/* Show Testimonials Landing on homepage */}
       {isHomePage && <TestimonialsLanding />}
-      
+
       {/* Only show BusinessGrowth and Contact on homepage */}
       {isHomePage && <BusinessGrowth />}
       {isHomePage && <Contact />}
@@ -229,22 +229,23 @@ const MainPage = () => {
 
 function App() {
   const location = useLocation(); // New addition to track URL
-  
+
   // New logic to check if current route is part of the CRM section
   const isCrmPage = location.pathname.startsWith('/crm');
   const isOnboardingPage = location.pathname === '/onboarding';
-  
+  const isThankYouPage = location.pathname === '/thank-you';
+
   return (
     <>
       <ScrollToTop />
-      {!isCrmPage && !isOnboardingPage && <Header />}
+      {!isCrmPage && !isOnboardingPage && !isThankYouPage && <Header />}
       <div className="main-content-wrapper min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <DarkModeToggle />
         
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<MainPage />} />
-            
+
             {/* Service Pages */}
             <Route path="/our-services" element={<OurServicesPage />} />
             <Route path="/website-development" element={<WebsiteDevelopmentPage />} />
@@ -252,11 +253,11 @@ function App() {
             <Route path="/search-engine-marketing" element={<SearchEngineMarketingPage />} />
             <Route path="/social-media-marketing" element={<SocialMediaMarketingPage />} />
             <Route path="/customer-support" element={<CustomerSupportPage />} />
-                        
+
             {/* Quick Link Pages */}
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/portfolio" element={<Portfolio />} />
-            
+
             {/* Blog Section */}
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
@@ -310,7 +311,7 @@ function App() {
             <Route path="/blog/future-of-websites-accessibility-compliance" element={<FutureOfWebsitesAccessibilityCompliance />} />
             <Route path="/blog/ai-solutions-modern-agriculture-2026" element={<AiSolutionsModernAgriculture2026 />} />
             <Route path="/blog/embracing-future-dynamic-rankers" element={<EmbracingFutureDynamicRankers />} /> {/* DYNAMIC ROUTE ADDED HERE */}
-            
+
             <Route path="/career" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
@@ -393,7 +394,7 @@ function App() {
             <Route path="/book-a-call-meeting" element={<BookACall />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="/special-booking" element={<SpecialBookingPage />} />
-                     
+
             {/* CRM Microsite */}
             <Route path="/crm" element={<CRMPage />} />
             <Route path="/crm/features" element={<CRMFeatures />} />
@@ -405,8 +406,8 @@ function App() {
           </Routes>
         </Suspense>
         
-        {!isCrmPage && !isOnboardingPage && <Footer />}
-        {!isOnboardingPage && <AIAssistant />}
+        {!isCrmPage && !isOnboardingPage && !isThankYouPage && <Footer />}
+        {!isOnboardingPage && !isThankYouPage && <AIAssistant />}
       </div>
     </>
   );

@@ -6,8 +6,8 @@ import '../styles/ThankYouPage.css';
 const ThankYouPage: React.FC = () => {
   useEffect(() => {
     // Track thank you page views
-    if (typeof gtag === 'function') {
-      gtag('event', 'thank_you_page_view', {
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('event', 'thank_you_page_view', {
         'event_category': 'Conversion',
         'event_label': 'Consultation Request'
       });
@@ -15,7 +15,7 @@ const ThankYouPage: React.FC = () => {
   }, []);
 
   return (
-    <>
+    <div className="thank-you-page-container">
       <Helmet>
         <title>Thank You - The Dynamic Rankers</title>
         <meta name="description" content="Thank you for your consultation request. The Dynamic Rankers will contact you within 24 hours." />
@@ -102,7 +102,7 @@ const ThankYouPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

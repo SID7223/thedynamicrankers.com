@@ -1,11 +1,1 @@
-# public/_redirects
-# Handle client-side routing
-/success  /thank-you  302
-/book-a-call  /book-a-call-meeting  301
-
-# CRM microsite redirects
-/crm-demo  /crm#demo  302
-/crm-features  /crm#features  302
-/crm-industries  /crm#industries  302
-
-/*    /index.html   200
+/* /index.html 200
