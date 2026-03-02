@@ -1,4 +1,4 @@
-export const onRequestGet: PagesFunction<any> = async (context) => {
+export const onRequestGet = async (context: any) => {
   try {
     const results = [
       { id: 1, title: 'Edge Deployment', status: 'pending', assigned_to: 'SID', created_at: '2026-03-02' },
@@ -14,7 +14,7 @@ export const onRequestGet: PagesFunction<any> = async (context) => {
   }
 };
 
-export const onRequestPost: PagesFunction<any> = async (context) => {
+export const onRequestPost = async (context: any) => {
   const { request } = context;
 
   try {

@@ -1,4 +1,4 @@
-export const onRequestGet: PagesFunction<any> = async (context) => {
+export const onRequestGet = async (context: any) => {
   const { request } = context;
   const url = new URL(request.url);
   const taskId = url.searchParams.get('taskId');
@@ -38,7 +38,7 @@ export const onRequestGet: PagesFunction<any> = async (context) => {
   });
 };
 
-export const onRequestPost: PagesFunction<any> = async (context) => {
+export const onRequestPost = async (context: any) => {
   const { request } = context;
 
   try {

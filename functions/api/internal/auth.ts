@@ -1,4 +1,4 @@
-export const onRequestPost: PagesFunction<any> = async (context) => {
+export const onRequestPost = async (context: any) => {
   const { request } = context;
 
   try {

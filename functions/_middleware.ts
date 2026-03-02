@@ -1,4 +1,4 @@
-export const onRequest: PagesFunction<any> = async (context) => {
+export const onRequest = async (context: any) => {
   const { request, next } = context;
   const url = new URL(request.url);
 
