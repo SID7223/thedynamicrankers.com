@@ -1,4 +1,18 @@
-export const onRequestGet = async (context: any) => {
+interface Env {
+  DB: D1Database;
+}
+
+interface Message {
+  id: number;
+  task_id: number;
+  sender_id: number;
+  content: string;
+  timestamp: string;
+  sender_name: string;
+  reactions?: any[];
+}
+
+export const onRequestGet = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
   const taskId = url.searchParams.get('taskId');
@@ -8,39 +22,50 @@ export const onRequestGet = async (context: any) => {
   }
 
   try {
-    const { results: messages } = await env.DB.prepare(
+    const { results } = await env.DB.prepare(
       'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id = ? ORDER BY m.timestamp ASC'
     ).bind(taskId).all();
 
+    const messages = results as unknown as Message[];
+
     // Fetch reactions for these messages
-    const messageIds = messages.map((m: any) => m.id);
-    let reactions = [];
+    const messageIds = messages.map((m) => m.id);
+    let reactions: any[] = [];
     if (messageIds.length > 0) {
-      const { results } = await env.DB.prepare(
-        \`SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (\${messageIds.join(',')})\`
+      const { results: reactionResults } = await env.DB.prepare(
+        `SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (${messageIds.join(',')})`
       ).all();
-      reactions = results;
+      reactions = reactionResults;
     }
 
-    const messagesWithReactions = messages.map((m: any) => ({
+    const messagesWithReactions = messages.map((m) => ({
       ...m,
-      reactions: reactions.filter((r: any) => r.message_id === m.id)
+      reactions: reactions.filter((r) => r.message_id === m.id)
     }));
 
     return new Response(JSON.stringify({ results: messagesWithReactions }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
   }
 };
 
-export const onRequestPost = async (context: any) => {
+export const onRequestPost = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
 
   try {
-    const body = await request.json() as any;
+    const body = (await request.json()) as {
+        action: string;
+        taskId?: number;
+        senderId?: number;
+        content?: string;
+        messageId?: number;
+        userId?: number;
+        emoji?: string;
+    };
     const { action, taskId, senderId, content, messageId, userId, emoji } = body;
 
     if (action === 'SEND') {
@@ -67,7 +92,8 @@ export const onRequestPost = async (context: any) => {
     }
 
     return new Response(JSON.stringify({ error: 'Invalid Action' }), { status: 400 });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
   }
 };

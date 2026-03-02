@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, AlignLeft } from 'lucide-react';
 
@@ -10,7 +10,7 @@ interface Operative {
 interface NewTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: { title: string; description: string; assigned_to: number; due_date: string }) => void;
   operatives: Operative[];
 }
 

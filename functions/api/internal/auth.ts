@@ -1,15 +1,17 @@
-export const onRequestPost = async (context: any) => {
+interface Env {
+  DB: D1Database;
+}
+
+export const onRequestPost = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
 
   try {
-    const body = await request.json() as any;
+    const body = (await request.json()) as { email?: string; password?: string };
     const { email, password } = body;
 
-    // In a real environment, we'd use bcrypt.compare with body.password
-    // For this hardened prototype, we'll check against the seeded password hash representation
     const user = await env.DB.prepare(
       'SELECT id, email, name FROM users WHERE email = ? AND password_hash = ?'
-    ).bind(email, '$2b$10$Ex.vQOqO5W/Hk/Y.v3K3Z.m3eY3vY3vY3vY3vY3vY3vY3vY3v').first();
+    ).bind(email, '$2b$10$Ex.vQOqO5W/Hk/Y.v3K3Z.m3eY3vY3vY3vY3vY3vY3vY3vY3v').first() as { id: number; email: string; name: string } | null;
 
     if (user && password === '123456') {
       const token = btoa(JSON.stringify({ id: user.id, email: user.email, name: user.name, exp: Date.now() + 86400000 }));
@@ -27,7 +29,8 @@ export const onRequestPost = async (context: any) => {
     }
 
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
   }
 };

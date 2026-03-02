@@ -1,4 +1,8 @@
-export const onRequestGet = async (context: any) => {
+interface Env {
+  DB: D1Database;
+}
+
+export const onRequestGet = async (context: { env: Env }) => {
   const { env } = context;
   try {
     const { results } = await env.DB.prepare(
@@ -9,16 +13,26 @@ export const onRequestGet = async (context: any) => {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
   }
 };
 
-export const onRequestPost = async (context: any) => {
+export const onRequestPost = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
 
   try {
-    const body = await request.json() as any;
+    const body = (await request.json()) as {
+        action: string;
+        id?: number;
+        title?: string;
+        description?: string;
+        assigned_to?: number;
+        due_date?: string;
+        created_by?: number;
+        status?: string;
+    };
     const { action, id, title, description, assigned_to, due_date, created_by, status } = body;
 
     if (action === 'TOGGLE') {
@@ -38,7 +52,8 @@ export const onRequestPost = async (context: any) => {
     }
 
     return new Response(JSON.stringify({ error: 'Invalid Action' }), { status: 400 });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
   }
 };

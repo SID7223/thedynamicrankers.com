@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskManager from '../components/internal/TaskManager';
 import SlackStream from '../components/internal/SlackStream';
 import NewTaskModal from '../components/internal/NewTaskModal';
@@ -25,18 +25,17 @@ const InternalDashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [operatives, setOperatives] = useState<any[]>([]);
+  const [operatives, setOperatives] = useState<{id: number, name: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTyping, setIsTyping] = useState<string[]>([]);
 
-  // Mocking current user - in prod this comes from auth context/token
   const currentUser = { id: 1, name: 'SID' };
 
   const fetchTasks = async () => {
     try {
       const response = await fetch('/api/internal/tasks');
-      const data = await response.json();
+      const data = (await response.json()) as { results: Task[] };
       setTasks(data.results || []);
     } catch (err) {
       console.error('Failed to fetch tasks', err);
@@ -46,7 +45,7 @@ const InternalDashboard: React.FC = () => {
   const fetchMessages = async (taskId: number) => {
     try {
       const response = await fetch(`/api/internal/chat?taskId=${taskId}`);
-      const data = await response.json();
+      const data = (await response.json()) as { results: Message[] };
       setMessages(data.results || []);
     } catch (err) {
       console.error('Failed to fetch messages', err);
@@ -56,7 +55,7 @@ const InternalDashboard: React.FC = () => {
   const fetchOperatives = async () => {
     try {
       const response = await fetch('/api/internal/users');
-      const data = await response.json();
+      const data = (await response.json()) as { results: {id: number, name: string}[] };
       setOperatives(data.results || []);
     } catch (err) {
       console.error('Failed to fetch operatives', err);
@@ -70,7 +69,6 @@ const InternalDashboard: React.FC = () => {
     };
     init();
 
-    // SSE Stream for Real-time updates
     const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -89,7 +87,8 @@ const InternalDashboard: React.FC = () => {
     };
 
     return () => eventSource.close();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTask?.id]);
 
   useEffect(() => {
     if (selectedTask) {
@@ -102,7 +101,6 @@ const InternalDashboard: React.FC = () => {
   const handleToggleTask = async (task: Task) => {
     const newStatus = task.status === 'pending' ? 'completed' : 'pending';
 
-    // Optimistic UI
     setTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: newStatus } : t));
 
     try {
@@ -111,13 +109,12 @@ const InternalDashboard: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'TOGGLE', id: task.id, status: newStatus })
       });
-    } catch (err) {
-      // Revert on error
+    } catch {
       fetchTasks();
     }
   };
 
-  const handleCreateTask = async (taskData: any) => {
+  const handleCreateTask = async (taskData: { title: string; description: string; assigned_to: number; due_date: string }) => {
     try {
       await fetch('/api/internal/tasks', {
         method: 'POST',
@@ -215,7 +212,6 @@ const InternalDashboard: React.FC = () => {
         operatives={operatives}
       />
 
-      {/* Global Status Footer */}
       <div className="fixed bottom-0 right-0 p-3 flex items-center gap-6 bg-[#0B101A]/80 backdrop-blur-md border-t border-l border-white/5 rounded-tl-2xl z-50">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

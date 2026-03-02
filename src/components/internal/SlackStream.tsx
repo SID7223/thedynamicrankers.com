@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smile, Reply, Trash2, MoreHorizontal } from 'lucide-react';
+import { Smile, Reply, MoreHorizontal } from 'lucide-react';
 import Avatar from './Avatar';
 
 interface Message {
