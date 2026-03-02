@@ -33,6 +33,10 @@ const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage'));
 const SpecialBookingPage = React.lazy(() => import('./pages/SpecialBookingPage'));
 const OnboardingPage = React.lazy(() => import('./pages/OnboardingPage'));
 
+// Internal Command Center
+const InternalLogin = React.lazy(() => import('./pages/InternalLogin'));
+const InternalDashboard = React.lazy(() => import('./pages/InternalDashboard'));
+
 // ✅ ADDED: Message page route target
 const MessagePage = React.lazy(() => import('./pages/MessagePage'));
 
@@ -234,13 +238,14 @@ function App() {
   const isCrmPage = location.pathname.startsWith('/crm');
   const isOnboardingPage = location.pathname === '/onboarding';
   const isThankYouPage = location.pathname === '/thank-you';
+  const isInternalPage = location.pathname.startsWith('/internal');
 
   return (
     <>
       <ScrollToTop />
-      {!isCrmPage && !isOnboardingPage && !isThankYouPage && <Header />}
+      {!isCrmPage && !isOnboardingPage && !isThankYouPage && !isInternalPage && <Header />}
       <div className="main-content-wrapper min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-        <DarkModeToggle />
+        {!isInternalPage && <DarkModeToggle />}
         
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
@@ -403,11 +408,15 @@ function App() {
 
             {/* Onboarding Funnel */}
             <Route path="/onboarding" element={<OnboardingPage />} />
+
+            {/* Internal Command Center */}
+            <Route path="/internal" element={<InternalLogin />} />
+            <Route path="/internal/dashboard" element={<InternalDashboard />} />
           </Routes>
         </Suspense>
         
-        {!isCrmPage && !isOnboardingPage && !isThankYouPage && <Footer />}
-        {!isOnboardingPage && !isThankYouPage && <AIAssistant />}
+        {!isCrmPage && !isOnboardingPage && !isThankYouPage && !isInternalPage && <Footer />}
+        {!isOnboardingPage && !isThankYouPage && !isInternalPage && <AIAssistant />}
       </div>
     </>
   );
