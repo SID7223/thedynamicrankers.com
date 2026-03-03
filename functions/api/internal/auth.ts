@@ -9,20 +9,24 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const body = (await request.json()) as { email?: string; password?: string };
     const { email, password } = body;
 
-    if (!email || password !== '123456') {
-        return new Response(JSON.stringify({ message: 'Invalid Credentials' }), { status: 401 });
+    const allowedEmails = [
+        'saadumar7223@gmail.com',
+        'eric@thedynamicrankers.com'
+    ];
+
+    if (!email || !allowedEmails.includes(email.toLowerCase()) || password !== '123456') {
+        return new Response(JSON.stringify({ message: 'Authorization Denied: Member Not Recognized' }), { status: 401 });
     }
 
-    // Try to find existing user or just create/mock one for this session
-    // In this hardened version, we'll try to get the ID from DB if it exists, else use 1
+    // Attempt to find or fallback
     const user = await env.DB.prepare(
-      'SELECT id, name as username, role FROM users WHERE email = ?'
-    ).bind(email).first() as { id: number; username: string; role: string } | null;
+      'SELECT id, name as username, role FROM users WHERE LOWER(email) = ?'
+    ).bind(email.toLowerCase()).first() as { id: number; username: string; role: string } | null;
 
     const sessionUser = user || {
-        id: 1,
+        id: email.toLowerCase() === 'saadumar7223@gmail.com' ? 1 : 2,
         username: email.split('@')[0],
-        role: 'operative'
+        role: 'superuser'
     };
 
     const response = new Response(JSON.stringify(sessionUser), {

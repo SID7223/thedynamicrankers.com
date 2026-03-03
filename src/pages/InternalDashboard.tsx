@@ -69,7 +69,6 @@ const InternalDashboard = () => {
         if (tasksRes.ok && usersRes.ok) {
           const tasksData = await tasksRes.json();
           const usersData = await usersRes.json();
-          // Backend returns results in a results array or directly as an array
           setTasks(Array.isArray(tasksData) ? tasksData : (tasksData.results || []));
           setOperatives(Array.isArray(usersData) ? usersData : (usersData.results || []));
           setStreamStatus('stable');
@@ -81,39 +80,43 @@ const InternalDashboard = () => {
 
     fetchData();
 
-    const eventSource = new EventSource('/api/internal/stream');
-
-    eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'task_update') {
-          setTasks(prev => {
-            const index = prev.findIndex(t => t.id === data.task.id);
-            if (index > -1) {
-              const newTasks = [...prev];
-              newTasks[index] = data.task;
-              return newTasks;
+    // EventSource fallback for local/dev where SSE might be tricky
+    let eventSource: EventSource | null = null;
+    try {
+        eventSource = new EventSource('/api/internal/stream');
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'task_update') {
+              setTasks(prev => {
+                const index = prev.findIndex(t => t.id === data.task.id);
+                if (index > -1) {
+                  const newTasks = [...prev];
+                  newTasks[index] = data.task;
+                  return newTasks;
+                }
+                return [data.task, ...prev];
+              });
+            } else if (data.type === 'presence_update') {
+              setOperatives(prev => prev.map(u =>
+                u.id === data.userId ? { ...u, is_online: data.isOnline } : u
+              ));
             }
-            return [data.task, ...prev];
-          });
-        } else if (data.type === 'presence_update') {
-          setOperatives(prev => prev.map(u =>
-            u.id === data.userId ? { ...u, is_online: data.isOnline } : u
-          ));
-        }
-      } catch (err) {
-        console.error('SSE Error:', err);
-      }
-    };
-
-    eventSource.onerror = () => setStreamStatus('failed');
+          } catch (err) {
+            console.error('SSE Error:', err);
+          }
+        };
+        eventSource.onerror = () => setStreamStatus('failed');
+    } catch {
+        console.warn('SSE not available');
+    }
 
     const heartbeat = setInterval(() => {
-      fetch('/api/internal/presence', { method: 'POST' });
+      fetch('/api/internal/presence', { method: 'POST' }).catch(() => {});
     }, 30000);
 
     return () => {
-      eventSource.close();
+      eventSource?.close();
       clearInterval(heartbeat);
     };
   }, [session]);
@@ -155,7 +158,7 @@ const InternalDashboard = () => {
       const res = await fetch('/api/internal/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ ...data, created_by: session?.id })
       });
       if (res.ok) {
         const newTask = await res.json();
@@ -225,8 +228,8 @@ const InternalDashboard = () => {
           </div>
 
           <div className="text-center mb-10 space-y-2">
-            <h1 className="text-3xl font-bold text-white tracking-tight">Command Center</h1>
-            <p className="text-zinc-500 text-sm">Authorized Personnel Only — Secure Node ID: 2024-DR</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight">Sovereign Node</h1>
+            <p className="text-zinc-500 text-sm">Authorized Organization Members Only — Secure Node: 2024-DR</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
@@ -248,7 +251,7 @@ const InternalDashboard = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-zinc-900/50 border border-zinc-800 px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-all rounded-2xl"
-                  placeholder="Email Address"
+                  placeholder="Organization Email"
                   required
                 />
               </div>
@@ -258,7 +261,7 @@ const InternalDashboard = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-zinc-900/50 border border-zinc-800 px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-all rounded-2xl"
-                  placeholder="Crypto Key"
+                  placeholder="Security Key"
                   required
                 />
               </div>
@@ -269,7 +272,7 @@ const InternalDashboard = () => {
               disabled={loading}
               className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-semibold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 group disabled:opacity-50"
             >
-              Initiate Handshake
+              Authorize Handshake
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
@@ -356,7 +359,7 @@ const InternalDashboard = () => {
           <div className="flex items-center gap-3">
             <Hash className="w-5 h-5 text-zinc-600" />
             <h2 className="font-bold text-white tracking-tight">
-              {activeTaskId === 0 ? 'global-command' : activeTask?.title.toLowerCase().replace(/\s+/g, '-')}
+              {activeTaskId === 0 ? 'global-command' : (activeTask?.title || 'active-command').toLowerCase().replace(/\s+/g, '-')}
             </h2>
           </div>
 

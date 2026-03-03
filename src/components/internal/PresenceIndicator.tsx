@@ -15,7 +15,7 @@ interface PresenceIndicatorProps {
 
 const PresenceIndicator: React.FC<PresenceIndicatorProps> = ({ operatives = [], status }) => {
   const safeOperatives = Array.isArray(operatives) ? operatives : [];
-  const onlineCount = safeOperatives.filter(u => u.is_online).length;
+  const onlineCount = safeOperatives.filter(u => u && u.is_online).length;
 
   return (
     <div className="flex items-center gap-4">
@@ -27,13 +27,13 @@ const PresenceIndicator: React.FC<PresenceIndicatorProps> = ({ operatives = [], 
       </div>
 
       <div className="flex -space-x-2">
-        {safeOperatives.slice(0, 3).map((op) => (
+        {safeOperatives.slice(0, 3).map((op) => op && (
           <div
             key={op.id}
             className={`w-6 h-6 rounded-full border-2 border-[#06080D] flex items-center justify-center text-[8px] font-bold ${op.is_online ? 'bg-emerald-500 text-white' : 'bg-zinc-800 text-zinc-500'}`}
             title={`${op.username} (${op.is_online ? 'Online' : 'Offline'})`}
           >
-            {op.username?.[0]?.toUpperCase()}
+            {op.username?.[0]?.toUpperCase() || '?'}
           </div>
         ))}
         {safeOperatives.length > 3 && (

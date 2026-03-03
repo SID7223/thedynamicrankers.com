@@ -40,11 +40,15 @@ const SlackStream: React.FC<SlackStreamProps> = ({
         const res = await fetch(`/api/internal/chat?taskId=${taskId}`);
         if (res.ok) {
           const data = await res.json();
-          // The API returns results in a results property or as an array
-          setMessages(Array.isArray(data) ? data : (data.results || []));
+          // Force array and handle result wrapping
+          const arrayData = Array.isArray(data) ? data : (data.results || []);
+          setMessages(arrayData);
+        } else {
+          setMessages([]);
         }
       } catch (err) {
         console.error('Failed to fetch messages:', err);
+        setMessages([]);
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +77,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({
         setInput('');
         const updated = await fetch(`/api/internal/chat?taskId=${taskId}`);
         const data = await updated.json();
-        setMessages(Array.isArray(data) ? data : (data.results || []));
+        const arrayData = Array.isArray(data) ? data : (data.results || []);
+        setMessages(arrayData);
       }
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -95,7 +100,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({
       });
       const updated = await fetch(`/api/internal/chat?taskId=${taskId}`);
       const data = await updated.json();
-      setMessages(Array.isArray(data) ? data : (data.results || []));
+      const arrayData = Array.isArray(data) ? data : (data.results || []);
+      setMessages(arrayData);
     } catch (err) {
       console.error('Failed to react:', err);
     }
@@ -116,7 +122,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({
                 <p className="text-xs uppercase tracking-widest">Beginning of thread</p>
             </div>
         ) : (
-          messages.map((msg) => (
+          (messages || []).map((msg) => (
             <div
               key={msg.id}
               className="group relative flex gap-4 items-start"
@@ -138,7 +144,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({
                 {msg.reactions && msg.reactions.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {Object.entries(
-                      msg.reactions.reduce((acc, r) => {
+                      (msg.reactions || []).reduce((acc, r) => {
                         acc[r.emoji] = (acc[r.emoji] || 0) + 1;
                         return acc;
                       }, {} as Record<string, number>)
@@ -147,7 +153,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({
                         key={emoji}
                         onClick={() => handleReact(msg.id, emoji)}
                         className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
-                          msg.reactions?.some(r => r.user_id === currentUser?.id && r.emoji === emoji)
+                          (msg.reactions || []).some(r => r.user_id === currentUser?.id && r.emoji === emoji)
                             ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-400'
                             : 'bg-white/5 border-white/10 text-zinc-400 hover:bg-white/10'
                         }`}
