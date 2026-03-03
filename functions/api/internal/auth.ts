@@ -10,7 +10,8 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const { email, password } = body;
 
     if (email === "admin@thedynamicrankers.com" && password === "admin") {
-      return new Response(JSON.stringify({
+      // Set a cookie so the middleware doesn't block subsequent requests
+      const response = new Response(JSON.stringify({
         id: 1,
         username: "Admin",
         role: "commander"
@@ -20,6 +21,10 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
           'Content-Type': 'application/json'
         }
       });
+
+      // dr_token=verified; Path=/; SameSite=Strict
+      response.headers.set('Set-Cookie', 'dr_token=verified; Path=/; SameSite=Strict');
+      return response;
     }
 
     return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });

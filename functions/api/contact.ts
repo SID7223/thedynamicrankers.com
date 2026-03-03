@@ -3,11 +3,13 @@ import { Resend } from "resend";
 interface ContactRequestBody {
   name: string;
   email: string;
-  phone?: string;
   message: string;
+  subject?: string;
+  type?: 'support' | 'general' | 'business';
 }
 
-function escapeHtml(value: string) {
+function escapeHtml(value: string | number | boolean | null | undefined): string {
+  if (typeof value !== 'string') return String(value || '');
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -16,43 +18,54 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#39;");
 }
 
-function ContactEmailTemplate({
-  name,
-  email,
-  phone,
-  message,
-}: { name: string; email: string; phone?: string; message: string }) {
-  const safeName = escapeHtml(name);
-  const safeEmail = escapeHtml(email);
-  const safePhone = phone ? escapeHtml(phone) : "";
-  const safeMessage = message ? escapeHtml(message) : "";
+function ContactEmailTemplate(data: ContactRequestBody) {
+  const typeLabel = data.type ? data.type.toUpperCase() : 'GENERAL';
 
   return `
-    <div style="font-family: Arial, sans-serif; line-height: 1.4;">
-      <h1>New call booking from ${safeName}</h1>
-      <p><strong>Name:</strong> ${safeName}</p>
-      <p><strong>Email:</strong> ${safeEmail}</p>
-      ${safePhone ? `<p><strong>Phone:</strong> ${safePhone}</p>` : ""}
-      ${
-        safeMessage
-          ? `<div><p><strong>Message:</strong></p><p>${safeMessage}</p></div>`
-          : ""
-      }
+    <div style="font-family: sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #0a0d36; padding: 20px; text-align: center;">
+        <h1 style="color: #fff; margin: 0; font-size: 20px;">New Contact Request</h1>
+      </div>
+      <div style="padding: 30px;">
+        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+          <p style="margin: 0 0 10px; font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Request Details</p>
+          <table style="width: 100%;">
+            <tr>
+              <td style="padding: 5px 0; font-weight: bold; width: 100px;">Type:</td>
+              <td style="padding: 5px 0;">${escapeHtml(typeLabel)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0; font-weight: bold;">Name:</td>
+              <td style="padding: 5px 0;">${escapeHtml(data.name)}</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0; font-weight: bold;">Email:</td>
+              <td style="padding: 5px 0;"><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></td>
+            </tr>
+          </table>
+        </div>
+        <div>
+          <p style="margin: 0 0 10px; font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Message</p>
+          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 4px; white-space: pre-wrap;">${escapeHtml(data.message)}</div>
+        </div>
+      </div>
+      <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #999;">
+        Sent via the Dynamic Rankers website
+      </div>
     </div>
   `;
 }
 
-export const onRequestPost = async (context: {
-  env: {
-    RESEND_API_KEY: string;
-    RESEND_FROM_EMAIL: string;
-    RESEND_TARGET_EMAIL: string;
-    CONTACT_FROM_EMAIL?: string;
-    CONTACT_TO_EMAIL?: string;
-  };
-  request: Request;
-}) => {
-  const { env, request } = context;
+interface Env {
+  RESEND_API_KEY: string;
+  RESEND_FROM_EMAIL: string;
+  RESEND_TARGET_EMAIL: string;
+  CONTACT_FROM_EMAIL: string;
+  CONTACT_TO_EMAIL: string;
+}
+
+export const onRequestPost = async (context: { request: Request; env: Env }) => {
+  const { request, env } = context;
 
   try {
     const resendApiKey = env.RESEND_API_KEY;
@@ -60,44 +73,18 @@ export const onRequestPost = async (context: {
     const resendTargetEmail = env.RESEND_TARGET_EMAIL || env.CONTACT_TO_EMAIL;
 
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
+      console.error("Missing Resend configuration.");
       return new Response(JSON.stringify({
         error: "Email service is not configured",
-        details: "Missing environment variables."
-      }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      }), { status: 500 });
     }
 
-    let name = "";
-    let email = "";
-    let phone = "";
-    let message = "";
-    let redirectUrl = "";
+    const data: ContactRequestBody = await request.json();
 
-    const contentType = request.headers.get("content-type") || "";
-
-    if (contentType.includes("application/json")) {
-      const body = await request.json() as any;
-      name = body.name;
-      email = body.email;
-      phone = body.phone || "";
-      message = body.message;
-      redirectUrl = body.redirect;
-    } else {
-      const formData = await request.formData();
-      name = formData.get("name")?.toString() || "";
-      email = formData.get("email")?.toString() || "";
-      phone = formData.get("phone")?.toString() || "";
-      message = formData.get("message")?.toString() || "";
-      redirectUrl = formData.get("redirect")?.toString() || "";
-    }
-
-    if (!name || !email || !message) {
-      return new Response(JSON.stringify({ error: "Name, email, and message are required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!data.email || !data.name || !data.message) {
+      return new Response(JSON.stringify({
+        error: "Name, email, and message are required",
+      }), { status: 400 });
     }
 
     const resend = new Resend(resendApiKey);
@@ -105,38 +92,25 @@ export const onRequestPost = async (context: {
     const result = await resend.emails.send({
       from: resendFromEmail,
       to: [resendTargetEmail],
-      subject: `New Contact Form Submission – ${name}`,
-      html: ContactEmailTemplate({ name, email, phone, message }),
+      subject: `[${data.type || 'General'}] Website Contact: ${data.name}`,
+      html: ContactEmailTemplate(data),
+      reply_to: data.email
     });
 
     if (result.error) {
-      return new Response(JSON.stringify({
-        error: "Resend error",
-        details: result.error.message
-      }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    if (redirectUrl && !contentType.includes("application/json")) {
-      return Response.redirect(new URL(redirectUrl, request.url).toString(), 303);
+        return new Response(JSON.stringify({ error: result.error.message }), { status: 500 });
     }
 
     return new Response(JSON.stringify({
       success: true,
       id: result.data?.id,
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error: any) {
+    }), { status: 200 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Contact API error:", message);
     return new Response(JSON.stringify({
-      error: "Failed to send message",
-      details: error.message || String(error)
-    }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+      error: "Failed to process contact request",
+      details: message
+    }), { status: 500 });
   }
 };

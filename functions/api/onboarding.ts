@@ -13,9 +13,9 @@ interface OnboardingData {
   appointmentType?: string;
 }
 
-function escapeHtml(value: string | number | null | undefined) {
-  const str = typeof value !== 'string' ? String(value || '') : value;
-  return str
+function escapeHtml(value: string | number | boolean | null | undefined): string {
+  if (typeof value !== 'string') return String(value || '');
+  return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -102,17 +102,16 @@ function OnboardingEmailTemplate(data: OnboardingData) {
   `;
 }
 
-export const onRequestPost = async (context: {
-  env: {
-    RESEND_API_KEY: string;
-    RESEND_FROM_EMAIL: string;
-    RESEND_TARGET_EMAIL: string;
-    CONTACT_FROM_EMAIL?: string;
-    CONTACT_TO_EMAIL?: string;
-  };
-  request: Request;
-}) => {
-  const { env, request } = context;
+interface Env {
+  RESEND_API_KEY: string;
+  RESEND_FROM_EMAIL: string;
+  RESEND_TARGET_EMAIL: string;
+  CONTACT_FROM_EMAIL: string;
+  CONTACT_TO_EMAIL: string;
+}
+
+export const onRequestPost = async (context: { request: Request; env: Env }) => {
+  const { request, env } = context;
 
   try {
     const resendApiKey = env.RESEND_API_KEY;
@@ -120,41 +119,18 @@ export const onRequestPost = async (context: {
     const resendTargetEmail = env.RESEND_TARGET_EMAIL || env.CONTACT_TO_EMAIL;
 
     if (!resendApiKey || !resendFromEmail || !resendTargetEmail) {
+      console.error("Missing Resend configuration.");
       return new Response(JSON.stringify({
         error: "Email service is not configured",
-        details: "Missing environment variables."
-      }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+      }), { status: 500 });
     }
 
-    let data: OnboardingData;
-    const contentType = request.headers.get("content-type") || "";
-
-    if (contentType.includes("application/json")) {
-      data = await request.json();
-    } else {
-      const formData = await request.formData();
-      data = {
-        orgName: formData.get("orgName")?.toString() || "",
-        industry: formData.get("industry")?.toString() || "",
-        location: formData.get("location")?.toString() || "",
-        role: formData.get("role")?.toString() || "",
-        email: formData.get("email")?.toString() || "",
-        phone: formData.get("phone")?.toString() || "",
-        primaryIntent: formData.get("primaryIntent")?.toString() || "",
-        refinement: formData.get("refinement")?.toString() || "",
-        communicationChannel: formData.get("communicationChannel")?.toString() || "",
-        appointmentType: formData.get("appointmentType")?.toString() || undefined,
-      };
-    }
+    const data: OnboardingData = await request.json();
 
     if (!data.email || !data.orgName) {
-      return new Response(JSON.stringify({ error: "Email and Organization Name are required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify({
+        error: "Email and Organization Name are required",
+      }), { status: 400 });
     }
 
     const resend = new Resend(resendApiKey);
@@ -167,29 +143,19 @@ export const onRequestPost = async (context: {
     });
 
     if (result.error) {
-      return new Response(JSON.stringify({
-        error: "Resend error",
-        details: result.error.message
-      }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
+        return new Response(JSON.stringify({ error: result.error.message }), { status: 500 });
     }
 
     return new Response(JSON.stringify({
       success: true,
       id: result.data?.id,
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error: any) {
+    }), { status: 200 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Onboarding API error:", message);
     return new Response(JSON.stringify({
       error: "Failed to process onboarding data",
-      details: error.message || String(error)
-    }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+      details: message
+    }), { status: 500 });
   }
 };
