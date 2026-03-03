@@ -1,130 +1,73 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Circle, Clock, MessageSquare } from 'lucide-react';
 
 interface Task {
   id: number;
   title: string;
   status: 'pending' | 'completed';
-  assigned_to: number;
-  assigned_name: string;
-  due_date?: string;
+  created_at: string;
+  assigned_to: number | null;
+}
+
+interface User {
+  id: number;
+  username: string;
 }
 
 interface TaskManagerProps {
   tasks: Task[];
-  activeTaskId?: number;
-  onSelectTask: (task: Task) => void;
-  onToggleTask: (task: Task) => void;
-  onAddNew: () => void;
-  onSelectGlobal: () => void;
+  activeTaskId: number;
+  setActiveTaskId: (id: number) => void;
+  onToggleStatus: (id: number, status: 'pending' | 'completed') => void;
+  onAssignTask: (id: number, assignedTo: number | null) => void;
+  operatives: User[];
 }
 
 const TaskManager: React.FC<TaskManagerProps> = ({
   tasks,
   activeTaskId,
-  onSelectTask,
-  onToggleTask,
-  onAddNew,
-  onSelectGlobal
+  setActiveTaskId,
+  onAssignTask,
+  operatives
 }) => {
-  const activeTasks = tasks.filter(t => t.status === 'pending');
-  const completedTasks = tasks.filter(t => t.status === 'completed');
-
-  const TaskItem = ({ task }: { task: Task }) => (
-    <motion.button
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      onClick={() => onSelectTask(task)}
-      className={`w-full text-left p-4 rounded-xl transition-all mb-2 group border ${
-        activeTaskId === task.id
-          ? 'bg-indigo-600/10 border-indigo-500 shadow-lg shadow-indigo-500/10'
-          : 'bg-white/5 border-white/10 hover:bg-white/10'
-      } ${task.status === 'completed' ? 'opacity-60' : ''}`}
-    >
-      <div className="flex items-start gap-3">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleTask(task);
-          }}
-          className={`mt-1 transition-colors ${task.status === 'completed' ? 'text-emerald-500' : 'text-zinc-500 hover:text-indigo-400'}`}
-        >
-          {task.status === 'completed' ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-        </button>
-        <div className="flex-1 min-w-0">
-          <h3 className={`font-semibold text-sm truncate ${task.status === 'completed' ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>
-            {task.title}
-          </h3>
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-[10px] text-indigo-400 font-medium uppercase tracking-wider">
-              {task.assigned_name}
-            </span>
-            {task.due_date && (
-              <span className="flex items-center gap-1 text-[10px] text-zinc-500">
-                <Clock size={10} />
-                {new Date(task.due_date).toLocaleDateString()}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.button>
-  );
-
   return (
-    <div className="flex flex-col h-full bg-[#0B101A] border-r border-white/5 w-80">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-white font-bold text-lg tracking-tight">The Ledger</h2>
-          <button
-            onClick={onAddNew}
-            className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20"
+    <div className="space-y-4">
+      <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Active Tasks</h3>
+      {tasks.length === 0 ? (
+        <div className="px-3 py-4 bg-zinc-800/20 rounded-xl border border-zinc-800/50 text-center">
+          <p className="text-[10px] text-zinc-600 uppercase tracking-widest">No Active Commands</p>
+        </div>
+      ) : (
+        tasks.map((task) => (
+          <div
+            key={task.id}
+            onClick={() => setActiveTaskId(task.id)}
+            className={`w-full text-left px-3 py-3 rounded-xl transition-all cursor-pointer border ${activeTaskId === task.id ? 'bg-indigo-600/10 border-indigo-500/30' : 'bg-zinc-800/30 border-zinc-800/50 hover:bg-zinc-800/50'}`}
           >
-            +
-          </button>
-        </div>
+            <div className="flex items-center gap-3 mb-2">
+               <div className={`w-2 h-2 rounded-full ${task.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-indigo-50'}`} />
+               <span className="text-xs font-bold text-white truncate">{task.title}</span>
+            </div>
 
-        <div className="space-y-6">
-          {/* Global Feed Access */}
-          <div>
-            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Channels</h4>
-            <button
-                onClick={onSelectGlobal}
-                className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-all ${
-                    activeTaskId === 0
-                    ? 'bg-indigo-600/10 border-indigo-500 shadow-lg shadow-indigo-500/10'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10'
-                }`}
-            >
-                <MessageSquare size={18} className="text-indigo-400" />
-                <span className="text-sm font-bold text-zinc-100">Global Command</span>
-            </button>
-          </div>
-
-          <div>
-            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Active Tasks</h4>
-            <div className="max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-              <AnimatePresence mode="popLayout">
-                {activeTasks.map(task => <TaskItem key={task.id} task={task} />)}
-              </AnimatePresence>
+            <div className="flex items-center justify-between">
+              <select
+                value={task.assigned_to || ''}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  onAssignTask(task.id, e.target.value ? parseInt(e.target.value) : null);
+                }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-transparent text-[10px] text-zinc-500 uppercase tracking-widest outline-none cursor-pointer hover:text-indigo-400 transition-colors"
+              >
+                <option value="" className="bg-zinc-900">Unassigned</option>
+                {operatives.map((op) => (
+                  <option key={op.id} value={op.id} className="bg-zinc-900">{op.username}</option>
+                ))}
+              </select>
+              <span className="text-[9px] text-zinc-600">{new Date(task.created_at).toLocaleDateString()}</span>
             </div>
           </div>
-
-          {completedTasks.length > 0 && (
-            <div>
-              <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Completed</h4>
-              <div className="max-h-[30vh] overflow-y-auto pr-2 custom-scrollbar">
-                <AnimatePresence mode="popLayout">
-                  {completedTasks.map(task => <TaskItem key={task.id} task={task} />)}
-                </AnimatePresence>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+        ))
+      )}
     </div>
   );
 };

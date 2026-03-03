@@ -8,11 +8,12 @@ CREATE TABLE users (
 );
 
 -- The Ledger (Tasks)
+-- assigned_to is NULL for unassigned tasks
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT,
-    assigned_to INTEGER NOT NULL,
+    assigned_to INTEGER,
     due_date DATETIME,
     status TEXT CHECK(status IN ('pending', 'completed')) DEFAULT 'pending',
     created_by INTEGER NOT NULL,
