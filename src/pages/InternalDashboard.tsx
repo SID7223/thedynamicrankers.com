@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TaskManager from '../components/internal/TaskManager';
 import SlackStream from '../components/internal/SlackStream';
 import NewTaskModal from '../components/internal/NewTaskModal';
+import PresenceIndicator from '../components/internal/PresenceIndicator';
 
 interface Task {
   id: number;
@@ -23,12 +24,14 @@ interface Message {
 
 const InternalDashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  // Default to Global Command thread (taskId 0)
+  const [selectedTask, setSelectedTask] = useState<Task | { id: number; title: string }>({ id: 0, title: 'Global Command' });
   const [messages, setMessages] = useState<Message[]>([]);
   const [operatives, setOperatives] = useState<{id: number, name: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTyping, setIsTyping] = useState<string[]>([]);
+  const [activeUsers, setActiveUsers] = useState<string[]>(['SID', 'Eric']);
 
   const currentUser = { id: 1, name: 'SID' };
 
@@ -39,8 +42,7 @@ const InternalDashboard: React.FC = () => {
       const fetchedTasks = data.results || [];
       setTasks(fetchedTasks);
 
-      // Keep selected task in sync if it exists
-      if (selectedTask) {
+      if (selectedTask && selectedTask.id !== 0) {
           const updated = fetchedTasks.find(t => t.id === selectedTask.id);
           if (updated) setSelectedTask(updated);
       }
@@ -76,12 +78,26 @@ const InternalDashboard: React.FC = () => {
     };
     init();
 
+    // Presence Heartbeat
+    const heartbeat = setInterval(async () => {
+        try {
+            await fetch('/api/internal/presence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user: currentUser.name })
+            });
+        } catch (err) {
+            console.error('Presence heartbeat failed', err);
+        }
+    }, 30000);
+
     const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data) as { type: string; payload: Record<string, unknown> };
+      const data = JSON.parse(event.data) as { type: string; payload?: Record<string, unknown>; active_users?: string[] };
+
       if (data.type === 'TASK_TOGGLE' || data.type === 'TASK_CREATED') {
         fetchTasks();
-      } else if (data.type === 'CHAT_MSG' && selectedTask?.id === data.payload.task_id) {
+      } else if (data.type === 'CHAT_MSG' && selectedTask?.id === (data.payload?.task_id as number)) {
         fetchMessages(selectedTask.id);
       } else if (data.type === 'TYPING_INDICATOR') {
         const { user, isTyping: typingStatus } = data.payload as { user: string; isTyping: boolean };
@@ -90,10 +106,15 @@ const InternalDashboard: React.FC = () => {
             typingStatus ? [...new Set([...prev, user])] : prev.filter(u => u !== user)
           );
         }
+      } else if (data.type === 'PRESENCE_UPDATE' && data.active_users) {
+          setActiveUsers(data.active_users);
       }
     };
 
-    return () => eventSource.close();
+    return () => {
+        eventSource.close();
+        clearInterval(heartbeat);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTask?.id]);
 
@@ -131,19 +152,8 @@ const InternalDashboard: React.FC = () => {
 
       if (data.success) {
           await fetchTasks();
-          // After creation, automatically select the new task to open the chat thread
-          const newTask = tasks.find(t => t.id === data.id);
-          if (newTask) {
-              setSelectedTask(newTask);
-          } else {
-              // Fallback: wait a bit for state update or re-fetch logic
-              setTimeout(async () => {
-                  const response2 = await fetch('/api/internal/tasks');
-                  const data2 = (await response2.json()) as unknown as { results: Task[] };
-                  const createdTask = data2.results.find(t => t.id === data.id);
-                  if (createdTask) setSelectedTask(createdTask);
-              }, 500);
-          }
+          // After creation, we can either switch to the task or stay in global.
+          // Let's stay in global but ensure tasks are refreshed.
       }
     } catch (err) {
       console.error('Failed to create task', err);
@@ -204,30 +214,22 @@ const InternalDashboard: React.FC = () => {
       <TaskManager
         tasks={tasks}
         activeTaskId={selectedTask?.id}
-        onSelectTask={setSelectedTask}
+        onSelectTask={(task) => setSelectedTask(task)}
         onToggleTask={handleToggleTask}
         onAddNew={() => setIsModalOpen(true)}
+        onSelectGlobal={() => setSelectedTask({ id: 0, title: 'Global Command' })}
       />
 
-      {selectedTask ? (
-        <SlackStream
-          messages={messages}
-          currentUserId={currentUser.id}
-          onSend={handleSendMessage}
-          onReact={handleReact}
-          isTyping={isTyping}
-        />
-      ) : (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-6">
-          <div className="w-24 h-24 rounded-3xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-600 shadow-xl shadow-indigo-600/40" />
-          </div>
-          <div className="text-center space-y-2">
-            <h2 className="text-white font-bold text-xl">Command Center Ready</h2>
-            <p className="text-zinc-500 text-sm max-w-xs">Select a task from the ledger to initialize operational oversight.</p>
-          </div>
-        </div>
-      )}
+      <SlackStream
+        messages={messages}
+        currentUserId={currentUser.id}
+        onSend={handleSendMessage}
+        onReact={handleReact}
+        isTyping={isTyping}
+        threadName={selectedTask?.title || 'Global Command'}
+      />
+
+      <PresenceIndicator activeUsers={activeUsers} />
 
       <NewTaskModal
         isOpen={isModalOpen}

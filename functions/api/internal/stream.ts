@@ -7,6 +7,7 @@
  * - { type: 'TASK_TOGGLE', payload: { id: number, status: 'pending' | 'completed' } }
  * - { type: 'TASK_CREATED', payload: { id: number, title: string } }
  * - { type: 'TYPING_INDICATOR', payload: { user: string, isTyping: boolean } }
+ * - { type: 'PRESENCE_UPDATE', active_users: string[] }
  */
 
 export const onRequestGet = async (context: { request: Request }) => {
@@ -20,13 +21,20 @@ export const onRequestGet = async (context: { request: Request }) => {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
       };
 
-      // Continuous Heartbeat to maintain Edge Link
+      // Continuous Heartbeat
       const heartbeat = setInterval(() => {
         sendEvent({ type: 'HEARTBEAT', timestamp: new Date().toISOString() });
       }, 30000);
 
+      // Presence Update Simulation for the prototype
+      // In prod, this would be triggered by KV changes or Durable Objects
+      const presenceSim = setInterval(() => {
+          sendEvent({ type: 'PRESENCE_UPDATE', active_users: ['SID', 'Eric'] });
+      }, 15000);
+
       request.signal.addEventListener('abort', () => {
         clearInterval(heartbeat);
+        clearInterval(presenceSim);
         controller.close();
       });
     },

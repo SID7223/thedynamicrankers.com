@@ -17,7 +17,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
   const url = new URL(request.url);
   const taskId = url.searchParams.get('taskId');
 
-  if (!taskId) {
+  if (taskId === null) {
     return new Response(JSON.stringify({ error: 'Missing taskId' }), { status: 400 });
   }
 

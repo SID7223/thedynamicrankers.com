@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, AlignLeft } from 'lucide-react';
 
@@ -19,6 +19,19 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isOpen, onClose, onSubmit, 
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [internalOperatives, setInternalOperatives] = useState<Operative[]>(operatives);
+
+  useEffect(() => {
+    if (isOpen) {
+        // Hydrate operatives from D1 on open to ensure fresh data
+        fetch('/api/internal/users')
+          .then(res => res.json())
+          .then((data: {results: Operative[]}) => {
+              if (data.results) setInternalOperatives(data.results);
+          })
+          .catch(err => console.error('Failed to hydrate operatives', err));
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +107,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isOpen, onClose, onSubmit, 
                       className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors appearance-none"
                     >
                       <option value="" disabled className="bg-[#111827]">Select...</option>
-                      {operatives.map(op => (
+                      {internalOperatives.map(op => (
                         <option key={op.id} value={op.id} className="bg-[#111827]">{op.name}</option>
                       ))}
                     </select>

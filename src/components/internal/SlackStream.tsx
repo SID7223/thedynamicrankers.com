@@ -18,6 +18,7 @@ interface SlackStreamProps {
   onSend: (content: string) => void;
   onReact: (messageId: number, emoji: string) => void;
   isTyping?: string[];
+  threadName?: string;
 }
 
 const SlackStream: React.FC<SlackStreamProps> = ({
@@ -25,7 +26,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({
   currentUserId,
   onSend,
   onReact,
-  isTyping = []
+  isTyping = [],
+  threadName = 'Global Command'
 }) => {
   const [input, setInput] = useState('');
   const [hoveredMessage, setHoveredMessage] = useState<number | null>(null);
@@ -44,12 +46,18 @@ const SlackStream: React.FC<SlackStreamProps> = ({
       {/* Header */}
       <div className="h-16 border-b border-white/5 flex items-center px-8 justify-between bg-[#06080D]/80 backdrop-blur-md z-10">
         <h2 className="text-zinc-100 font-semibold flex items-center gap-2">
-          <span className="text-indigo-500">#</span> communication-stream
+          <span className="text-indigo-500">#</span> {threadName.toLowerCase().replace(/\s+/g, '-')}
         </h2>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar">
+        {messages.length === 0 && (
+            <div className="h-full flex flex-col items-center justify-center text-center space-y-2 opacity-20">
+                <div className="w-12 h-12 rounded-full border-2 border-dashed border-white/20" />
+                <p className="text-xs uppercase tracking-widest">Beginning of thread</p>
+            </div>
+        )}
         {messages.map((msg) => (
           <div
             key={msg.id}

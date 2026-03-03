@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Circle, Clock } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, MessageSquare } from 'lucide-react';
 
 interface Task {
   id: number;
@@ -17,6 +17,7 @@ interface TaskManagerProps {
   onSelectTask: (task: Task) => void;
   onToggleTask: (task: Task) => void;
   onAddNew: () => void;
+  onSelectGlobal: () => void;
 }
 
 const TaskManager: React.FC<TaskManagerProps> = ({
@@ -24,7 +25,8 @@ const TaskManager: React.FC<TaskManagerProps> = ({
   activeTaskId,
   onSelectTask,
   onToggleTask,
-  onAddNew
+  onAddNew,
+  onSelectGlobal
 }) => {
   const activeTasks = tasks.filter(t => t.status === 'pending');
   const completedTasks = tasks.filter(t => t.status === 'completed');
@@ -86,6 +88,22 @@ const TaskManager: React.FC<TaskManagerProps> = ({
         </div>
 
         <div className="space-y-6">
+          {/* Global Feed Access */}
+          <div>
+            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Channels</h4>
+            <button
+                onClick={onSelectGlobal}
+                className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-all ${
+                    activeTaskId === 0
+                    ? 'bg-indigo-600/10 border-indigo-500 shadow-lg shadow-indigo-500/10'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                }`}
+            >
+                <MessageSquare size={18} className="text-indigo-400" />
+                <span className="text-sm font-bold text-zinc-100">Global Command</span>
+            </button>
+          </div>
+
           <div>
             <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Active Tasks</h4>
             <div className="max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
