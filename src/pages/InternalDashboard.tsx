@@ -36,7 +36,14 @@ const InternalDashboard: React.FC = () => {
     try {
       const response = await fetch('/api/internal/tasks');
       const data = (await response.json()) as { results: Task[] };
-      setTasks(data.results || []);
+      const fetchedTasks = data.results || [];
+      setTasks(fetchedTasks);
+
+      // Keep selected task in sync if it exists
+      if (selectedTask) {
+          const updated = fetchedTasks.find(t => t.id === selectedTask.id);
+          if (updated) setSelectedTask(updated);
+      }
     } catch (err) {
       console.error('Failed to fetch tasks', err);
     }
@@ -100,7 +107,6 @@ const InternalDashboard: React.FC = () => {
 
   const handleToggleTask = async (task: Task) => {
     const newStatus = task.status === 'pending' ? 'completed' : 'pending';
-
     setTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: newStatus } : t));
 
     try {
@@ -116,12 +122,29 @@ const InternalDashboard: React.FC = () => {
 
   const handleCreateTask = async (taskData: { title: string; description: string; assigned_to: number; due_date: string }) => {
     try {
-      await fetch('/api/internal/tasks', {
+      const response = await fetch('/api/internal/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'CREATE', ...taskData, created_by: currentUser.id })
       });
-      fetchTasks();
+      const data = (await response.json()) as { success: boolean; id: number };
+
+      if (data.success) {
+          await fetchTasks();
+          // After creation, automatically select the new task to open the chat thread
+          const newTask = tasks.find(t => t.id === data.id);
+          if (newTask) {
+              setSelectedTask(newTask);
+          } else {
+              // Fallback: wait a bit for state update or re-fetch logic
+              setTimeout(async () => {
+                  const response2 = await fetch('/api/internal/tasks');
+                  const data2 = (await response2.json()) as { results: Task[] };
+                  const createdTask = data2.results.find(t => t.id === data.id);
+                  if (createdTask) setSelectedTask(createdTask);
+              }, 500);
+          }
+      }
     } catch (err) {
       console.error('Failed to create task', err);
     }
@@ -143,7 +166,8 @@ const InternalDashboard: React.FC = () => {
   };
 
   const handleReact = async (messageId: number, emoji: string) => {
-    const hasReacted = messages.find(m => m.id === messageId)?.reactions?.some(r => r.user_id === currentUser.id && r.emoji === emoji);
+    const message = messages.find(m => m.id === messageId);
+    const hasReacted = message?.reactions?.some(r => r.user_id === currentUser.id && r.emoji === emoji);
 
     try {
       await fetch('/api/internal/chat', {

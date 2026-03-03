@@ -1,3 +1,14 @@
+/**
+ * Internal SSE Stream Protocol (Edge-Optimized)
+ *
+ * Event Types:
+ * - { type: 'HEARTBEAT', timestamp: string }
+ * - { type: 'CHAT_MSG', payload: { task_id: number, content: string, sender: string } }
+ * - { type: 'TASK_TOGGLE', payload: { id: number, status: 'pending' | 'completed' } }
+ * - { type: 'TASK_CREATED', payload: { id: number, title: string } }
+ * - { type: 'TYPING_INDICATOR', payload: { user: string, isTyping: boolean } }
+ */
+
 export const onRequestGet = async (context: { request: Request }) => {
   const { request } = context;
 
@@ -9,6 +20,7 @@ export const onRequestGet = async (context: { request: Request }) => {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
       };
 
+      // Continuous Heartbeat to maintain Edge Link
       const heartbeat = setInterval(() => {
         sendEvent({ type: 'HEARTBEAT', timestamp: new Date().toISOString() });
       }, 30000);
