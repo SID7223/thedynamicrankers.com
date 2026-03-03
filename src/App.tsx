@@ -249,11 +249,9 @@ function App() {
             <Route path="/blog/future-of-ai-narrow-to-general-intelligence" element={<FutureOfAiNarrowToGeneralIntelligence />} />
             <Route path="/blog/dynamic-rankers-future-digital-visibility" element={<DynamicRankersFutureDigitalVisibility />} />
             <Route path="/blog/future-of-websites-dynamic-layouts-mood" element={<FutureOfWebsitesDynamicLayoutsMood />} />
-            <Route path="/blog/harnessing-ai-solutions-mental-health-2026" element={<HarnessingAiSolutionsMentalHealth2026 />} />
             <Route path="/blog/future-of-ai-legal-tech-automated-contracts" element={<FutureOfAiLegalTechAutomatedContracts />} />
             <Route path="/blog/dynamic-rankers-performance-marketing" element={<DynamicRankersPerformanceMarketing />} />
             <Route path="/blog/future-of-websites-accessibility-compliance" element={<FutureOfWebsitesAccessibilityCompliance />} />
-            <Route path="/blog/ai-solutions-modern-agriculture-2026" element={<AiSolutionsModernAgriculture2026 />} />
             <Route path="/blog/embracing-future-dynamic-rankers" element={<EmbracingFutureDynamicRankers />} /> {/* DYNAMIC ROUTE ADDED HERE */}
             <Route path="/blog/building-sustainable-digital-ecosystems" element={<BuildingSustainableDigitalEcosystems />} />
             <Route path="/blog/data-privacy-dynamic-rankers" element={<DataPrivacyDynamicRankers />} />
