@@ -35,7 +35,7 @@ const InternalDashboard: React.FC = () => {
   const fetchTasks = async () => {
     try {
       const response = await fetch('/api/internal/tasks');
-      const data = (await response.json()) as { results: Task[] };
+      const data = (await response.json()) as unknown as { results: Task[] };
       const fetchedTasks = data.results || [];
       setTasks(fetchedTasks);
 
@@ -52,7 +52,7 @@ const InternalDashboard: React.FC = () => {
   const fetchMessages = async (taskId: number) => {
     try {
       const response = await fetch(`/api/internal/chat?taskId=${taskId}`);
-      const data = (await response.json()) as { results: Message[] };
+      const data = (await response.json()) as unknown as { results: Message[] };
       setMessages(data.results || []);
     } catch (err) {
       console.error('Failed to fetch messages', err);
@@ -62,7 +62,7 @@ const InternalDashboard: React.FC = () => {
   const fetchOperatives = async () => {
     try {
       const response = await fetch('/api/internal/users');
-      const data = (await response.json()) as { results: {id: number, name: string}[] };
+      const data = (await response.json()) as unknown as { results: {id: number, name: string}[] };
       setOperatives(data.results || []);
     } catch (err) {
       console.error('Failed to fetch operatives', err);
@@ -78,13 +78,13 @@ const InternalDashboard: React.FC = () => {
 
     const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+      const data = JSON.parse(event.data) as { type: string; payload: Record<string, unknown> };
       if (data.type === 'TASK_TOGGLE' || data.type === 'TASK_CREATED') {
         fetchTasks();
       } else if (data.type === 'CHAT_MSG' && selectedTask?.id === data.payload.task_id) {
         fetchMessages(selectedTask.id);
       } else if (data.type === 'TYPING_INDICATOR') {
-        const { user, isTyping: typingStatus } = data.payload;
+        const { user, isTyping: typingStatus } = data.payload as { user: string; isTyping: boolean };
         if (user !== currentUser.name) {
           setIsTyping(prev =>
             typingStatus ? [...new Set([...prev, user])] : prev.filter(u => u !== user)
@@ -127,7 +127,7 @@ const InternalDashboard: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'CREATE', ...taskData, created_by: currentUser.id })
       });
-      const data = (await response.json()) as { success: boolean; id: number };
+      const data = (await response.json()) as unknown as { success: boolean; id: number };
 
       if (data.success) {
           await fetchTasks();
@@ -139,7 +139,7 @@ const InternalDashboard: React.FC = () => {
               // Fallback: wait a bit for state update or re-fetch logic
               setTimeout(async () => {
                   const response2 = await fetch('/api/internal/tasks');
-                  const data2 = (await response2.json()) as { results: Task[] };
+                  const data2 = (await response2.json()) as unknown as { results: Task[] };
                   const createdTask = data2.results.find(t => t.id === data.id);
                   if (createdTask) setSelectedTask(createdTask);
               }, 500);

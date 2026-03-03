@@ -9,7 +9,7 @@ interface Message {
   content: string;
   timestamp: string;
   sender_name: string;
-  reactions?: any[];
+  reactions?: { emoji: string; user_name: string; user_id: number }[];
 }
 
 export const onRequestGet = async (context: { request: Request; env: Env }) => {
@@ -22,19 +22,19 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
   }
 
   try {
-    const { results } = await env.DB.prepare(
+    const { results } = (await env.DB.prepare(
       'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id = ? ORDER BY m.timestamp ASC'
-    ).bind(taskId).all();
+    ).bind(taskId).all()) as unknown as { results: Message[] };
 
-    const messages = results as unknown as Message[];
+    const messages = results;
 
     // Fetch reactions for these messages
     const messageIds = messages.map((m) => m.id);
-    let reactions: any[] = [];
+    let reactions: { message_id: number; emoji: string; user_name: string; user_id: number }[] = [];
     if (messageIds.length > 0) {
-      const { results: reactionResults } = await env.DB.prepare(
+      const { results: reactionResults } = (await env.DB.prepare(
         `SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (${messageIds.join(',')})`
-      ).all();
+      ).all()) as unknown as { results: { message_id: number; emoji: string; user_name: string; user_id: number }[] };
       reactions = reactionResults;
     }
 

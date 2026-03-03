@@ -16,7 +16,7 @@ export const onRequestGet = async (context: { request: Request }) => {
     start(controller) {
       const encoder = new TextEncoder();
 
-      const sendEvent = (event: any) => {
+      const sendEvent = (event: Record<string, unknown>) => {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
       };
 
