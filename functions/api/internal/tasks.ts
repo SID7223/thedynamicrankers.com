@@ -6,19 +6,22 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
+  if (!env.DB) {
+    return new Response(JSON.stringify({ error: 'D1 Binding "DB" missing' }), { status: 500 });
+  }
+
   if (request.method === 'GET') {
     try {
       const { results } = await env.DB.prepare(
         'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
       ).all();
 
-      return new Response(JSON.stringify(results), {
+      return new Response(JSON.stringify(results || []), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
+      return new Response(JSON.stringify({ error: 'GET_TASKS_FAILED', message: (err as Error).message }), { status: 500 });
     }
   }
 
@@ -29,16 +32,18 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         description?: string;
         due_date?: string;
         assigned_to?: number;
+        created_by?: number;
       };
 
       const result = await env.DB.prepare(
-        'INSERT INTO tasks (title, description, assigned_to, due_date, status) VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO tasks (title, description, assigned_to, due_date, status, created_by) VALUES (?, ?, ?, ?, ?, ?)'
       ).bind(
         body.title,
         body.description || null,
         body.assigned_to || null,
         body.due_date || null,
-        'pending'
+        'pending',
+        body.created_by || 1 // Fallback to 1 for prototype
       ).run();
 
       const newTask = await env.DB.prepare(
@@ -47,8 +52,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       return new Response(JSON.stringify(newTask), { status: 201 });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
+      return new Response(JSON.stringify({ error: 'POST_TASK_FAILED', message: (err as Error).message }), { status: 500 });
     }
   }
 
@@ -72,8 +76,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
+      return new Response(JSON.stringify({ error: 'PATCH_TASK_FAILED', message: (err as Error).message }), { status: 500 });
     }
   }
 
