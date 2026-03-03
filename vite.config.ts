@@ -8,4 +8,13 @@ export default defineConfig({
     exclude: ['lucide-react'],
     include: ['react-icons/fa'],
   },
+  server: {
+    proxy: {
+      '/api/internal': {
+        target: 'http://localhost:8788', // Standard Wrangler Pages Dev port
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 });
