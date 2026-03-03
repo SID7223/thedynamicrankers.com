@@ -94,7 +94,7 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       to: [resendTargetEmail],
       subject: `[${data.type || 'General'}] Website Contact: ${data.name}`,
       html: ContactEmailTemplate(data),
-      reply_to: data.email
+      replyTo: data.email
     });
 
     if (result.error) {
