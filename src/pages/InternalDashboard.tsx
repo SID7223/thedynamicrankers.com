@@ -70,11 +70,10 @@ const InternalDashboard = () => {
           const tasksData = await tasksRes.json();
           const usersData = await usersRes.json();
           setTasks(tasksData);
-          setOperatives(usersData);
+          setOperatives(usersData.results || usersData);
           setStreamStatus('stable');
         }
-      } catch (err) {
-        console.error('Initial fetch failed:', err);
+      } catch {
         setStreamStatus('failed');
       }
     };

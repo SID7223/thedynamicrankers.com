@@ -2,110 +2,65 @@ interface Env {
   DB: D1Database;
 }
 
-interface Message {
-  id: number;
-  task_id: number | null;
-  sender_id: number;
-  content: string;
-  timestamp: string;
-  sender_name: string;
-  reactions?: { emoji: string; user_name: string; user_id: number }[];
-}
-
-export const onRequestGet = async (context: { request: Request; env: Env }) => {
+export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
-  const taskIdRaw = url.searchParams.get('taskId');
 
-  if (taskIdRaw === null) {
-    return new Response(JSON.stringify({ error: 'Missing taskId' }), { status: 400 });
-  }
+  if (request.method === 'GET') {
+    const taskIdRaw = url.searchParams.get('taskId');
+    if (taskIdRaw === null) return new Response(JSON.stringify({ error: 'Missing taskId' }), { status: 400 });
+    const taskId = parseInt(taskIdRaw);
 
-  const taskId = parseInt(taskIdRaw);
+    try {
+      let query = 'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE ';
+      query += taskId === 0 ? 'm.task_id IS NULL ' : 'm.task_id = ? ';
+      query += 'ORDER BY m.timestamp ASC';
 
-  try {
-    let results;
-    if (taskId === 0) {
-      // Global Feed
-      ({ results } = await env.DB.prepare(
-        'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id IS NULL ORDER BY m.timestamp ASC'
-      ).all());
-    } else {
-      // Specific Task Thread
-      ({ results } = await env.DB.prepare(
-        'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id = ? ORDER BY m.timestamp ASC'
-      ).bind(taskId).all());
-    }
+      const stmt = env.DB.prepare(query);
+      const { results } = taskId === 0 ? await stmt.all() : await stmt.bind(taskId).all();
 
-    const messages = results as unknown as Message[];
+      const messages = results as any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+      if (messages.length === 0) return new Response(JSON.stringify([]), { status: 200 });
 
-    // Fetch reactions for these messages
-    const messageIds = messages.map((m) => m.id);
-    let reactions: { message_id: number; emoji: string; user_name: string; user_id: number }[] = [];
-    if (messageIds.length > 0) {
-      const { results: reactionResults } = (await env.DB.prepare(
+      const messageIds = messages.map(m => m.id);
+      const { results: reactions } = await env.DB.prepare(
         `SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (${messageIds.join(',')})`
-      ).all()) as unknown as { results: { message_id: number; emoji: string; user_name: string; user_id: number }[] };
-      reactions = reactionResults;
+      ).all();
+
+      const messagesWithReactions = messages.map(m => ({
+        ...m,
+        reactions: (reactions as any[]).filter(r => r.message_id === m.id) // eslint-disable-line @typescript-eslint/no-explicit-any
+      }));
+
+      return new Response(JSON.stringify(messagesWithReactions), { status: 200 });
+    } catch (err: unknown) {
+      return new Response(JSON.stringify({ error: 'Internal Server Error', details: (err as Error).message }), { status: 500 });
     }
-
-    const messagesWithReactions = messages.map((m) => ({
-      ...m,
-      reactions: reactions.filter((r) => r.message_id === m.id)
-    }));
-
-    return new Response(JSON.stringify({ results: messagesWithReactions }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
   }
-};
 
-export const onRequestPost = async (context: { request: Request; env: Env }) => {
-  const { request, env } = context;
+  if (request.method === 'POST') {
+    try {
+      const body = await request.json() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+      const { action } = body;
 
-  try {
-    const body = (await request.json()) as {
-        action: string;
-        taskId?: number;
-        senderId?: number;
-        content?: string;
-        messageId?: number;
-        userId?: number;
-        emoji?: string;
-    };
-    const { action, taskId, senderId, content, messageId, userId, emoji } = body;
-
-    if (action === 'SEND') {
-      const task_id = taskId === 0 ? null : taskId;
-      const result = await env.DB.prepare(
-        'INSERT INTO messages (task_id, sender_id, content) VALUES (?, ?, ?)'
-      ).bind(task_id, senderId, content).run();
-
-      return new Response(JSON.stringify({ success: true, id: result.meta.last_row_id }), { status: 201 });
-    }
-
-    if (action === 'REACT') {
-      await env.DB.prepare(
-        'INSERT OR REPLACE INTO message_reactions (message_id, user_id, emoji) VALUES (?, ?, ?)'
-      ).bind(messageId, userId, emoji).run();
-
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
-    }
-
-    if (action === 'DELETE_REACTION') {
+      if (action === 'SEND') {
+        const taskId = body.taskId === 0 ? null : body.taskId;
         await env.DB.prepare(
-            'DELETE FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
-        ).bind(messageId, userId, emoji).run();
-        return new Response(JSON.stringify({ success: true }), { status: 200 });
-    }
+          'INSERT INTO messages (task_id, sender_id, content) VALUES (?, ?, ?)'
+        ).bind(taskId, body.senderId, body.content).run();
+        return new Response(JSON.stringify({ success: true }), { status: 201 });
+      }
 
-    return new Response(JSON.stringify({ error: 'Invalid Action' }), { status: 400 });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: message }), { status: 500 });
+      if (action === 'REACT') {
+        await env.DB.prepare(
+          'INSERT OR REPLACE INTO message_reactions (message_id, user_id, emoji) VALUES (?, ?, ?)'
+        ).bind(body.messageId, body.userId, body.emoji).run();
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
+      }
+    } catch (err: unknown) {
+      return new Response(JSON.stringify({ error: 'Internal Server Error', details: (err as Error).message }), { status: 500 });
+    }
   }
+
+  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
 };
