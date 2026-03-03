@@ -4,7 +4,7 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "dr-command-center"
-database_id = "f8b9e5a6-2b4c-4e8f-9d1a-2b3c4d5e6f7a" # Placeholder ID for local/dev
+database_id = "caed5c77-6a39-4b14-b10d-5437f9a1bea5" # Placeholder ID for local/dev
 
 [vars]
 JWT_SECRET = "dr_sovereign_2024"
