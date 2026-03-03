@@ -1,52 +1,52 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Users } from 'lucide-react';
+import React from 'react';
+import { Activity } from 'lucide-react';
 
-interface PresenceIndicatorProps {
-  activeUsers: string[];
+interface User {
+  id: number;
+  username: string;
+  role: string;
+  is_online?: boolean;
 }
 
-const PresenceIndicator: React.FC<PresenceIndicatorProps> = ({ activeUsers }) => {
-  const [isOpen, setIsOpen] = useState(false);
+interface PresenceIndicatorProps {
+  operatives: User[];
+  status: 'connecting' | 'stable' | 'failed';
+}
+
+const PresenceIndicator: React.FC<PresenceIndicatorProps> = ({ operatives = [], status }) => {
+  const safeOperatives = Array.isArray(operatives) ? operatives : [];
+  const onlineCount = safeOperatives.filter(u => u.is_online).length;
 
   return (
-    <div className="fixed bottom-20 right-8 z-40">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute bottom-16 right-0 w-48 bg-[#111827] border border-white/10 rounded-2xl shadow-2xl p-4 space-y-3"
-          >
-            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest border-b border-white/5 pb-2">
-              Who's Online ({activeUsers.length})
-            </h4>
-            <div className="space-y-2">
-              {activeUsers.map(user => (
-                <div key={user} className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                  <span className="text-xs text-zinc-200 font-medium">{user}</span>
-                  <span className="text-[10px] text-zinc-600 ml-auto">Active</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/20 rounded-full transition-all group"
-      >
-        <div className="relative">
-          <Users size={16} className="text-indigo-400" />
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full border-2 border-[#06080D]" />
-        </div>
-        <span className="text-xs font-bold text-indigo-400 tracking-tight">
-          {activeUsers.length} Online
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800/50 rounded-full border border-zinc-700/50">
+        <Activity className={`w-3 h-3 ${status === 'stable' ? 'text-emerald-500' : 'text-amber-500 animate-pulse'}`} />
+        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+          {status === 'stable' ? 'Link: Stable' : 'Connecting...'}
         </span>
-      </button>
+      </div>
+
+      <div className="flex -space-x-2">
+        {safeOperatives.slice(0, 3).map((op) => (
+          <div
+            key={op.id}
+            className={`w-6 h-6 rounded-full border-2 border-[#06080D] flex items-center justify-center text-[8px] font-bold ${op.is_online ? 'bg-emerald-500 text-white' : 'bg-zinc-800 text-zinc-500'}`}
+            title={`${op.username} (${op.is_online ? 'Online' : 'Offline'})`}
+          >
+            {op.username?.[0]?.toUpperCase()}
+          </div>
+        ))}
+        {safeOperatives.length > 3 && (
+          <div className="w-6 h-6 rounded-full border-2 border-[#06080D] bg-zinc-900 flex items-center justify-center text-[8px] font-bold text-zinc-500">
+            +{safeOperatives.length - 3}
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+        <span className="text-[10px] font-bold text-white uppercase tracking-widest">{onlineCount || 1} Online</span>
+      </div>
     </div>
   );
 };

@@ -23,28 +23,31 @@ interface TaskManagerProps {
 }
 
 const TaskManager: React.FC<TaskManagerProps> = ({
-  tasks,
+  tasks = [],
   activeTaskId,
   setActiveTaskId,
   onAssignTask,
-  operatives
+  operatives = []
 }) => {
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const safeOperatives = Array.isArray(operatives) ? operatives : [];
+
   return (
     <div className="space-y-4">
       <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Active Tasks</h3>
-      {tasks.length === 0 ? (
+      {safeTasks.length === 0 ? (
         <div className="px-3 py-4 bg-zinc-800/20 rounded-xl border border-zinc-800/50 text-center">
           <p className="text-[10px] text-zinc-600 uppercase tracking-widest">No Active Commands</p>
         </div>
       ) : (
-        tasks.map((task) => (
+        safeTasks.map((task) => (
           <div
             key={task.id}
             onClick={() => setActiveTaskId(task.id)}
             className={`w-full text-left px-3 py-3 rounded-xl transition-all cursor-pointer border ${activeTaskId === task.id ? 'bg-indigo-600/10 border-indigo-500/30' : 'bg-zinc-800/30 border-zinc-800/50 hover:bg-zinc-800/50'}`}
           >
             <div className="flex items-center gap-3 mb-2">
-               <div className={`w-2 h-2 rounded-full ${task.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-indigo-50'}`} />
+               <div className={`w-2 h-2 rounded-full ${task.status === 'completed' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-indigo-500 animate-pulse'}`} />
                <span className="text-xs font-bold text-white truncate">{task.title}</span>
             </div>
 
@@ -59,7 +62,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                 className="bg-transparent text-[10px] text-zinc-500 uppercase tracking-widest outline-none cursor-pointer hover:text-indigo-400 transition-colors"
               >
                 <option value="" className="bg-zinc-900">Unassigned</option>
-                {operatives.map((op) => (
+                {safeOperatives.map((op) => (
                   <option key={op.id} value={op.id} className="bg-zinc-900">{op.username}</option>
                 ))}
               </select>

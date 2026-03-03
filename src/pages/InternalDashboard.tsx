@@ -69,8 +69,9 @@ const InternalDashboard = () => {
         if (tasksRes.ok && usersRes.ok) {
           const tasksData = await tasksRes.json();
           const usersData = await usersRes.json();
-          setTasks(tasksData);
-          setOperatives(usersData.results || usersData);
+          // Backend returns results in a results array or directly as an array
+          setTasks(Array.isArray(tasksData) ? tasksData : (tasksData.results || []));
+          setOperatives(Array.isArray(usersData) ? usersData : (usersData.results || []));
           setStreamStatus('stable');
         }
       } catch {
@@ -283,7 +284,7 @@ const InternalDashboard = () => {
     );
   }
 
-  const activeTask = activeTaskId === 0 ? null : tasks.find(t => t.id === activeTaskId);
+  const activeTask = activeTaskId === 0 ? null : (Array.isArray(tasks) ? tasks.find(t => t.id === activeTaskId) : null);
 
   return (
     <div className="flex h-screen bg-[#06080D] text-zinc-300 font-sans selection:bg-indigo-500/30 overflow-hidden">
@@ -330,7 +331,7 @@ const InternalDashboard = () => {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-9 h-9 bg-zinc-800 rounded-xl flex items-center justify-center font-bold text-indigo-400 border border-zinc-700">
-                  {session.username[0].toUpperCase()}
+                  {session.username?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#080C14] rounded-full" />
               </div>
