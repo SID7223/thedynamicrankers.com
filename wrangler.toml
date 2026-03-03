@@ -1,12 +1,10 @@
 name = "dynamic-rankers"
 pages_build_output_dir = "dist"
 
-# D1 Database Binding
-# Note: Bindings must be created in the Cloudflare Dashboard before deployment
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "dr-command-center"
-# database_id = "REPLACE_WITH_ACTUAL_ID"
+[[d1_databases]]
+binding = "DB"
+database_name = "dr-command-center"
+database_id = "caed5c77-6a39-4b14-b10d-5437f9a1bea5" # Placeholder ID for local/dev
 
 [vars]
-JWT_SECRET = "REPLACE_WITH_SECURE_SECRET"
+JWT_SECRET = "dr_sovereign_2024"

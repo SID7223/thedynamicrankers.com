@@ -1,0 +1,810 @@
+import React, { useState, useEffect, useRef } from 'react';
+import TaskManager from '../components/internal/TaskManager';
+import SlackStream from '../components/internal/SlackStream';
+import NewTaskModal from '../components/internal/NewTaskModal';
+
+interface Task {
+  id: number;
+  title: string;
+  status: 'pending' | 'completed';
+  assigned_to: number;
+  assigned_name: string;
+  due_date?: string;
+}
+
+interface Message {
+  id: number;
+  content: string;
+  sender_id: number;
+  sender_name: string;
+  timestamp: string;
+  reactions?: Array<{ emoji: string; user_name: string; user_id: number }>;
+}
+
+const InternalDashboard: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [operatives, setOperatives] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState<string[]>([]);
+
+  // Mocking current user - in prod this comes from auth context/token
+  const currentUser = { id: 1, name: 'SID' };
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('/api/internal/tasks');
+      const data = await response.json();
+      setTasks(data.results || []);
+    } catch (err) {
+      console.error('Failed to fetch tasks', err);
+    }
+  };
+
+  const fetchMessages = async (taskId: number) => {
+    try {
+      const response = await fetch(`/api/internal/chat?taskId=${taskId}`);
+      const data = await response.json();
+      setMessages(data.results || []);
+    } catch (err) {
+      console.error('Failed to fetch messages', err);
+    }
+  };
+
+  const fetchOperatives = async () => {
+    try {
+      const response = await fetch('/api/internal/users');
+      const data = await response.json();
+      setOperatives(data.results || []);
+    } catch (err) {
+      console.error('Failed to fetch operatives', err);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      await Promise.all([fetchTasks(), fetchOperatives()]);
+      setLoading(false);
+    };
+    init();
+
+    // SSE Stream for Real-time updates
+    const eventSource = new EventSource('/api/internal/stream');
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'TASK_TOGGLE' || data.type === 'TASK_CREATED') {
+        fetchTasks();
+      } else if (data.type === 'CHAT_MSG' && selectedTask?.id === data.payload.task_id) {
+        fetchMessages(selectedTask.id);
+      } else if (data.type === 'TYPING_INDICATOR') {
+        const { user, isTyping: typingStatus } = data.payload;
+        if (user !== currentUser.name) {
+          setIsTyping(prev =>
+            typingStatus ? [...new Set([...prev, user])] : prev.filter(u => u !== user)
+          );
+        }
+      }
+    };
+
+    return () => eventSource.close();
+  }, []);
+
+  useEffect(() => {
+    if (selectedTask) {
+      fetchMessages(selectedTask.id);
+    } else {
+      setMessages([]);
+    }
+  }, [selectedTask]);
+
+  const handleToggleTask = async (task: Task) => {
+    const newStatus = task.status === 'pending' ? 'completed' : 'pending';
+
+    // Optimistic UI
+    setTasks(prev => prev.map(t => t.id === task.id ? { ...t, status: newStatus } : t));
+
+    try {
+      await fetch('/api/internal/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'TOGGLE', id: task.id, status: newStatus })
+      });
+    } catch (err) {
+      // Revert on error
+      fetchTasks();
+    }
+  };
+
+  const handleCreateTask = async (taskData: any) => {
+    try {
+      await fetch('/api/internal/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'CREATE', ...taskData, created_by: currentUser.id })
+      });
+      fetchTasks();
+    } catch (err) {
+      console.error('Failed to create task', err);
+    }
+  };
+
+  const handleSendMessage = async (content: string) => {
+    if (!selectedTask) return;
+
+    try {
+      await fetch('/api/internal/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'SEND', taskId: selectedTask.id, senderId: currentUser.id, content })
+      });
+      fetchMessages(selectedTask.id);
+    } catch (err) {
+      console.error('Failed to send message', err);
+    }
+  };
+
+  const handleReact = async (messageId: number, emoji: string) => {
+    const hasReacted = messages.find(m => m.id === messageId)?.reactions?.some(r => r.user_id === currentUser.id && r.emoji === emoji);
+
+    try {
+      await fetch('/api/internal/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: hasReacted ? 'DELETE_REACTION' : 'REACT',
+          messageId,
+          userId: currentUser.id,
+          emoji
+        })
+      });
+      if (selectedTask) fetchMessages(selectedTask.id);
+    } catch (err) {
+      console.error('Failed to react', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#06080D] flex flex-col items-center justify-center p-8 space-y-4">
+        <div className="w-12 h-1 bg-white/5 overflow-hidden relative rounded-full">
+          <div className="absolute inset-0 bg-indigo-500 w-1/3 animate-[shimmer_2s_infinite]"></div>
+        </div>
+        <p className="text-zinc-500 text-[10px] uppercase tracking-widest animate-pulse">
+          Establishing Sovereign Link...
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-screen bg-[#06080D] text-zinc-400 overflow-hidden font-sans">
+      <TaskManager
+        tasks={tasks}
+        activeTaskId={selectedTask?.id}
+        onSelectTask={setSelectedTask}
+        onToggleTask={handleToggleTask}
+        onAddNew={() => setIsModalOpen(true)}
+      />
+
+      {selectedTask ? (
+        <SlackStream
+          messages={messages}
+          currentUserId={currentUser.id}
+          onSend={handleSendMessage}
+          onReact={handleReact}
+          isTyping={isTyping}
+        />
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-6">
+          <div className="w-24 h-24 rounded-3xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-600 shadow-xl shadow-indigo-600/40" />
+          </div>
+          <div className="text-center space-y-2">
+            <h2 className="text-white font-bold text-xl">Command Center Ready</h2>
+            <p className="text-zinc-500 text-sm max-w-xs">Select a task from the ledger to initialize operational oversight.</p>
+          </div>
+        </div>
+      )}
+
+      <NewTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateTask}
+        operatives={operatives}
+      />
+
+      {/* Global Status Footer */}
+      <div className="fixed bottom-0 right-0 p-3 flex items-center gap-6 bg-[#0B101A]/80 backdrop-blur-md border-t border-l border-white/5 rounded-tl-2xl z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Link: Stable</span>
+        </div>
+        <div className="h-3 w-px bg-white/10" />
+        <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Node: Edge_D1</span>
+      </div>
+    </div>
+  );
+};
+
+export default InternalDashboard;
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Smile, Reply, Trash2, MoreHorizontal } from 'lucide-react';
+import Avatar from './Avatar';
+
+interface Message {
+  id: number;
+  content: string;
+  sender_id: number;
+  sender_name: string;
+  timestamp: string;
+  reactions?: Array<{ emoji: string; user_name: string; user_id: number }>;
+}
+
+interface SlackStreamProps {
+  messages: Message[];
+  currentUserId: number;
+  onSend: (content: string) => void;
+  onReact: (messageId: number, emoji: string) => void;
+  isTyping?: string[];
+}
+
+const SlackStream: React.FC<SlackStreamProps> = ({
+  messages,
+  currentUserId,
+  onSend,
+  onReact,
+  isTyping = []
+}) => {
+  const [input, setInput] = useState('');
+  const [hoveredMessage, setHoveredMessage] = useState<number | null>(null);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    onSend(input.trim());
+    setInput('');
+  };
+
+  const quickReactions = ['👍', '✅', '🚀', '🔥', '👀'];
+
+  return (
+    <div className="flex-1 flex flex-col h-full bg-[#06080D] relative overflow-hidden">
+      {/* Header */}
+      <div className="h-16 border-b border-white/5 flex items-center px-8 justify-between bg-[#06080D]/80 backdrop-blur-md z-10">
+        <h2 className="text-zinc-100 font-semibold flex items-center gap-2">
+          <span className="text-indigo-500">#</span> communication-stream
+        </h2>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className="group relative flex gap-4 items-start"
+            onMouseEnter={() => setHoveredMessage(msg.id)}
+            onMouseLeave={() => setHoveredMessage(null)}
+          >
+            <Avatar name={msg.sender_name} />
+            <div className="flex-1 space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-zinc-100">{msg.sender_name}</span>
+                <span className="text-[10px] text-zinc-500">
+                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <div className="text-zinc-300 text-sm leading-relaxed max-w-3xl">
+                {msg.content}
+              </div>
+
+              {/* Reactions Display */}
+              {msg.reactions && msg.reactions.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {Object.entries(
+                    msg.reactions.reduce((acc, r) => {
+                      acc[r.emoji] = (acc[r.emoji] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>)
+                  ).map(([emoji, count]) => (
+                    <button
+                      key={emoji}
+                      onClick={() => onReact(msg.id, emoji)}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-colors ${
+                        msg.reactions?.some(r => r.user_id === currentUserId && r.emoji === emoji)
+                          ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-400'
+                          : 'bg-white/5 border-white/10 text-zinc-400 hover:bg-white/10'
+                      }`}
+                    >
+                      <span>{emoji}</span>
+                      <span className="font-bold">{count}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Floating Action Bar */}
+            <AnimatePresence>
+              {hoveredMessage === msg.id && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute right-0 -top-4 flex items-center bg-[#111827] border border-white/10 rounded-lg shadow-2xl p-1 z-20"
+                >
+                  <div className="flex items-center border-r border-white/5 px-1 gap-1">
+                    {quickReactions.map(emoji => (
+                      <button
+                        key={emoji}
+                        onClick={() => onReact(msg.id, emoji)}
+                        className="p-1.5 hover:bg-white/5 rounded transition-colors"
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center px-1 gap-1">
+                    <button className="p-1.5 hover:bg-white/5 rounded text-zinc-400"><Smile size={16} /></button>
+                    <button className="p-1.5 hover:bg-white/5 rounded text-zinc-400"><Reply size={16} /></button>
+                    <button className="p-1.5 hover:bg-white/5 rounded text-zinc-400"><MoreHorizontal size={16} /></button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </div>
+
+      {/* Typing Indicator */}
+      <AnimatePresence>
+        {isTyping.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="px-8 py-2 text-[10px] text-indigo-400 italic"
+          >
+            {isTyping.join(', ')} {isTyping.length === 1 ? 'is' : 'are'} typing...
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Input */}
+      <form onSubmit={handleSubmit} className="p-8 pt-0">
+        <div className="relative group bg-white/5 border border-white/10 rounded-xl focus-within:border-indigo-500/50 transition-all p-1">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Message the team..."
+            className="w-full bg-transparent border-none focus:ring-0 text-zinc-100 text-sm px-4 py-3 placeholder-zinc-600"
+          />
+          <div className="flex items-center justify-between px-2 py-1 border-t border-white/5">
+            <div className="flex gap-1">
+              <button type="button" className="p-1.5 hover:bg-white/5 rounded text-zinc-500"><Smile size={16} /></button>
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20"
+            >
+              SEND
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default SlackStream;
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Circle, Clock } from 'lucide-react';
+
+interface Task {
+  id: number;
+  title: string;
+  status: 'pending' | 'completed';
+  assigned_to: number;
+  assigned_name: string;
+  due_date?: string;
+}
+
+interface TaskManagerProps {
+  tasks: Task[];
+  activeTaskId?: number;
+  onSelectTask: (task: Task) => void;
+  onToggleTask: (task: Task) => void;
+  onAddNew: () => void;
+}
+
+const TaskManager: React.FC<TaskManagerProps> = ({
+  tasks,
+  activeTaskId,
+  onSelectTask,
+  onToggleTask,
+  onAddNew
+}) => {
+  const activeTasks = tasks.filter(t => t.status === 'pending');
+  const completedTasks = tasks.filter(t => t.status === 'completed');
+
+  const TaskItem = ({ task }: { task: Task }) => (
+    <motion.button
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      onClick={() => onSelectTask(task)}
+      className={`w-full text-left p-4 rounded-xl transition-all mb-2 group border ${
+        activeTaskId === task.id
+          ? 'bg-indigo-600/10 border-indigo-500 shadow-lg shadow-indigo-500/10'
+          : 'bg-white/5 border-white/10 hover:bg-white/10'
+      } ${task.status === 'completed' ? 'opacity-60' : ''}`}
+    >
+      <div className="flex items-start gap-3">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleTask(task);
+          }}
+          className={`mt-1 transition-colors ${task.status === 'completed' ? 'text-emerald-500' : 'text-zinc-500 hover:text-indigo-400'}`}
+        >
+          {task.status === 'completed' ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+        </button>
+        <div className="flex-1 min-w-0">
+          <h3 className={`font-semibold text-sm truncate ${task.status === 'completed' ? 'line-through text-zinc-500' : 'text-zinc-100'}`}>
+            {task.title}
+          </h3>
+          <div className="flex items-center gap-3 mt-1">
+            <span className="text-[10px] text-indigo-400 font-medium uppercase tracking-wider">
+              {task.assigned_name}
+            </span>
+            {task.due_date && (
+              <span className="flex items-center gap-1 text-[10px] text-zinc-500">
+                <Clock size={10} />
+                {new Date(task.due_date).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.button>
+  );
+
+  return (
+    <div className="flex flex-col h-full bg-[#0B101A] border-r border-white/5 w-80">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-white font-bold text-lg tracking-tight">The Ledger</h2>
+          <button
+            onClick={onAddNew}
+            className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20"
+          >
+            +
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Active Tasks</h4>
+            <div className="max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+              <AnimatePresence mode="popLayout">
+                {activeTasks.map(task => <TaskItem key={task.id} task={task} />)}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {completedTasks.length > 0 && (
+            <div>
+              <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">Completed</h4>
+              <div className="max-h-[30vh] overflow-y-auto pr-2 custom-scrollbar">
+                <AnimatePresence mode="popLayout">
+                  {completedTasks.map(task => <TaskItem key={task.id} task={task} />)}
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TaskManager;
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Calendar, User, AlignLeft } from 'lucide-react';
+
+interface Operative {
+  id: number;
+  name: string;
+}
+
+interface NewTaskModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: any) => void;
+  operatives: Operative[];
+}
+
+const NewTaskModal: React.FC<NewTaskModalProps> = ({ isOpen, onClose, onSubmit, operatives }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [dueDate, setDueDate] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ title, description, assigned_to: parseInt(assignedTo), due_date: dueDate });
+    onClose();
+    setTitle('');
+    setDescription('');
+    setAssignedTo('');
+    setDueDate('');
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative w-full max-w-lg bg-[#111827] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+          >
+            <div className="p-6 border-b border-white/5 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white tracking-tight">Issue Command</h2>
+              <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Title</label>
+                <input
+                  autoFocus
+                  required
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="What needs to be done?"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Description</label>
+                <div className="relative">
+                  <AlignLeft className="absolute left-4 top-4 text-zinc-600" size={18} />
+                  <textarea
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Add more details..."
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Assign Operative</label>
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                    <select
+                      required
+                      value={assignedTo}
+                      onChange={(e) => setAssignedTo(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors appearance-none"
+                    >
+                      <option value="" disabled className="bg-[#111827]">Select...</option>
+                      {operatives.map(op => (
+                        <option key={op.id} value={op.id} className="bg-[#111827]">{op.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Due Date</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                    <input
+                      required
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors [color-scheme:dark]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 px-4 py-3 rounded-xl border border-white/10 text-zinc-400 font-bold text-sm hover:bg-white/5 transition-colors"
+                >
+                  CANCEL
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20"
+                >
+                  DEPLOY TASK
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default NewTaskModal;
+export const onRequestGet = async (context: any) => {
+  const { request } = context;
+
+  const stream = new ReadableStream({
+    start(controller) {
+      const encoder = new TextEncoder();
+
+      // In a real multi-user scenario, we might use a Durable Object or a pub/sub mechanism.
+      // For this hardened prototype, we'll implement a polling mechanism that simulates liveness
+      // while providing the SSE interface expected by the client.
+
+      const sendEvent = (event: any) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+      };
+
+      // Heartbeat
+      const heartbeat = setInterval(() => {
+        sendEvent({ type: 'HEARTBEAT', timestamp: new Date().toISOString() });
+      }, 30000);
+
+      request.signal.addEventListener('abort', () => {
+        clearInterval(heartbeat);
+        controller.close();
+      });
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
+};
+export const onRequestGet = async (context: any) => {
+  const { request, env } = context;
+  const url = new URL(request.url);
+  const taskId = url.searchParams.get('taskId');
+
+  if (!taskId) {
+    return new Response(JSON.stringify({ error: 'Missing taskId' }), { status: 400 });
+  }
+
+  try {
+    const { results: messages } = await env.DB.prepare(
+      'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id = ? ORDER BY m.timestamp ASC'
+    ).bind(taskId).all();
+
+    // Fetch reactions for these messages
+    const messageIds = messages.map((m: any) => m.id);
+    let reactions = [];
+    if (messageIds.length > 0) {
+      const { results } = await env.DB.prepare(
+        \`SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (\${messageIds.join(',')})\`
+      ).all();
+      reactions = results;
+    }
+
+    const messagesWithReactions = messages.map((m: any) => ({
+      ...m,
+      reactions: reactions.filter((r: any) => r.message_id === m.id)
+    }));
+
+    return new Response(JSON.stringify({ results: messagesWithReactions }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  }
+};
+
+export const onRequestPost = async (context: any) => {
+  const { request, env } = context;
+
+  try {
+    const body = await request.json() as any;
+    const { action, taskId, senderId, content, messageId, userId, emoji } = body;
+
+    if (action === 'SEND') {
+      const result = await env.DB.prepare(
+        'INSERT INTO messages (task_id, sender_id, content) VALUES (?, ?, ?)'
+      ).bind(taskId, senderId, content).run();
+
+      return new Response(JSON.stringify({ success: true, id: result.meta.last_row_id }), { status: 201 });
+    }
+
+    if (action === 'REACT') {
+      await env.DB.prepare(
+        'INSERT OR REPLACE INTO message_reactions (message_id, user_id, emoji) VALUES (?, ?, ?)'
+      ).bind(messageId, userId, emoji).run();
+
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }
+
+    if (action === 'DELETE_REACTION') {
+        await env.DB.prepare(
+            'DELETE FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
+        ).bind(messageId, userId, emoji).run();
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }
+
+    return new Response(JSON.stringify({ error: 'Invalid Action' }), { status: 400 });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  }
+};
+export const onRequestGet = async (context: any) => {
+  const { env } = context;
+  try {
+    const { results } = await env.DB.prepare(
+      'SELECT t.*, u.name as assigned_name FROM tasks t JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
+    ).all();
+
+    return new Response(JSON.stringify({ results }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  }
+};
+
+export const onRequestPost = async (context: any) => {
+  const { request, env } = context;
+
+  try {
+    const body = await request.json() as any;
+    const { action, id, title, description, assigned_to, due_date, created_by, status } = body;
+
+    if (action === 'TOGGLE') {
+      await env.DB.prepare(
+        'UPDATE tasks SET status = ? WHERE id = ?'
+      ).bind(status, id).run();
+
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }
+
+    if (action === 'CREATE') {
+      const result = await env.DB.prepare(
+        'INSERT INTO tasks (title, description, assigned_to, due_date, created_by) VALUES (?, ?, ?, ?, ?)'
+      ).bind(title, description, assigned_to, due_date, created_by).run();
+
+      return new Response(JSON.stringify({ success: true, id: result.meta.last_row_id }), { status: 201 });
+    }
+
+    return new Response(JSON.stringify({ error: 'Invalid Action' }), { status: 400 });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Internal Server Error', details: err.message }), { status: 500 });
+  }
+};
