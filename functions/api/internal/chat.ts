@@ -4,7 +4,7 @@ interface Env {
 
 interface Message {
   id: number;
-  task_id: number;
+  task_id: number | null;
   sender_id: number;
   content: string;
   timestamp: string;
@@ -15,18 +15,29 @@ interface Message {
 export const onRequestGet = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
-  const taskId = url.searchParams.get('taskId');
+  const taskIdRaw = url.searchParams.get('taskId');
 
-  if (taskId === null) {
+  if (taskIdRaw === null) {
     return new Response(JSON.stringify({ error: 'Missing taskId' }), { status: 400 });
   }
 
-  try {
-    const { results } = (await env.DB.prepare(
-      'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id = ? ORDER BY m.timestamp ASC'
-    ).bind(taskId).all()) as unknown as { results: Message[] };
+  const taskId = parseInt(taskIdRaw);
 
-    const messages = results;
+  try {
+    let results;
+    if (taskId === 0) {
+      // Global Feed
+      ({ results } = await env.DB.prepare(
+        'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id IS NULL ORDER BY m.timestamp ASC'
+      ).all());
+    } else {
+      // Specific Task Thread
+      ({ results } = await env.DB.prepare(
+        'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.task_id = ? ORDER BY m.timestamp ASC'
+      ).bind(taskId).all());
+    }
+
+    const messages = results as unknown as Message[];
 
     // Fetch reactions for these messages
     const messageIds = messages.map((m) => m.id);
@@ -69,9 +80,10 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
     const { action, taskId, senderId, content, messageId, userId, emoji } = body;
 
     if (action === 'SEND') {
+      const task_id = taskId === 0 ? null : taskId;
       const result = await env.DB.prepare(
         'INSERT INTO messages (task_id, sender_id, content) VALUES (?, ?, ?)'
-      ).bind(taskId, senderId, content).run();
+      ).bind(task_id, senderId, content).run();
 
       return new Response(JSON.stringify({ success: true, id: result.meta.last_row_id }), { status: 201 });
     }

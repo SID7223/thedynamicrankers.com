@@ -22,9 +22,10 @@ CREATE TABLE tasks (
 );
 
 -- The Comms (Messages)
+-- task_id is NULL for Global Command Feed
 CREATE TABLE messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    task_id INTEGER NOT NULL,
+    task_id INTEGER,
     sender_id INTEGER NOT NULL,
     content TEXT NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -45,7 +46,6 @@ CREATE TABLE message_reactions (
 );
 
 -- Seeding Primary Operatives
--- Password Hash represents '123456' using Bcrypt
 INSERT INTO users (email, password_hash, name) VALUES
 ('saadumar7223@gmail.com', '$2b$10$Ex.vQOqO5W/Hk/Y.v3K3Z.m3eY3vY3vY3vY3vY3vY3vY3vY3v', 'SID'),
 ('eric@thedynamicrankers.com', '$2b$10$Ex.vQOqO5W/Hk/Y.v3K3Z.m3eY3vY3vY3vY3vY3vY3vY3vY3v', 'Eric');

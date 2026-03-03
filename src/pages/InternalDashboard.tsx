@@ -24,7 +24,6 @@ interface Message {
 
 const InternalDashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  // Default to Global Command thread (taskId 0)
   const [selectedTask, setSelectedTask] = useState<Task | { id: number; title: string }>({ id: 0, title: 'Global Command' });
   const [messages, setMessages] = useState<Message[]>([]);
   const [operatives, setOperatives] = useState<{id: number, name: string}[]>([]);
@@ -38,7 +37,7 @@ const InternalDashboard: React.FC = () => {
   const fetchTasks = async () => {
     try {
       const response = await fetch('/api/internal/tasks');
-      const data = (await response.json()) as unknown as { results: Task[] };
+      const data = (await response.json()) as { results: Task[] };
       const fetchedTasks = data.results || [];
       setTasks(fetchedTasks);
 
@@ -54,7 +53,7 @@ const InternalDashboard: React.FC = () => {
   const fetchMessages = async (taskId: number) => {
     try {
       const response = await fetch(`/api/internal/chat?taskId=${taskId}`);
-      const data = (await response.json()) as unknown as { results: Message[] };
+      const data = (await response.json()) as { results: Message[] };
       setMessages(data.results || []);
     } catch (err) {
       console.error('Failed to fetch messages', err);
@@ -64,8 +63,10 @@ const InternalDashboard: React.FC = () => {
   const fetchOperatives = async () => {
     try {
       const response = await fetch('/api/internal/users');
-      const data = (await response.json()) as unknown as { results: {id: number, name: string}[] };
-      setOperatives(data.results || []);
+      const data = (await response.json()) as { results: {id: number, name: string}[] };
+      const fetchedOps = data.results || [];
+      console.log('Operatives Hydrated:', fetchedOps.length);
+      setOperatives(fetchedOps);
     } catch (err) {
       console.error('Failed to fetch operatives', err);
     }
@@ -78,7 +79,6 @@ const InternalDashboard: React.FC = () => {
     };
     init();
 
-    // Presence Heartbeat
     const heartbeat = setInterval(async () => {
         try {
             await fetch('/api/internal/presence', {
@@ -97,8 +97,12 @@ const InternalDashboard: React.FC = () => {
 
       if (data.type === 'TASK_TOGGLE' || data.type === 'TASK_CREATED') {
         fetchTasks();
-      } else if (data.type === 'CHAT_MSG' && selectedTask?.id === (data.payload?.task_id as number)) {
-        fetchMessages(selectedTask.id);
+      } else if (data.type === 'CHAT_MSG') {
+          const payload = data.payload as { task_id: number | null };
+          const msgTaskId = payload.task_id === null ? 0 : payload.task_id;
+          if (selectedTask?.id === msgTaskId) {
+            fetchMessages(selectedTask.id);
+          }
       } else if (data.type === 'TYPING_INDICATOR') {
         const { user, isTyping: typingStatus } = data.payload as { user: string; isTyping: boolean };
         if (user !== currentUser.name) {
@@ -148,12 +152,10 @@ const InternalDashboard: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'CREATE', ...taskData, created_by: currentUser.id })
       });
-      const data = (await response.json()) as unknown as { success: boolean; id: number };
+      const data = (await response.json()) as { success: boolean; id: number };
 
       if (data.success) {
-          await fetchTasks();
-          // After creation, we can either switch to the task or stay in global.
-          // Let's stay in global but ensure tasks are refreshed.
+          fetchTasks();
       }
     } catch (err) {
       console.error('Failed to create task', err);
@@ -164,12 +166,16 @@ const InternalDashboard: React.FC = () => {
     if (!selectedTask) return;
 
     try {
-      await fetch('/api/internal/chat', {
+      const response = await fetch('/api/internal/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'SEND', taskId: selectedTask.id, senderId: currentUser.id, content })
       });
-      fetchMessages(selectedTask.id);
+      if (response.ok) {
+          fetchMessages(selectedTask.id);
+      } else {
+          console.error('Message failed to send');
+      }
     } catch (err) {
       console.error('Failed to send message', err);
     }
