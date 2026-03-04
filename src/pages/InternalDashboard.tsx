@@ -199,7 +199,7 @@ const InternalDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#06080D] flex items-center justify-center">
+      <div className="h-screen bg-[#06080D] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Zap className="w-8 h-8 text-indigo-500 animate-pulse" />
           <span className="text-indigo-500/50 text-[10px] font-bold uppercase tracking-[0.3em]">Establishing Secure Link</span>
@@ -210,7 +210,7 @@ const InternalDashboard = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6">
+      <div className="h-screen bg-[#06080D] flex items-center justify-center p-6 overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -400,10 +400,10 @@ const InternalDashboard = () => {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative overflow-hidden bg-[#1f1f1f]">
+      <div className="flex-1 flex flex-col relative overflow-hidden bg-[#1f1f1f] h-full">
 
         {/* Mobile Header Toggle */}
-        <div className="lg:hidden h-20 px-6 flex items-center justify-between border-b border-zinc-800/50 bg-[#111111]">
+        <div className="lg:hidden h-20 px-6 flex items-center justify-between border-b border-zinc-800/50 bg-[#111111] shrink-0">
           <button onClick={() => setIsSidebarOpen(true)} className="text-zinc-400">
             <Menu size={24} />
           </button>
@@ -418,172 +418,187 @@ const InternalDashboard = () => {
           </button>
         </div>
 
-        {activeView === 'tasks' && (
-          activeTaskId === null ? (
-            <div className="flex-1 flex flex-col p-6 lg:p-10 overflow-y-auto custom-scrollbar">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-2 font-sans tracking-tight">Active Directives</h2>
-                  <p className="text-zinc-500 text-sm font-sans">Strategic threads and tactical operations.</p>
+        <div className="flex-1 flex flex-col min-h-0">
+          {activeView === 'tasks' && (
+            activeTaskId === null ? (
+              <div className="flex-1 flex flex-col p-6 lg:p-10 overflow-y-auto custom-scrollbar h-full">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white mb-2 font-sans tracking-tight">Active Directives</h2>
+                    <p className="text-zinc-500 text-sm font-sans">Strategic threads and tactical operations.</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid gap-4">
-                <button
-                    onClick={() => {
-                      setActiveTaskId(0);
-                      setTasks(prev => prev.map(t => t.id === 0 ? { ...t, hasUnread: false } : t));
-                    }}
-                    className={`w-full flex items-center gap-4 p-5 rounded-2xl transition-all group bg-[#262728] border border-zinc-800/50 hover:border-indigo-500/30`}
-                  >
-                    <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/10 transition-colors">
-                      <Hash size={24} />
-                    </div>
-                    <div className="text-left">
-                      <span className="text-lg font-bold text-white block">Global Command Feed</span>
-                      <span className="text-xs text-zinc-500 uppercase tracking-widest font-bold">Encrypted Channel</span>
-                    </div>
-                </button>
-
-                <TaskManager
-                  tasks={tasks}
-                  activeTaskId={-1}
-                  setActiveTaskId={(id) => {
-                    setActiveTaskId(id);
-                    setTasks(prev => prev.map(t => t.id === id ? { ...t, hasUnread: false } : t));
-                    setShowDirectiveDetails(true);
-                  }}
-                  onToggleStatus={handleToggleTaskStatus}
-                  onAssignTask={handleAssignTask}
-                  operatives={operatives}
-                />
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="h-20 px-6 lg:px-10 flex items-center justify-between border-b border-zinc-800/50 bg-[#1f1f1f]/80 backdrop-blur-xl z-10 shadow-sm shrink-0">
-                <div className="flex items-center gap-4">
+                <div className="grid gap-4">
                   <button
-                    onClick={() => setActiveTaskId(null)}
-                    className="p-2.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-zinc-800/50"
-                    title="Return to Directives"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <div className="w-10 h-10 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
-                    <Hash className="w-5 h-5 text-indigo-500" />
-                  </div>
-                  <h2 className="font-bold text-white tracking-tight text-lg lg:text-xl font-sans">
-                    {activeTaskId === 0 ? 'global-command' : (activeTask?.title || 'active-command').toLowerCase().replace(/\\s+/g, '-')}
-                  </h2>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="hidden sm:block">
-                    <PresenceIndicator operatives={operatives} status={streamStatus} />
-                  </div>
-                  {activeTaskId !== 0 && (
-                    <button
-                      onClick={() => setShowDirectiveDetails(!showDirectiveDetails)}
-                      className={`p-2 rounded-xl transition-all ${showDirectiveDetails ? 'bg-indigo-600 text-white' : 'text-zinc-500 hover:bg-zinc-800'}`}
+                      onClick={() => {
+                        setActiveTaskId(0);
+                        setTasks(prev => prev.map(t => t.id === 0 ? { ...t, hasUnread: false } : t));
+                      }}
+                      className={`w-full flex items-center gap-4 p-5 rounded-2xl transition-all group bg-[#262728] border border-zinc-800/50 hover:border-indigo-500/30`}
                     >
-                      <Zap size={20} />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex-1 flex overflow-hidden">
-                <div className="flex-1 flex flex-col min-w-0">
-                  <SlackStream taskId={activeTaskId} currentUser={session} operatives={operatives} key={`stream-${activeTaskId}-${lastMessageTimestamp}`} />
-                </div>
-
-                <AnimatePresence>
-                  {activeTask && showDirectiveDetails && (
-                    <motion.div
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 360 }}
-                      exit={{ opacity: 0, width: 0 }}
-                      className="border-l border-zinc-800/50 bg-[#2d2e30]/50 backdrop-blur-xl shrink-0 flex flex-col overflow-hidden relative"
-                    >
-                      <div className="p-8 h-full flex flex-col">
-                          <div className="flex items-center justify-between mb-10">
-                              <h3 className="font-bold text-white tracking-tight text-2xl font-sans">Directive</h3>
-                              <button
-                                  onClick={() => setShowDirectiveDetails(false)}
-                                  className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 transition-colors"
-                              >
-                                  <X size={18} />
-                              </button>
-                          </div>
-
-                          <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 -mr-4">
-                              <p className="text-[15px] text-zinc-300 leading-relaxed mb-12 font-sans opacity-90">
-                                  {activeTask.description || 'No supplementary data provided for this command.'}
-                              </p>
-
-                              <div className="space-y-10">
-                                  <div className="flex items-center gap-5">
-                                      <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
-                                          <Calendar className="w-5 h-5 text-indigo-400" />
-                                      </div>
-                                      <div className="flex flex-col">
-                                          <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Target Date</span>
-                                          <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.due_date ? new Date(activeTask.due_date).toLocaleDateString() : '02/03/3333'}</span>
-                                      </div>
-                                  </div>
-                                  <div className="flex items-center gap-5">
-                                      <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
-                                          <Users className="w-5 h-5 text-indigo-400" />
-                                      </div>
-                                      <div className="flex flex-col">
-                                          <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Assigned To</span>
-                                          <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.assigned_username || 'Awaiting Resource'}</span>
-                                      </div>
-                                  </div>
-                                  <div className="flex items-center gap-5">
-                                      <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
-                                          <Clock className="w-5 h-5 text-indigo-400" />
-                                      </div>
-                                      <div className="flex flex-col">
-                                          <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Established</span>
-                                          <span className="text-zinc-100 text-[14px] font-bold font-sans">{new Date(activeTask.created_at).toLocaleDateString()}</span>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-
-                          <div className="pt-8 mt-auto">
-                              <button
-                                  onClick={() => handleToggleTaskStatus(activeTask.id, activeTask.status)}
-                                  className="w-full py-4.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all border border-zinc-700/50 shadow-xl active:scale-[0.98] font-sans h-14"
-                              >
-                                  {activeTask.status === 'completed' ? 'Re-Open Directive' : 'Finalize Handshake'}
-                              </button>
-                          </div>
+                      <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/10 transition-colors">
+                        <Hash size={24} />
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      <div className="text-left">
+                        <span className="text-lg font-bold text-white block">Global Command Feed</span>
+                        <span className="text-xs text-zinc-500 uppercase tracking-widest font-bold">Encrypted Channel</span>
+                      </div>
+                  </button>
+
+                  <TaskManager
+                    tasks={tasks}
+                    activeTaskId={-1}
+                    setActiveTaskId={(id) => {
+                      setActiveTaskId(id);
+                      setTasks(prev => prev.map(t => t.id === id ? { ...t, hasUnread: false } : t));
+                      setShowDirectiveDetails(true);
+                    }}
+                    onToggleStatus={handleToggleTaskStatus}
+                    onAssignTask={handleAssignTask}
+                    operatives={operatives}
+                  />
+                </div>
               </div>
-            </>
-          )
-        )}
+            ) : (
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <div className="h-20 px-6 lg:px-10 flex items-center justify-between border-b border-zinc-800/50 bg-[#1f1f1f]/80 backdrop-blur-xl z-10 shadow-sm shrink-0">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setActiveTaskId(null)}
+                      className="p-2.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-zinc-800/50"
+                      title="Return to Directives"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <div className="w-10 h-10 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
+                      <Hash className="w-5 h-5 text-indigo-500" />
+                    </div>
+                    <h2 className="font-bold text-white tracking-tight text-lg lg:text-xl font-sans">
+                      {activeTaskId === 0 ? 'global-command' : (activeTask?.title || 'active-command').toLowerCase().replace(/\\s+/g, '-')}
+                    </h2>
+                  </div>
 
-        {activeView === 'customers' && (
-          selectedCustomer ? (
-            <CustomerProfile
-              customer={selectedCustomer}
-              onBack={() => setSelectedCustomer(null)}
-              onUpdate={() => {}}
-            />
-          ) : (
-            <CRMCustomers onSelectCustomer={setSelectedCustomer} />
-          )
-        )}
+                  <div className="flex items-center gap-4">
+                    <div className="hidden sm:block">
+                      <PresenceIndicator operatives={operatives} status={streamStatus} />
+                    </div>
+                    {activeTaskId !== 0 && (
+                      <button
+                        onClick={() => setShowDirectiveDetails(!showDirectiveDetails)}
+                        className={`p-2 rounded-xl transition-all ${showDirectiveDetails ? 'bg-indigo-600 text-white' : 'text-zinc-500 hover:bg-zinc-800'}`}
+                      >
+                        <Zap size={20} />
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-        {activeView === 'invoices' && <CRMInvoices />}
-        {activeView === 'appointments' && <CRMAppointments />}
+                <div className="flex-1 flex overflow-hidden min-h-0">
+                  <div className="flex-1 flex flex-col min-w-0 h-full">
+                    <SlackStream taskId={activeTaskId} currentUser={session} operatives={operatives} key={`stream-${activeTaskId}-${lastMessageTimestamp}`} />
+                  </div>
+
+                  <AnimatePresence>
+                    {activeTask && showDirectiveDetails && (
+                      <motion.div
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 360 }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="border-l border-zinc-800/50 bg-[#2d2e30]/50 backdrop-blur-xl shrink-0 flex flex-col overflow-hidden relative h-full"
+                      >
+                        <div className="p-8 h-full flex flex-col">
+                            <div className="flex items-center justify-between mb-10">
+                                <h3 className="font-bold text-white tracking-tight text-2xl font-sans">Directive</h3>
+                                <button
+                                    onClick={() => setShowDirectiveDetails(false)}
+                                    className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 transition-colors"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 -mr-4">
+                                <p className="text-[15px] text-zinc-300 leading-relaxed mb-12 font-sans opacity-90">
+                                    {activeTask.description || 'No supplementary data provided for this command.'}
+                                </p>
+
+                                <div className="space-y-10">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
+                                            <Calendar className="w-5 h-5 text-indigo-400" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Target Date</span>
+                                            <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.due_date ? new Date(activeTask.due_date).toLocaleDateString() : '02/03/3333'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
+                                            <Users className="w-5 h-5 text-indigo-400" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Assigned To</span>
+                                            <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.assigned_username || 'Awaiting Resource'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
+                                            <Clock className="w-5 h-5 text-indigo-400" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Established</span>
+                                            <span className="text-zinc-100 text-[14px] font-bold font-sans">{new Date(activeTask.created_at).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-8 mt-auto">
+                                <button
+                                    onClick={() => handleToggleTaskStatus(activeTask.id, activeTask.status)}
+                                    className="w-full py-4.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all border border-zinc-700/50 shadow-xl active:scale-[0.98] font-sans h-14"
+                                >
+                                    {activeTask.status === 'completed' ? 'Re-Open Directive' : 'Finalize Handshake'}
+                                </button>
+                            </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )
+          )}
+
+          {activeView === 'customers' && (
+            <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
+              {selectedCustomer ? (
+                <CustomerProfile
+                  customer={selectedCustomer}
+                  onBack={() => setSelectedCustomer(null)}
+                  onUpdate={() => {}}
+                />
+              ) : (
+                <div className="flex-1 overflow-y-auto custom-scrollbar h-full">
+                  <CRMCustomers onSelectCustomer={setSelectedCustomer} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeView === 'invoices' && (
+            <div className="flex-1 overflow-y-auto custom-scrollbar h-full">
+              <CRMInvoices />
+            </div>
+          )}
+
+          {activeView === 'appointments' && (
+            <div className="flex-1 overflow-y-auto custom-scrollbar h-full">
+              <CRMAppointments />
+            </div>
+          )}
+        </div>
 
       </div>
 

@@ -3,7 +3,6 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from './components/Header';
 import ScrollToTop from './components/ScrollToTop';
-import DarkModeToggle from './components/DarkModeToggle';
 import Hero from './components/Hero';
 import BusinessGrowth from './components/BusinessGrowth';
 import TestimonialsLanding from './components/TestimonialsLanding';
@@ -190,7 +189,6 @@ function App() {
 
       <div className="main-content-wrapper min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         <ScrollToTop />
-        <DarkModeToggle />
         {!isCrmPage && !isOnboardingPage && !isThankYouPage && !isInternalPage && <Header />}
         
         <Suspense fallback={
