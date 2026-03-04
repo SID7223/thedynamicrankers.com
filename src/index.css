@@ -8,9 +8,9 @@
   --y: 50%;
 }
 
-/* Set global scale to 90% for desktop view */
+/* Set global scale to 90% for desktop view, excluding no-zoom pages */
 @media (min-width: 1024px) {
-  .main-content-wrapper {
+  .main-content-wrapper:not(.no-zoom) {
     zoom: 0.9;
   }
 }
