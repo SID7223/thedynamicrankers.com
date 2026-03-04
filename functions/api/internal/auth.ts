@@ -18,10 +18,18 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
         return new Response(JSON.stringify({ message: 'Authorization Denied: Member Not Recognized' }), { status: 401 });
     }
 
-    // Attempt to find or fallback
-    const user = await env.DB.prepare(
-      'SELECT id, name as username, role FROM users WHERE LOWER(email) = ?'
-    ).bind(email.toLowerCase()).first() as { id: number; username: string; role: string } | null;
+    let user = null;
+
+    // Attempt to find via D1, with fallback safety
+    if (env.DB) {
+      try {
+        user = await env.DB.prepare(
+          'SELECT id, name as username, role FROM users WHERE LOWER(email) = ?'
+        ).bind(email.toLowerCase()).first() as { id: number; username: string; role: string } | null;
+      } catch (dbErr) {
+        console.error('D1 Database Query Failed:', dbErr);
+      }
+    }
 
     const sessionUser = user || {
         id: email.toLowerCase() === 'saadumar7223@gmail.com' ? 1 : 2,

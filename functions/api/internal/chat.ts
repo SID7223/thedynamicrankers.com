@@ -6,16 +6,16 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  if (!env.DB) {
-    return new Response(JSON.stringify({ error: 'D1 Binding "DB" missing' }), { status: 500 });
-  }
-
   if (request.method === 'GET') {
     const taskIdRaw = url.searchParams.get('taskId');
     if (taskIdRaw === null) return new Response(JSON.stringify({ error: 'Missing taskId' }), { status: 400 });
     const taskId = parseInt(taskIdRaw);
 
     try {
+      if (!env.DB) {
+          return new Response(JSON.stringify([]), { status: 200 });
+      }
+
       let query = 'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE ';
       query += taskId === 0 ? 'm.task_id IS NULL ' : 'm.task_id = ? ';
       query += 'ORDER BY m.timestamp ASC';
@@ -44,6 +44,10 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
   if (request.method === 'POST') {
     try {
+      if (!env.DB) {
+        return new Response(JSON.stringify({ error: 'Database operations unavailable' }), { status: 503 });
+      }
+
       const body = await request.json() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       const { action } = body;
 

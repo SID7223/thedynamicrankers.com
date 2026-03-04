@@ -6,17 +6,16 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  if (!env.DB) {
-    return new Response(JSON.stringify({ error: 'D1 Binding "DB" missing' }), { status: 500 });
-  }
-
   if (request.method === 'GET') {
     try {
-      const { results } = await env.DB.prepare(
-        'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
-      ).all();
-
-      return new Response(JSON.stringify(results || []), {
+      let results = [];
+      if (env.DB) {
+        const { results: dbResults } = await env.DB.prepare(
+          'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
+        ).all();
+        results = dbResults || [];
+      }
+      return new Response(JSON.stringify(results), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -35,6 +34,10 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         created_by?: number;
       };
 
+      if (!env.DB) {
+        return new Response(JSON.stringify({ error: 'Database operations unavailable' }), { status: 503 });
+      }
+
       const result = await env.DB.prepare(
         'INSERT INTO tasks (title, description, assigned_to, due_date, status, created_by) VALUES (?, ?, ?, ?, ?, ?)'
       ).bind(
@@ -43,7 +46,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         body.assigned_to || null,
         body.due_date || null,
         'pending',
-        body.created_by || 1 // Fallback to 1 for prototype
+        body.created_by || 1
       ).run();
 
       const newTask = await env.DB.prepare(
@@ -60,6 +63,10 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
     try {
       const id = url.searchParams.get('id');
       if (!id) return new Response(JSON.stringify({ error: 'Missing ID' }), { status: 400 });
+
+      if (!env.DB) {
+        return new Response(JSON.stringify({ error: 'Database operations unavailable' }), { status: 503 });
+      }
 
       const body = (await request.json()) as {
         status?: 'pending' | 'completed';
