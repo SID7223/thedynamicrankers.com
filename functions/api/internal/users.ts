@@ -14,12 +14,13 @@ export const onRequestGet = async (context: { env: Env }) => {
           'SELECT id, name as username, email, role FROM users ORDER BY name ASC'
         ).all();
         results = dbResults || [];
-      } catch (dbErr) {
-        console.error('D1 Users Query Failed:', dbErr);
+      } catch (dbErr: any) {
+        // Table likely missing
+        console.error('D1 Users Query Failed:', dbErr.message);
       }
     }
 
-    // Reliable fallback for dashboard UI
+    // Reliable fallback for dashboard UI if DB is empty or missing
     if (results.length === 0) {
       results = [
         { id: 1, username: 'saadumar7223', email: 'saadumar7223@gmail.com', role: 'superuser' },
@@ -33,7 +34,11 @@ export const onRequestGet = async (context: { env: Env }) => {
     });
   } catch (err: unknown) {
     console.error('Critical Users Error:', err);
-    return new Response(JSON.stringify({ error: 'GET_USERS_FAILED', message: (err as Error).message }), {
+    return new Response(JSON.stringify({
+      error: 'GET_USERS_FAILED',
+      message: (err as Error).message,
+      fallback: true
+    }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
     });

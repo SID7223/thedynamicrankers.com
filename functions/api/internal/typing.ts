@@ -8,7 +8,11 @@ export const onRequestPost = async (context: { request: Request }) => {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err: unknown) {
-      console.error(err);
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+    // If typing indicator fails (e.g. malformed body), don't crash the dashboard
+    console.error('Typing API error:', err);
+    return new Response(JSON.stringify({ success: false, error: 'SILENT_FAIL' }), {
+      status: 200, // Return 200 to keep the client happy
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 };

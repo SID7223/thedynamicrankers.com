@@ -20,26 +20,40 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       query += taskId === 0 ? 'm.task_id IS NULL ' : 'm.task_id = ? ';
       query += 'ORDER BY m.timestamp ASC';
 
-      const stmt = env.DB.prepare(query);
-      const { results } = taskId === 0 ? await stmt.all() : await stmt.bind(taskId).all();
+      let results;
+      try {
+        const stmt = env.DB.prepare(query);
+        const res = taskId === 0 ? await stmt.all() : await stmt.bind(taskId).all();
+        results = res.results;
+      } catch (dbErr: any) {
+        console.error('D1 Chat Query Failed:', dbErr.message);
+        return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
 
       const messages = (results || []) as any[];
       if (messages.length === 0) return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
 
       const messageIds = messages.map(m => m.id);
-      const { results: reactions } = await env.DB.prepare(
-        `SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (${messageIds.join(',')})`
-      ).all();
+
+      let reactions = [];
+      try {
+        const reactionRes = await env.DB.prepare(
+          `SELECT r.*, u.name as user_name FROM message_reactions r JOIN users u ON r.user_id = u.id WHERE r.message_id IN (${messageIds.join(',')})`
+        ).all();
+        reactions = reactionRes.results || [];
+      } catch (reactErr: any) {
+        console.warn('D1 Reactions Query Failed:', reactErr.message);
+      }
 
       const messagesWithReactions = messages.map(m => ({
         ...m,
-        reactions: ((reactions || []) as any[]).filter(r => r.message_id === m.id)
+        reactions: (reactions as any[]).filter(r => r.message_id === m.id)
       }));
 
       return new Response(JSON.stringify(messagesWithReactions), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (err: unknown) {
       console.error('Critical Chat GET Error:', err);
-      return new Response(JSON.stringify({ error: 'GET_CHAT_FAILED', message: (err as Error).message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
