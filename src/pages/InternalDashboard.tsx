@@ -63,7 +63,7 @@ const InternalDashboard = () => {
   const [tasks, setTasks] = useState<InternalTask[]>([]);
   const [operatives, setOperatives] = useState<User[]>([]);
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const [showDirectiveDetails, setShowDirectiveDetails] = useState(false);
+  const [showDirectiveDetails, setShowDirectiveDetails] = useState(true); // Default to true
   const [streamStatus, setStreamStatus] = useState<'connected' | 'reconnecting' | 'disconnected'>('disconnected');
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState<number>(Date.now());
 
@@ -92,6 +92,8 @@ const InternalDashboard = () => {
       else next.set('taskId', id.toString());
       return next;
     });
+    // Ensure directive sidebar opens when selecting a task (except global command 0)
+    if (id !== null && id !== 0) setShowDirectiveDetails(true);
   }, [setSearchParams]);
 
   const setSelectedCustomerId = useCallback((id: string | null) => {
@@ -128,8 +130,8 @@ const InternalDashboard = () => {
       const usersData = await usersRes.json();
       setTasks(tasksData);
       setOperatives(usersData);
-    } catch (err: unknown) {
-      console.error('Failed to load operations data:', err);
+    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      console.error('Failed to load operations data:', err instanceof Error ? err.message : String(err));
     }
   }, []);
 
@@ -147,8 +149,8 @@ const InternalDashboard = () => {
       if (data.type === 'SYNC_TASKS') {
         fetchInitialData();
       } else if (data.type === 'CHAT_MSG') {
-        if (data.payload.task_id !== activeTaskId) {
-          setTasks(prev => prev.map(t => t.id === (data.payload.task_id || 0) ? { ...t, hasUnread: true } : t));
+        if (data.payload?.task_id !== activeTaskId) {
+          setTasks(prev => prev.map(t => t.id === (data.payload?.task_id || 0) ? { ...t, hasUnread: true } : t));
         }
         setLastMessageTimestamp(Date.now());
       }
@@ -187,7 +189,7 @@ const InternalDashboard = () => {
       } else {
         setAuthError('Access Denied: Credentials Rejected');
       }
-    } catch (err: unknown) {
+    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
       setAuthError('Connection Failed: Intelligence Link Offline');
     } finally {
       setLoading(false);
@@ -210,8 +212,8 @@ const InternalDashboard = () => {
         setIsNewTaskModalOpen(false);
         fetchInitialData();
       }
-    } catch (err: unknown) {
-      console.error('Task creation failed:', err);
+    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      console.error('Task creation failed:', err instanceof Error ? err.message : String(err));
     }
   };
 
@@ -225,8 +227,8 @@ const InternalDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       });
-    } catch (err: unknown) {
-      console.error('Task update failed:', err);
+    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      console.error('Task update failed:', err instanceof Error ? err.message : String(err));
       fetchInitialData(); // Rollback
     }
   };
@@ -242,8 +244,8 @@ const InternalDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ assigned_to: userId })
       });
-    } catch (err: unknown) {
-      console.error('Assignment failed:', err);
+    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      console.error('Assignment failed:', err instanceof Error ? err.message : String(err));
       fetchInitialData(); // Rollback
     }
   };
@@ -254,8 +256,8 @@ const InternalDashboard = () => {
     if (activeTaskId === id) setActiveTaskId(null);
     try {
       await fetch(`/api/internal/tasks?id=${id}`, { method: 'DELETE' });
-    } catch (err: unknown) {
-      console.error('Delete failed:', err);
+    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+      console.error('Delete failed:', err instanceof Error ? err.message : String(err));
       fetchInitialData();
     }
   };
