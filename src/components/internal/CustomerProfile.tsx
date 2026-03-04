@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Phone, Mail, MapPin, FileText, ChevronLeft, Save, CheckCircle2 } from 'lucide-react';
 
 interface Customer {
@@ -12,21 +12,38 @@ interface Customer {
 }
 
 interface CustomerProfileProps {
-  customer: Customer;
+  customerId: string;
   onBack: () => void;
   onUpdate: () => void;
 }
 
 const STAGES = ['Discovery', 'Trial', 'Presentation', 'Paperwork', 'Checkout', 'Closed'];
 
-const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onUpdate }) => {
-  const [formData, setFormData] = useState({ ...customer });
+const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, onUpdate }) => {
+  const [formData, setFormData] = useState<Customer | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const res = await fetch(`/api/internal/crm_customers?id=${customerId}`);
+        const data = await res.json();
+        setFormData(data);
+      } catch (err) {
+        console.error('Fetch failed:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCustomer();
+  }, [customerId]);
 
   const handleSave = async () => {
+    if (!formData) return;
     setSaving(true);
     try {
-      await fetch(`/api/internal/crm_customers?id=${customer.id}`, {
+      await fetch(`/api/internal/crm_customers?id=${formData.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -40,10 +57,11 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
   };
 
   const handleStageChange = async (stage: string) => {
+    if (!formData) return;
     const updatedData = { ...formData, sales_stage: stage };
     setFormData(updatedData);
     try {
-      await fetch(`/api/internal/crm_customers?id=${customer.id}`, {
+      await fetch(`/api/internal/crm_customers?id=${formData.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData)
@@ -53,6 +71,9 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
       console.error('Stage update failed:', err);
     }
   };
+
+  if (loading) return <div className="p-10 text-zinc-500">Retrieving intelligence...</div>;
+  if (!formData) return <div className="p-10 text-red-500">Error: Identity not found.</div>;
 
   const currentStageIndex = STAGES.indexOf(formData.sales_stage);
 
