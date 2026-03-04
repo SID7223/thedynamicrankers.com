@@ -48,7 +48,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
   // Preview State
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(1);
 
   // Voice Recording State
   const [isRecording, setIsRecording] = useState(false);
@@ -89,7 +88,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
       // If new messages arrived and we aren't at bottom
       if (lastMessageIdRef.current !== 0 && newLastId > lastMessageIdRef.current && !isAtBottom) {
-        // Find how many new messages were added
         const currentCount = messages.length;
         if (data.length > currentCount) {
             setNewMessagesCount(prev => prev + (data.length - currentCount));
@@ -116,7 +114,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
     scrollToBottom('auto');
   }, [taskId, scrollToBottom]);
 
-  // Auto-scroll on new messages if already at bottom
+  // Auto-scroll on new messages ONLY if already at bottom
   useEffect(() => {
     if (isAtBottom) {
       scrollToBottom('smooth');
@@ -218,15 +216,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
     if (recordingInterval.current) clearInterval(recordingInterval.current);
   };
 
-  // Zoom Handling
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.ctrlKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setZoom(prev => Math.min(Math.max(prev + delta, 0.5), 3));
-    }
-  };
-
   return (
     <div className="flex-1 flex flex-col h-full bg-[#1f1f1f] relative overflow-hidden">
       <div
@@ -252,7 +241,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
                                 src={att.url}
                                 alt={att.name}
                                 className="max-w-[240px] max-h-[320px] object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                                onClick={() => { setPreviewImage(att.url); setZoom(1); }}
+                                onClick={() => { setPreviewImage(att.url); }}
                               />
                             ) : att.type.startsWith('audio/') ? (
                               <audio src={att.url} controls className="w-full h-8" />
@@ -308,7 +297,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 lg:p-10"
             onClick={() => setPreviewImage(null)}
-            onWheel={handleWheel}
           >
             <button
               onClick={() => setPreviewImage(null)}
@@ -319,7 +307,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: zoom, opacity: 1 }}
+              animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="relative max-w-full max-h-full"
@@ -328,13 +316,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
               <img
                 src={previewImage}
                 className="max-h-[90vh] w-auto rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] select-none"
-                style={{ cursor: 'zoom-in', pointerEvents: 'auto' }}
               />
             </motion.div>
-
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-[10px] font-bold uppercase tracking-[0.2em] pointer-events-none">
-                Hold CTRL + Scroll to zoom
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
