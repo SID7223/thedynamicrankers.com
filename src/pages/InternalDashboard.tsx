@@ -176,6 +176,7 @@ const InternalDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: session.id, taskId: activeTaskId })
       });
+      // Clear local unread status
       setTasks(prev => prev.map(t => (t.id === activeTaskId || (activeTaskId === 0 && t.id === 0)) ? { ...t, hasUnread: false } : t));
     }
   }, [activeTaskId, session]);
@@ -227,6 +228,7 @@ const InternalDashboard = () => {
 
   const handleToggleTaskStatus = async (id: number, currentStatus: string) => {
     const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+    // Optimistic UI
     setTasks(prev => prev.map(t => t.id === id ? { ...t, status: newStatus as 'pending' | 'completed' } : t));
     try {
       await fetch(`/api/internal/tasks?id=${id}`, {
@@ -236,13 +238,15 @@ const InternalDashboard = () => {
       });
     } catch (err: unknown) {
       console.error('Task update failed:', err instanceof Error ? err.message : String(err));
-      fetchInitialData();
+      fetchInitialData(); // Rollback
     }
   };
 
   const handleAssignTask = async (taskId: number, userId: number | null) => {
+    // Optimistic UI
     const assignedUser = operatives.find(u => u.id === userId);
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, assigned_to: userId, assigned_username: assignedUser?.username } : t));
+
     try {
       await fetch(`/api/internal/tasks?id=${taskId}`, {
         method: 'PATCH',
@@ -251,7 +255,7 @@ const InternalDashboard = () => {
       });
     } catch (err: unknown) {
       console.error('Assignment failed:', err instanceof Error ? err.message : String(err));
-      fetchInitialData();
+      fetchInitialData(); // Rollback
     }
   };
 
@@ -279,7 +283,7 @@ const InternalDashboard = () => {
         body: JSON.stringify(editBuffer)
       });
     } catch (err: unknown) {
-      console.error('Update failed:', err);
+      console.error('Update failed:', err instanceof Error ? err.message : String(err));
       fetchInitialData();
     }
   };
@@ -455,17 +459,6 @@ const InternalDashboard = () => {
                     <div className="hidden sm:block"><PresenceIndicator operatives={operatives} status={streamStatus} /></div>
                     {activeTaskId !== 0 && (
                       <>
-                        {session?.id === activeTask?.created_by && (
-                          <button
-                            onClick={() => {
-                                setIsEditingDirective(true);
-                                setEditBuffer({ title: activeTask!.title, description: activeTask!.description || '', due_date: activeTask!.due_date || '' });
-                            }}
-                            className="p-2 rounded-xl text-zinc-500 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all"
-                          >
-                            <Edit2 size={20} />
-                          </button>
-                        )}
                         <button onClick={() => handleDeleteTask(activeTaskId!)} className="p-2 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all"><Trash2 size={20} /></button>
                         <button onClick={() => setShowDirectiveDetails(!showDirectiveDetails)} className={`p-2 rounded-xl transition-all ${showDirectiveDetails ? 'bg-indigo-600 text-white' : 'text-zinc-500 hover:bg-zinc-800'}`}><Zap size={20} /></button>
                       </>
@@ -483,9 +476,23 @@ const InternalDashboard = () => {
                             <div className="flex items-center justify-between mb-10">
                                 <h3 className="font-bold text-white tracking-tight text-2xl font-sans">Directive</h3>
                                 <div className="flex items-center gap-2">
-                                    {isEditingDirective ? (
-                                        <button onClick={handleUpdateDirective} className="p-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg"><Save size={18} /></button>
-                                    ) : null}
+                                    {session?.id === activeTask?.created_by && (
+                                        <>
+                                            {isEditingDirective ? (
+                                                <button onClick={handleUpdateDirective} className="p-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg"><Save size={18} /></button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => {
+                                                        setIsEditingDirective(true);
+                                                        setEditBuffer({ title: activeTask!.title, description: activeTask!.description || '', due_date: activeTask!.due_date || '' });
+                                                    }}
+                                                    className="p-1.5 bg-indigo-500/10 text-indigo-400 rounded-lg hover:bg-indigo-500/20 transition-all"
+                                                >
+                                                    <Edit2 size={18} />
+                                                </button>
+                                            )}
+                                        </>
+                                    )}
                                     <button onClick={() => setShowDirectiveDetails(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 transition-colors"><X size={18} /></button>
                                 </div>
                             </div>
