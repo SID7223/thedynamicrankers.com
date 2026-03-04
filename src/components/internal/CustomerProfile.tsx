@@ -59,36 +59,37 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
   return (
     <div className="h-full flex flex-col bg-[#1f1f1f]">
       {/* Header */}
-      <div className="px-10 py-6 border-b border-zinc-800/50 flex items-center justify-between bg-[#1f1f1f]/80 backdrop-blur-xl">
-        <div className="flex items-center gap-6">
+      <div className="px-6 lg:px-10 py-4 lg:py-6 border-b border-zinc-800/50 flex items-center justify-between bg-[#1f1f1f]/80 backdrop-blur-xl shrink-0">
+        <div className="flex items-center gap-4 lg:gap-6 min-w-0">
           <button
             onClick={onBack}
-            className="p-2.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-zinc-800/50"
+            className="p-2 lg:p-2.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-transparent lg:border-zinc-800/50 shrink-0"
           >
             <ChevronLeft size={20} />
           </button>
-          <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">{formData.name}</h2>
-            <p className="text-zinc-500 text-xs font-medium uppercase tracking-widest mt-0.5">Customer Profile & Intel</p>
+          <div className="min-w-0">
+            <h2 className="text-lg lg:text-xl font-bold text-white tracking-tight truncate">{formData.name}</h2>
+            <p className="text-zinc-500 text-[10px] lg:text-xs font-medium uppercase tracking-widest mt-0.5 truncate">Profile & Intel</p>
           </div>
         </div>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-500/20"
+          className="flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl font-bold text-xs lg:text-sm transition-all shadow-lg shadow-indigo-500/20 shrink-0"
         >
-          <Save size={18} />
-          {saving ? 'Syncing...' : 'Save Changes'}
+          <Save size={16} className="lg:w-[18px] lg:h-[18px]" />
+          <span className="hidden sm:inline">{saving ? 'Syncing...' : 'Save Changes'}</span>
+          <span className="sm:hidden">{saving ? '...' : 'Save'}</span>
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-10">
-        <div className="max-w-4xl mx-auto space-y-10">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
+        <div className="max-w-4xl mx-auto space-y-10 pb-10 lg:pb-0">
 
           {/* Sales Ladder */}
-          <section>
+          <section className="overflow-x-auto lg:overflow-visible -mx-6 px-6 pb-6 lg:pb-0 lg:mx-0 lg:px-0 scrollbar-none">
             <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-8 font-sans">Sales Pipeline Ladder</h3>
-            <div className="relative">
+            <div className="relative min-w-[500px] lg:min-w-0 px-2">
               <div className="absolute top-1/2 left-0 w-full h-0.5 bg-zinc-800 -translate-y-1/2" />
               <div
                 className="absolute top-1/2 left-0 h-0.5 bg-indigo-500 -translate-y-1/2 transition-all duration-500"
@@ -122,9 +123,9 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
             </div>
           </section>
 
-          <div className="grid md:grid-cols-2 gap-10 pt-10">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 pt-10">
             {/* Contact Info */}
-            <div className="space-y-8 bg-[#262728] border border-zinc-800/50 p-8 rounded-3xl">
+            <div className="space-y-8 bg-[#262728] border border-zinc-800/50 p-6 lg:p-8 rounded-3xl">
               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Contact Information</h3>
 
               <div className="space-y-6">
@@ -133,7 +134,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
                     <User size={12} className="text-indigo-400" /> Full Name
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none"
+                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
                   />
@@ -144,7 +145,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
                     <Mail size={12} className="text-indigo-400" /> Email Address
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none"
+                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.email}
                     onChange={e => setFormData({...formData, email: e.target.value})}
                   />
@@ -155,7 +156,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
                     <Phone size={12} className="text-indigo-400" /> Phone Number
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none"
+                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.phone}
                     onChange={e => setFormData({...formData, phone: e.target.value})}
                   />
@@ -166,7 +167,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
                     <MapPin size={12} className="text-indigo-400" /> Physical Address
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none"
+                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.address}
                     onChange={e => setFormData({...formData, address: e.target.value})}
                   />
@@ -175,7 +176,7 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
             </div>
 
             {/* Notes Section */}
-            <div className="bg-[#262728] border border-zinc-800/50 p-8 rounded-3xl flex flex-col">
+            <div className="bg-[#262728] border border-zinc-800/50 p-6 lg:p-8 rounded-3xl flex flex-col min-h-[300px] lg:min-h-0">
               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Strategic Notes & Intel</h3>
               <div className="flex-1 flex flex-col space-y-2">
                  <div className="flex items-center gap-2 mb-2">
@@ -183,8 +184,8 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
                     <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Internal Ledger</span>
                  </div>
                  <textarea
-                  className="flex-1 w-full bg-zinc-900/50 border border-zinc-800 rounded-2xl px-5 py-4 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none leading-relaxed"
-                  placeholder="Enter strategic observations, meeting notes, and relationship details..."
+                  className="flex-1 w-full bg-zinc-900/50 border border-zinc-800 rounded-2xl px-5 py-4 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none leading-relaxed text-sm lg:text-base"
+                  placeholder="Enter strategic observations..."
                   value={formData.notes}
                   onChange={e => setFormData({...formData, notes: e.target.value})}
                 />
@@ -204,6 +205,13 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customer, onBack, onU
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: #374151;
           border-radius: 10px;
+        }
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </div>

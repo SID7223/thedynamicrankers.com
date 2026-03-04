@@ -66,9 +66,9 @@ const InternalDashboard = () => {
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState<number>(Date.now());
 
   // Mobile & Drill-down State
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
   const [activeView, setActiveView] = useState<DashboardView>('tasks');
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<unknown>(null);
 
   const checkAuth = useCallback(async () => {
     try {
@@ -280,140 +280,152 @@ const InternalDashboard = () => {
   return (
     <div className="h-screen bg-[#06080D] flex overflow-hidden font-sans relative">
 
-      {/* Sidebar Nav */}
+      {/* Sidebar Backdrop (Mobile Only) */}
       <AnimatePresence>
-        {(isSidebarOpen || window.innerWidth >= 1024) && (
+        {isSidebarOpen && window.innerWidth < 1024 && (
           <motion.div
-            initial={{ x: -320 }}
-            animate={{ x: 0 }}
-            exit={{ x: -320 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="w-80 flex flex-col border-r border-zinc-800/50 bg-[#111111] z-30 absolute lg:relative h-full"
-          >
-            <div className="h-20 px-6 flex items-center justify-between border-b border-zinc-800/50">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="font-bold text-white tracking-tight text-lg">The Ledger</h2>
-              </div>
-              <button
-                onClick={() => setIsNewTaskModalOpen(true)}
-                className="w-9 h-9 bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white rounded-xl transition-all flex items-center justify-center group border border-indigo-500/20"
-              >
-                <Plus className="w-5 h-5 transition-transform group-hover:scale-110" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto custom-scrollbar pt-6">
-              {/* Main Navigation */}
-              <div className="px-6 mb-8 space-y-1">
-                <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4 font-sans">Navigation</h3>
-                <button
-                  onClick={() => { setActiveView('tasks'); setActiveTaskId(null); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all group ${activeView === 'tasks' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <MessageSquare className={`w-4 h-4 ${activeView === 'tasks' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
-                    <span className="text-[13px] font-bold tracking-tight font-sans">Operations Hub</span>
-                  </div>
-                  {activeTasksCount > 0 && (
-                    <span className="bg-zinc-800 text-zinc-400 text-[10px] px-2 py-0.5 rounded-full border border-zinc-700 font-bold">
-                      {activeTasksCount}
-                    </span>
-                  )}
-                </button>
-                <button
-                  onClick={() => { setActiveView('customers'); setSelectedCustomer(null); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeView === 'customers' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
-                >
-                  <UserIcon className={`w-4 h-4 ${activeView === 'customers' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
-                  <span className="text-[13px] font-bold tracking-tight font-sans">Customers</span>
-                </button>
-                <button
-                  onClick={() => { setActiveView('invoices'); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeView === 'invoices' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
-                >
-                  <FileText className={`w-4 h-4 ${activeView === 'invoices' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
-                  <span className="text-[13px] font-bold tracking-tight font-sans">Invoices</span>
-                </button>
-                <button
-                  onClick={() => { setActiveView('appointments'); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeView === 'appointments' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
-                >
-                  <Calendar className={`w-4 h-4 ${activeView === 'appointments' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
-                  <span className="text-[13px] font-bold tracking-tight font-sans">Appointments</span>
-                </button>
-              </div>
-
-              {activeView === 'tasks' && (
-                <div className="px-6 mb-8 border-t border-zinc-800/50 pt-8 hidden lg:block">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] font-sans">Active Directives</h3>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setActiveTaskId(0);
-                      setTasks(prev => prev.map(t => t.id === 0 ? { ...t, hasUnread: false } : t));
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeTaskId === 0 ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
-                  >
-                    <Hash className={`w-4 h-4 ${activeTaskId === 0 ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
-                    <span className="text-[13px] font-bold tracking-tight font-sans">global-command</span>
-                  </button>
-                  <TaskManager
-                    tasks={tasks}
-                    activeTaskId={activeTaskId || -1}
-                    setActiveTaskId={(id) => {
-                      setActiveTaskId(id);
-                      setTasks(prev => prev.map(t => t.id === id ? { ...t, hasUnread: false } : t));
-                      setShowDirectiveDetails(true);
-                    }}
-                    onToggleStatus={handleToggleTaskStatus}
-                    onAssignTask={handleAssignTask}
-                    operatives={operatives}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="p-6 bg-[#262728] border-t border-zinc-800/50 shadow-inner">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar name={session.username} isOnline={true} />
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-white tracking-wide font-sans">{session.username}</span>
-                    <span className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold font-sans">{session.role}</span>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="p-2.5 text-zinc-600 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all border border-transparent hover:border-red-400/20"
-                  title="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          />
         )}
       </AnimatePresence>
+
+      {/* Sidebar Nav */}
+      <motion.div
+        animate={{
+          x: isSidebarOpen || window.innerWidth >= 1024 ? 0 : -320,
+          opacity: isSidebarOpen || window.innerWidth >= 1024 ? 1 : 0
+        }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className={`w-80 flex flex-col border-r border-zinc-800/50 bg-[#111111] z-50 absolute lg:relative h-full shadow-2xl lg:shadow-none ${!isSidebarOpen && window.innerWidth < 1024 ? 'pointer-events-none' : ''}`}
+      >
+        <div className="h-20 px-6 flex items-center justify-between border-b border-zinc-800/50">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="font-bold text-white tracking-tight text-lg">The Ledger</h2>
+          </div>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden p-2 text-zinc-500 hover:text-white"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto custom-scrollbar pt-6">
+          <div className="px-6 mb-8 space-y-1">
+            <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4 font-sans">Navigation</h3>
+            <button
+              onClick={() => { setActiveView('tasks'); setActiveTaskId(null); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all group ${activeView === 'tasks' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
+            >
+              <div className="flex items-center gap-3">
+                <MessageSquare className={`w-4 h-4 ${activeView === 'tasks' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
+                <span className="text-[13px] font-bold tracking-tight font-sans">Operations Hub</span>
+              </div>
+              {activeTasksCount > 0 && (
+                <span className="bg-zinc-800 text-zinc-400 text-[10px] px-2 py-0.5 rounded-full border border-zinc-700 font-bold">
+                  {activeTasksCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => { setActiveView('customers'); setSelectedCustomer(null); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeView === 'customers' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
+            >
+              <UserIcon className={`w-4 h-4 ${activeView === 'customers' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
+              <span className="text-[13px] font-bold tracking-tight font-sans">Customers</span>
+            </button>
+            <button
+              onClick={() => { setActiveView('invoices'); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeView === 'invoices' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
+            >
+              <FileText className={`w-4 h-4 ${activeView === 'invoices' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
+              <span className="text-[13px] font-bold tracking-tight font-sans">Invoices</span>
+            </button>
+            <button
+              onClick={() => { setActiveView('appointments'); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeView === 'appointments' ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
+            >
+              <Calendar className={`w-4 h-4 ${activeView === 'appointments' ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
+              <span className="text-[13px] font-bold tracking-tight font-sans">Appointments</span>
+            </button>
+          </div>
+
+          {activeView === 'tasks' && (
+            <div className="px-6 mb-8 border-t border-zinc-800/50 pt-8 hidden lg:block">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] font-sans">Active Directives</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setActiveTaskId(0);
+                  setTasks(prev => prev.map(t => t.id === 0 ? { ...t, hasUnread: false } : t));
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${activeTaskId === 0 ? 'bg-[#353739] text-white border border-zinc-700/50 shadow-sm' : 'hover:bg-[#353739]/30 text-zinc-400'}`}
+              >
+                <Hash className={`w-4 h-4 ${activeTaskId === 0 ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'}`} />
+                <span className="text-[13px] font-bold tracking-tight font-sans">global-command</span>
+              </button>
+              <TaskManager
+                tasks={tasks}
+                activeTaskId={activeTaskId || -1}
+                setActiveTaskId={(id) => {
+                  setActiveTaskId(id);
+                  setTasks(prev => prev.map(t => t.id === id ? { ...t, hasUnread: false } : t));
+                  setShowDirectiveDetails(true);
+                }}
+                onToggleStatus={handleToggleTaskStatus}
+                onAssignTask={handleAssignTask}
+                operatives={operatives}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 bg-[#262728] border-t border-zinc-800/50 shadow-inner">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar name={session.username} isOnline={true} />
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-white tracking-wide font-sans">{session.username}</span>
+                <span className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold font-sans">{session.role}</span>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="p-2.5 text-zinc-600 hover:text-red-400 hover:bg-red-400/5 rounded-xl transition-all border border-transparent hover:border-red-400/20"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col relative overflow-hidden bg-[#1f1f1f] h-full">
 
-        {/* Mobile Header Toggle */}
-        <div className="lg:hidden h-20 px-6 flex items-center justify-between border-b border-zinc-800/50 bg-[#111111] shrink-0">
-          <button onClick={() => setIsSidebarOpen(true)} className="text-zinc-400">
+        {/* Mobile Header */}
+        <div className="lg:hidden h-20 px-6 flex items-center justify-between border-b border-zinc-800/50 bg-[#111111] shrink-0 z-30">
+          <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-zinc-400 hover:text-white transition-colors">
             <Menu size={24} />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
-              <Shield size={14} className="text-white" />
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <Shield size={18} className="text-white" />
             </div>
-            <span className="text-white font-bold text-sm tracking-tight">The Ledger</span>
+            <span className="text-white font-bold text-lg tracking-tight font-sans">The Ledger</span>
           </div>
-          <button onClick={() => setIsNewTaskModalOpen(true)} className="text-indigo-400">
+          <button
+            onClick={() => setIsNewTaskModalOpen(true)}
+            className="p-2 -mr-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
              <Plus size={24} />
           </button>
         </div>
@@ -424,7 +436,7 @@ const InternalDashboard = () => {
               <div className="flex-1 flex flex-col p-6 lg:p-10 overflow-y-auto custom-scrollbar h-full">
                 <div className="flex items-center justify-between mb-8">
                   <div>
-                    <h2 className="text-2xl font-bold text-white mb-2 font-sans tracking-tight">Active Directives</h2>
+                    <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2 font-sans tracking-tight">Active Directives</h2>
                     <p className="text-zinc-500 text-sm font-sans">Strategic threads and tactical operations.</p>
                   </div>
                 </div>
@@ -463,10 +475,10 @@ const InternalDashboard = () => {
             ) : (
               <div className="flex-1 flex flex-col min-h-0 h-full">
                 <div className="h-20 px-6 lg:px-10 flex items-center justify-between border-b border-zinc-800/50 bg-[#1f1f1f]/80 backdrop-blur-xl z-10 shadow-sm shrink-0">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 lg:gap-4">
                     <button
                       onClick={() => setActiveTaskId(null)}
-                      className="p-2.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-zinc-800/50"
+                      className="p-2 -ml-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-transparent lg:border-zinc-800/50"
                       title="Return to Directives"
                     >
                       <ChevronLeft size={20} />
@@ -474,12 +486,12 @@ const InternalDashboard = () => {
                     <div className="w-10 h-10 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
                       <Hash className="w-5 h-5 text-indigo-500" />
                     </div>
-                    <h2 className="font-bold text-white tracking-tight text-lg lg:text-xl font-sans">
+                    <h2 className="font-bold text-white tracking-tight text-base lg:text-xl font-sans truncate max-w-[120px] sm:max-w-none">
                       {activeTaskId === 0 ? 'global-command' : (activeTask?.title || 'active-command').toLowerCase().replace(/\\s+/g, '-')}
                     </h2>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 lg:gap-4">
                     <div className="hidden sm:block">
                       <PresenceIndicator operatives={operatives} status={streamStatus} />
                     </div>
@@ -503,9 +515,9 @@ const InternalDashboard = () => {
                     {activeTask && showDirectiveDetails && (
                       <motion.div
                         initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 360 }}
+                        animate={{ opacity: 1, width: window.innerWidth < 1024 ? '100%' : 360 }}
                         exit={{ opacity: 0, width: 0 }}
-                        className="border-l border-zinc-800/50 bg-[#2d2e30]/50 backdrop-blur-xl shrink-0 flex flex-col overflow-hidden relative h-full"
+                        className={`border-l border-zinc-800/50 bg-[#2d2e30] backdrop-blur-xl shrink-0 flex flex-col overflow-hidden absolute inset-0 z-40 lg:relative lg:inset-auto h-full`}
                       >
                         <div className="p-8 h-full flex flex-col">
                             <div className="flex items-center justify-between mb-10">

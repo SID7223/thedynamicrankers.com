@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, User, ChevronRight } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, User, ChevronRight, X } from 'lucide-react';
 
 interface Customer {
   id: string;
@@ -83,8 +83,8 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
   );
 
   return (
-    <div className="p-8 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-8">
+    <div className="p-4 lg:p-8 h-full flex flex-col">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Customer Registry</h2>
           <p className="text-zinc-500 text-sm">Manage your client relationships and sales pipeline.</p>
@@ -95,7 +95,7 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
             setFormData({ name: '', phone: '', email: '', address: '', notes: '', sales_stage: 'Discovery' });
             setIsModalOpen(true);
           }}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/20"
+          className="w-full lg:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
         >
           <Plus size={18} />
           Create New Customer
@@ -113,7 +113,7 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0">
         {loading ? (
           <div className="flex items-center justify-center h-64 text-zinc-500">Scanning data streams...</div>
         ) : filteredCustomers.length === 0 ? (
@@ -122,33 +122,33 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
             <p className="text-zinc-500">No customers found in the registry.</p>
           </div>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid gap-4 pb-10 lg:pb-0">
             {filteredCustomers.map(customer => (
               <div
                 key={customer.id}
-                className="bg-[#262728] border border-zinc-800/50 rounded-2xl p-5 hover:border-indigo-500/30 transition-all group cursor-pointer"
+                className="bg-[#262728] border border-zinc-800/50 rounded-2xl p-4 lg:p-5 hover:border-indigo-500/30 transition-all group cursor-pointer"
                 onClick={() => onSelectCustomer(customer)}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500/10 transition-colors">
-                      <User size={24} />
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-zinc-800 rounded-xl flex items-center justify-center text-indigo-400 shrink-0 group-hover:bg-indigo-500/10 transition-colors">
+                      <User size={20} />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-white text-lg">{customer.name}</h3>
-                      <p className="text-zinc-500 text-sm">{customer.email || 'No email provided'}</p>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-white text-base lg:text-lg truncate">{customer.name}</h3>
+                      <p className="text-zinc-500 text-xs lg:text-sm truncate">{customer.email || 'No email provided'}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6">
-                    <div className="text-right hidden md:block">
-                      <span className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold block mb-1">Pipeline Stage</span>
+                  <div className="flex items-center gap-2 lg:gap-6">
+                    <div className="text-right hidden sm:block">
+                      <span className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold block mb-1">Stage</span>
                       <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full text-[10px] font-bold uppercase tracking-wider">
                         {customer.sales_stage}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1 lg:gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -173,10 +173,16 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
                       >
                         <Trash2 size={16} />
                       </button>
-                      <div className="w-px h-4 bg-zinc-800 mx-2" />
-                      <ChevronRight size={20} className="text-zinc-700 group-hover:text-indigo-500 transition-colors" />
+                      <div className="hidden lg:block w-px h-4 bg-zinc-800 mx-2" />
+                      <ChevronRight size={20} className="hidden lg:block text-zinc-700 group-hover:text-indigo-500 transition-colors" />
                     </div>
                   </div>
+                </div>
+                {/* Mobile only stage indicator */}
+                <div className="mt-3 sm:hidden pt-3 border-t border-zinc-800/30">
+                  <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full text-[9px] font-bold uppercase tracking-wider">
+                    {customer.sales_stage}
+                  </span>
                 </div>
               </div>
             ))}
@@ -186,15 +192,15 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#1f1f1f] border border-zinc-800 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
-            <div className="p-8 border-b border-zinc-800 flex justify-between items-center">
+        <div className="fixed inset-0 z-[100] flex items-end lg:items-center justify-center p-0 lg:p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1f1f1f] border-t lg:border border-zinc-800 w-full max-w-lg rounded-t-3xl lg:rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="p-6 lg:p-8 border-b border-zinc-800 flex justify-between items-center shrink-0">
               <h3 className="text-xl font-bold text-white">{editingCustomer ? 'Update Identity' : 'Establish New Identity'}</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-zinc-500 hover:text-white">
-                <Plus size={24} className="rotate-45" />
+              <button onClick={() => setIsModalOpen(false)} className="p-2 text-zinc-500 hover:text-white">
+                <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 lg:p-8 space-y-6 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Full Name</label>
@@ -205,7 +211,7 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
                     onChange={e => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
-                <div>
+                <div className="col-span-2 lg:col-span-1">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Email Address</label>
                   <input
                     type="email"
@@ -214,7 +220,7 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
                     onChange={e => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
-                <div>
+                <div className="col-span-2 lg:col-span-1">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Phone Number</label>
                   <input
                     className="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
@@ -250,19 +256,6 @@ const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
           </div>
         </div>
       )}
-
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #374151;
-          border-radius: 10px;
-        }
-      `}</style>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Phone, Mail, CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Phone, Mail, CheckCircle2, Plus, Trash2, X } from 'lucide-react';
 
 interface Appointment {
   id: string;
@@ -105,37 +105,37 @@ const CRMAppointments = () => {
   };
 
   return (
-    <div className="p-8 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-8">
+    <div className="p-4 lg:p-8 h-full flex flex-col">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Operation Schedule</h2>
           <p className="text-zinc-500 text-sm">Strategic sessions and tactical engagements.</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/20"
+          className="w-full lg:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
         >
           <Plus size={18} />
           Book Appointment
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex-1 overflow-y-auto custom-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 pb-10 lg:pb-0">
           {appointments.map(app => (
             <div
               key={app.id}
-              className={`relative bg-[#262728] border border-zinc-800/50 rounded-2xl p-6 transition-all ${
+              className={`relative bg-[#262728] border border-zinc-800/50 rounded-2xl p-5 lg:p-6 transition-all ${
                 app.status === 'completed' ? 'opacity-40' : 'hover:border-indigo-500/30'
               }`}
             >
               <div className="flex justify-between items-start mb-6">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center ${
                   app.status === 'completed' ? 'bg-zinc-800 text-zinc-600' : 'bg-indigo-500/10 text-indigo-400'
                 }`}>
-                  <Calendar size={24} />
+                  <Calendar size={20} />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1 lg:gap-2">
                   <button
                     onClick={() => toggleComplete(app.id, app.status)}
                     className={`p-2 rounded-lg transition-colors ${
@@ -155,21 +155,21 @@ const CRMAppointments = () => {
 
               <div className={`space-y-4 ${app.status === 'completed' ? 'line-through decoration-zinc-500' : ''}`}>
                 <div>
-                  <h3 className="font-bold text-white text-lg">{app.customer_name}</h3>
-                  <div className="flex items-center gap-2 text-zinc-500 text-xs mt-1">
+                  <h3 className="font-bold text-white text-base lg:text-lg truncate">{app.customer_name}</h3>
+                  <div className="flex items-center gap-2 text-zinc-500 text-[11px] lg:text-xs mt-1">
                     <Clock size={12} />
                     <span>{app.appointment_date} @ {app.appointment_time}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2 pt-2 border-t border-zinc-800/50">
-                  <div className="flex items-center gap-3 text-zinc-400 text-sm">
-                    <Mail size={14} className="text-zinc-600" />
-                    <span>{app.email || 'N/A'}</span>
+                  <div className="flex items-center gap-3 text-zinc-400 text-xs lg:text-sm truncate">
+                    <Mail size={14} className="text-zinc-600 shrink-0" />
+                    <span className="truncate">{app.email || 'N/A'}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-zinc-400 text-sm">
-                    <Phone size={14} className="text-zinc-600" />
-                    <span>{app.phone || 'N/A'}</span>
+                  <div className="flex items-center gap-3 text-zinc-400 text-xs lg:text-sm truncate">
+                    <Phone size={14} className="text-zinc-600 shrink-0" />
+                    <span className="truncate">{app.phone || 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -179,15 +179,15 @@ const CRMAppointments = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#1f1f1f] border border-zinc-800 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
-            <div className="p-8 border-b border-zinc-800 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-white">Schedule Strategic Session</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-zinc-500 hover:text-white">
-                <Plus size={24} className="rotate-45" />
+        <div className="fixed inset-0 z-[100] flex items-end lg:items-center justify-center p-0 lg:p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1f1f1f] border-t lg:border border-zinc-800 w-full max-w-lg rounded-t-3xl lg:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 lg:p-8 border-b border-zinc-800 flex justify-between items-center shrink-0">
+              <h3 className="text-xl font-bold text-white">Schedule Session</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 text-zinc-500 hover:text-white">
+                <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 lg:p-8 space-y-6 overflow-y-auto custom-scrollbar">
               <div>
                 <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Identity Selection</label>
                 <select
@@ -202,7 +202,7 @@ const CRMAppointments = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
+                <div className="col-span-2 lg:col-span-1">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Email Override</label>
                   <input
                     className="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3 text-white"
@@ -210,7 +210,7 @@ const CRMAppointments = () => {
                     onChange={e => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
-                <div>
+                <div className="col-span-2 lg:col-span-1">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Phone Override</label>
                   <input
                     className="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3 text-white"
@@ -219,7 +219,7 @@ const CRMAppointments = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Engagement Date</label>
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Date</label>
                   <input
                     type="date" required
                     className="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3 text-white"
@@ -228,7 +228,7 @@ const CRMAppointments = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Engagement Time</label>
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 block">Time</label>
                   <input
                     type="time" required
                     className="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3 text-white"
