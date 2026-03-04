@@ -54,11 +54,19 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (!id) return new Response(JSON.stringify({ error: 'Missing directive ID' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
       const body = await request.json() as any;
-      if (body.status !== undefined) {
-        await env.DB.prepare('UPDATE tasks SET status = ? WHERE id = ?').bind(body.status, id).run();
-      }
-      if (body.assigned_to !== undefined) {
-        await env.DB.prepare('UPDATE tasks SET assigned_to = ? WHERE id = ?').bind(body.assigned_to, id).run();
+
+      const updates = [];
+      const values = [];
+
+      if (body.status !== undefined) { updates.push('status = ?'); values.push(body.status); }
+      if (body.assigned_to !== undefined) { updates.push('assigned_to = ?'); values.push(body.assigned_to); }
+      if (body.title !== undefined) { updates.push('title = ?'); values.push(body.title); }
+      if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
+      if (body.due_date !== undefined) { updates.push('due_date = ?'); values.push(body.due_date); }
+
+      if (updates.length > 0) {
+        const query = `UPDATE tasks SET ${updates.join(', ')} WHERE id = ?`;
+        await env.DB.prepare(query).bind(...values, id).run();
       }
 
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });

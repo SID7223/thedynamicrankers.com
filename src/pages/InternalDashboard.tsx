@@ -17,7 +17,9 @@ import {
   FileText,
   ChevronLeft,
   Menu,
-  Trash2
+  Trash2,
+  Edit2,
+  Save
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TaskManager from '../components/internal/TaskManager';
@@ -48,6 +50,7 @@ interface InternalTask {
   due_date: string | null;
   assigned_to: number | null;
   assigned_username?: string;
+  created_by: number;
   hasUnread?: boolean;
 }
 
@@ -63,9 +66,13 @@ const InternalDashboard = () => {
   const [tasks, setTasks] = useState<InternalTask[]>([]);
   const [operatives, setOperatives] = useState<User[]>([]);
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const [showDirectiveDetails, setShowDirectiveDetails] = useState(true); // Default to true
+  const [showDirectiveDetails, setShowDirectiveDetails] = useState(true);
   const [streamStatus, setStreamStatus] = useState<'connected' | 'reconnecting' | 'disconnected'>('disconnected');
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState<number>(Date.now());
+
+  // Edit State
+  const [isEditingDirective, setIsEditingDirective] = useState(false);
+  const [editBuffer, setEditBuffer] = useState({ title: '', description: '', due_date: '' });
 
   // URL-synced State
   const activeView = (searchParams.get('view') as DashboardView) || 'tasks';
@@ -92,8 +99,10 @@ const InternalDashboard = () => {
       else next.set('taskId', id.toString());
       return next;
     });
-    // Ensure directive sidebar opens when selecting a task (except global command 0)
-    if (id !== null && id !== 0) setShowDirectiveDetails(true);
+    if (id !== null && id !== 0) {
+        setShowDirectiveDetails(true);
+        setIsEditingDirective(false);
+    }
   }, [setSearchParams]);
 
   const setSelectedCustomerId = useCallback((id: string | null) => {
@@ -130,7 +139,7 @@ const InternalDashboard = () => {
       const usersData = await usersRes.json();
       setTasks(tasksData);
       setOperatives(usersData);
-    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    } catch (err: unknown) {
       console.error('Failed to load operations data:', err instanceof Error ? err.message : String(err));
     }
   }, []);
@@ -167,7 +176,6 @@ const InternalDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: session.id, taskId: activeTaskId })
       });
-      // Clear local unread status
       setTasks(prev => prev.map(t => (t.id === activeTaskId || (activeTaskId === 0 && t.id === 0)) ? { ...t, hasUnread: false } : t));
     }
   }, [activeTaskId, session]);
@@ -189,7 +197,7 @@ const InternalDashboard = () => {
       } else {
         setAuthError('Access Denied: Credentials Rejected');
       }
-    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    } catch (err: unknown) {
       setAuthError('Connection Failed: Intelligence Link Offline');
     } finally {
       setLoading(false);
@@ -212,14 +220,13 @@ const InternalDashboard = () => {
         setIsNewTaskModalOpen(false);
         fetchInitialData();
       }
-    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    } catch (err: unknown) {
       console.error('Task creation failed:', err instanceof Error ? err.message : String(err));
     }
   };
 
   const handleToggleTaskStatus = async (id: number, currentStatus: string) => {
     const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
-    // Optimistic UI
     setTasks(prev => prev.map(t => t.id === id ? { ...t, status: newStatus as 'pending' | 'completed' } : t));
     try {
       await fetch(`/api/internal/tasks?id=${id}`, {
@@ -227,26 +234,24 @@ const InternalDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       });
-    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    } catch (err: unknown) {
       console.error('Task update failed:', err instanceof Error ? err.message : String(err));
-      fetchInitialData(); // Rollback
+      fetchInitialData();
     }
   };
 
   const handleAssignTask = async (taskId: number, userId: number | null) => {
-    // Optimistic UI
     const assignedUser = operatives.find(u => u.id === userId);
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, assigned_to: userId, assigned_username: assignedUser?.username } : t));
-
     try {
       await fetch(`/api/internal/tasks?id=${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ assigned_to: userId })
       });
-    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    } catch (err: unknown) {
       console.error('Assignment failed:', err instanceof Error ? err.message : String(err));
-      fetchInitialData(); // Rollback
+      fetchInitialData();
     }
   };
 
@@ -256,8 +261,25 @@ const InternalDashboard = () => {
     if (activeTaskId === id) setActiveTaskId(null);
     try {
       await fetch(`/api/internal/tasks?id=${id}`, { method: 'DELETE' });
-    } catch (err: any) { /* eslint-disable-line @typescript-eslint/no-explicit-any */
+    } catch (err: unknown) {
       console.error('Delete failed:', err instanceof Error ? err.message : String(err));
+      fetchInitialData();
+    }
+  };
+
+  const handleUpdateDirective = async () => {
+    if (!activeTaskId) return;
+    // Optimistic UI
+    setTasks(prev => prev.map(t => t.id === activeTaskId ? { ...t, title: editBuffer.title, description: editBuffer.description, due_date: editBuffer.due_date } : t));
+    setIsEditingDirective(false);
+    try {
+      await fetch(`/api/internal/tasks?id=${activeTaskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editBuffer)
+      });
+    } catch (err: unknown) {
+      console.error('Update failed:', err);
       fetchInitialData();
     }
   };
@@ -433,6 +455,17 @@ const InternalDashboard = () => {
                     <div className="hidden sm:block"><PresenceIndicator operatives={operatives} status={streamStatus} /></div>
                     {activeTaskId !== 0 && (
                       <>
+                        {session?.id === activeTask?.created_by && (
+                          <button
+                            onClick={() => {
+                                setIsEditingDirective(true);
+                                setEditBuffer({ title: activeTask!.title, description: activeTask!.description || '', due_date: activeTask!.due_date || '' });
+                            }}
+                            className="p-2 rounded-xl text-zinc-500 hover:bg-indigo-500/10 hover:text-indigo-400 transition-all"
+                          >
+                            <Edit2 size={20} />
+                          </button>
+                        )}
                         <button onClick={() => handleDeleteTask(activeTaskId!)} className="p-2 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all"><Trash2 size={20} /></button>
                         <button onClick={() => setShowDirectiveDetails(!showDirectiveDetails)} className={`p-2 rounded-xl transition-all ${showDirectiveDetails ? 'bg-indigo-600 text-white' : 'text-zinc-500 hover:bg-zinc-800'}`}><Zap size={20} /></button>
                       </>
@@ -447,18 +480,72 @@ const InternalDashboard = () => {
                     {activeTask && showDirectiveDetails && (
                       <motion.div initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: window.innerWidth < 1024 ? '100%' : 360 }} exit={{ opacity: 0, width: 0 }} className="border-l border-zinc-800/50 bg-[#2d2e30] backdrop-blur-xl shrink-0 flex flex-col overflow-hidden absolute inset-0 z-40 lg:relative lg:inset-auto h-full">
                         <div className="p-8 h-full flex flex-col">
-                            <div className="flex items-center justify-between mb-10"><h3 className="font-bold text-white tracking-tight text-2xl font-sans">Directive</h3><button onClick={() => setShowDirectiveDetails(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 transition-colors"><X size={18} /></button></div>
+                            <div className="flex items-center justify-between mb-10">
+                                <h3 className="font-bold text-white tracking-tight text-2xl font-sans">Directive</h3>
+                                <div className="flex items-center gap-2">
+                                    {isEditingDirective ? (
+                                        <button onClick={handleUpdateDirective} className="p-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg"><Save size={18} /></button>
+                                    ) : null}
+                                    <button onClick={() => setShowDirectiveDetails(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 transition-colors"><X size={18} /></button>
+                                </div>
+                            </div>
+
                             <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 -mr-4">
-                                <p className="text-[15px] text-zinc-300 leading-relaxed mb-12 font-sans opacity-90">{activeTask.description || 'No supplementary data provided for this command.'}</p>
+                                {isEditingDirective ? (
+                                    <div className="space-y-6 mb-12">
+                                        <div>
+                                            <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-2 block">Command Title</label>
+                                            <input
+                                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none"
+                                                value={editBuffer.title}
+                                                onChange={e => setEditBuffer({...editBuffer, title: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-2 block">Operational Intelligence</label>
+                                            <textarea
+                                                rows={4}
+                                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none resize-none"
+                                                value={editBuffer.description}
+                                                onChange={e => setEditBuffer({...editBuffer, description: e.target.value})}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-[15px] text-zinc-300 leading-relaxed mb-12 font-sans opacity-90">{activeTask.description || 'No supplementary data provided for this command.'}</p>
+                                )}
+
                                 <div className="space-y-10">
-                                    <div className="flex items-center gap-5"><div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm"><Calendar className="w-5 h-5 text-indigo-400" /></div><div className="flex flex-col"><span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Target Date</span><span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.due_date ? new Date(activeTask.due_date).toLocaleDateString() : '02/03/3333'}</span></div></div>
-                                    <div className="flex items-center gap-5"><div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm"><Users className="w-5 h-5 text-indigo-400" /></div><div className="flex flex-col"><span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Assigned To</span>
-                                      <select value={activeTask.assigned_to || ''} onChange={(e) => handleAssignTask(activeTask.id, e.target.value ? parseInt(e.target.value) : null)} className="bg-transparent text-zinc-100 text-[14px] font-bold font-sans outline-none">
-                                        <option value="" className="bg-zinc-900 text-zinc-500">Unassigned</option>
-                                        {operatives.map(op => <option key={op.id} value={op.id} className="bg-zinc-900">{op.username}</option>)}
-                                      </select>
-                                    </div></div>
-                                    <div className="flex items-center gap-5"><div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm"><Clock className="w-5 h-5 text-indigo-400" /></div><div className="flex flex-col"><span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Established</span><span className="text-zinc-100 text-[14px] font-bold font-sans">{new Date(activeTask.created_at).toLocaleDateString()}</span></div></div>
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm"><Calendar className="w-5 h-5 text-indigo-400" /></div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Target Date</span>
+                                            {isEditingDirective ? (
+                                                <input
+                                                    type="date"
+                                                    className="bg-transparent text-zinc-100 text-[14px] font-bold font-sans outline-none"
+                                                    value={editBuffer.due_date}
+                                                    onChange={e => setEditBuffer({...editBuffer, due_date: e.target.value})}
+                                                />
+                                            ) : (
+                                                <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.due_date ? new Date(activeTask.due_date).toLocaleDateString() : '02/03/3333'}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm"><Users className="w-5 h-5 text-indigo-400" /></div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Assigned To</span>
+                                            <select value={activeTask.assigned_to || ''} onChange={(e) => handleAssignTask(activeTask.id, e.target.value ? parseInt(e.target.value) : null)} className="bg-transparent text-zinc-100 text-[14px] font-bold font-sans outline-none">
+                                                <option value="" className="bg-zinc-900 text-zinc-500">Unassigned</option>
+                                                {operatives.map(op => <option key={op.id} value={op.id} className="bg-zinc-900">{op.username}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm"><Clock className="w-5 h-5 text-indigo-400" /></div>
+                                        <div className="flex flex-col"><span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Established</span><span className="text-zinc-100 text-[14px] font-bold font-sans">{new Date(activeTask.created_at).toLocaleDateString()}</span></div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="pt-8 mt-auto"><button onClick={() => handleToggleTaskStatus(activeTask.id, activeTask.status)} className="w-full py-4.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all border border-zinc-700/50 shadow-xl active:scale-[0.98] font-sans h-14">{activeTask.status === 'completed' ? 'Re-Open Directive' : 'Finalize Handshake'}</button></div>
