@@ -1,5 +1,5 @@
 interface Env {
-  DB: D1Database;
+  DB?: D1Database;
 }
 
 export const onRequest = async (context: { request: Request; env: Env }) => {
@@ -9,39 +9,37 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   if (request.method === 'GET') {
     try {
       let results = [];
-      if (env.DB) {
-        const { results: dbResults } = await env.DB.prepare(
-          'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
-        ).all();
-        results = dbResults || [];
+      if (env.DB && typeof env.DB.prepare === 'function') {
+        try {
+          const { results: dbResults } = await env.DB.prepare(
+            'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
+          ).all();
+          results = dbResults || [];
+        } catch (dbErr) {
+          console.error('D1 Tasks Query Failed:', dbErr);
+        }
       }
       return new Response(JSON.stringify(results), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
     } catch (err: unknown) {
-      return new Response(JSON.stringify({ error: 'GET_TASKS_FAILED', message: (err as Error).message }), { status: 500 });
+      console.error('Critical Tasks GET Error:', err);
+      return new Response(JSON.stringify({ error: 'GET_TASKS_FAILED', message: (err as Error).message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
   if (request.method === 'POST') {
     try {
-      const body = (await request.json()) as {
-        title: string;
-        description?: string;
-        due_date?: string;
-        assigned_to?: number;
-        created_by?: number;
-      };
-
-      if (!env.DB) {
-        return new Response(JSON.stringify({ error: 'Database operations unavailable' }), { status: 503 });
+      if (!env.DB || typeof env.DB.prepare !== 'function') {
+        return new Response(JSON.stringify({ error: 'D1 Binding "DB" missing or inactive' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
       }
 
+      const body = await request.json() as any;
       const result = await env.DB.prepare(
         'INSERT INTO tasks (title, description, assigned_to, due_date, status, created_by) VALUES (?, ?, ?, ?, ?, ?)'
       ).bind(
-        body.title,
+        body.title || 'Untitled Directive',
         body.description || null,
         body.assigned_to || null,
         body.due_date || null,
@@ -53,39 +51,36 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id WHERE t.id = ?'
       ).bind(result.meta.last_row_id).first();
 
-      return new Response(JSON.stringify(newTask), { status: 201 });
+      return new Response(JSON.stringify(newTask), { status: 201, headers: { 'Content-Type': 'application/json' } });
     } catch (err: unknown) {
-      return new Response(JSON.stringify({ error: 'POST_TASK_FAILED', message: (err as Error).message }), { status: 500 });
+      console.error('Critical Tasks POST Error:', err);
+      return new Response(JSON.stringify({ error: 'POST_TASK_FAILED', message: (err as Error).message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
   if (request.method === 'PATCH') {
     try {
       const id = url.searchParams.get('id');
-      if (!id) return new Response(JSON.stringify({ error: 'Missing ID' }), { status: 400 });
+      if (!id) return new Response(JSON.stringify({ error: 'Missing directive ID' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
-      if (!env.DB) {
-        return new Response(JSON.stringify({ error: 'Database operations unavailable' }), { status: 503 });
+      if (!env.DB || typeof env.DB.prepare !== 'function') {
+        return new Response(JSON.stringify({ error: 'D1 Binding "DB" missing or inactive' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
       }
 
-      const body = (await request.json()) as {
-        status?: 'pending' | 'completed';
-        assigned_to?: number | null;
-      };
-
+      const body = await request.json() as any;
       if (body.status !== undefined) {
         await env.DB.prepare('UPDATE tasks SET status = ? WHERE id = ?').bind(body.status, id).run();
       }
-
       if (body.assigned_to !== undefined) {
         await env.DB.prepare('UPDATE tasks SET assigned_to = ? WHERE id = ?').bind(body.assigned_to, id).run();
       }
 
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (err: unknown) {
-      return new Response(JSON.stringify({ error: 'PATCH_TASK_FAILED', message: (err as Error).message }), { status: 500 });
+      console.error('Critical Tasks PATCH Error:', err);
+      return new Response(JSON.stringify({ error: 'PATCH_TASK_FAILED', message: (err as Error).message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
-  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
+  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405, headers: { 'Content-Type': 'application/json' } });
 };
