@@ -95,6 +95,60 @@ const TechnicalSeoAudit = React.lazy(() => import('./pages/definitions/Technical
 const VisualHierarchy = React.lazy(() => import('./pages/definitions/VisualHierarchy'));
 const Cdn = React.lazy(() => import('./pages/definitions/cdn'));
 
+// Blog pages
+const AiSolutionsClimateChangeMitigation2026 = React.lazy(() => import('./pages/blogs/AiSolutionsClimateChangeMitigation2026'));
+const AiSolutionsFinancialDecisionMaking = React.lazy(() => import('./pages/blogs/AiSolutionsFinancialDecisionMaking'));
+const AiSolutionsModernAgriculture2026 = React.lazy(() => import('./pages/blogs/AiSolutionsModernAgriculture2026'));
+const AiSolutionsReduceOperationalFriction = React.lazy(() => import('./pages/blogs/AiSolutionsReduceOperationalFriction'));
+const AiSolutionsSmallBusinessGrowth = React.lazy(() => import('./pages/blogs/AiSolutionsSmallBusinessGrowth'));
+const AiSolutionsSupplyChainOptimization2026 = React.lazy(() => import('./pages/blogs/AiSolutionsSupplyChainOptimization2026'));
+const Blog5gAiSolutionsRevolutionizeConnectivity2026 = React.lazy(() => import('./pages/blogs/Blog5gAiSolutionsRevolutionizeConnectivity2026'));
+const BusinessesFailAdaptFutureTechnology = React.lazy(() => import('./pages/blogs/BusinessesFailAdaptFutureTechnology'));
+const DeathOfStaticContentFutureOfWebsites = React.lazy(() => import('./pages/blogs/DeathOfStaticContentFutureOfWebsites'));
+const DecentralizedWebBusinessFuture = React.lazy(() => import('./pages/blogs/DecentralizedWebBusinessFuture'));
+const DynamicRankersCompetitiveAdvantage = React.lazy(() => import('./pages/blogs/DynamicRankersCompetitiveAdvantage'));
+const DynamicRankersEraSemanticSearch = React.lazy(() => import('./pages/blogs/DynamicRankersEraSemanticSearch'));
+const DynamicRankersFutureDigitalVisibility = React.lazy(() => import('./pages/blogs/DynamicRankersFutureDigitalVisibility'));
+const DynamicRankersMethodologyScalesStartups = React.lazy(() => import('./pages/blogs/DynamicRankersMethodologyScalesStartups'));
+const DynamicRankersPerformanceMarketing = React.lazy(() => import('./pages/blogs/DynamicRankersPerformanceMarketing'));
+const DynamicRankersPredictiveSeo = React.lazy(() => import('./pages/blogs/DynamicRankersPredictiveSeo'));
+const DynamicRankersScienceConversionRates = React.lazy(() => import('./pages/blogs/DynamicRankersScienceConversionRates'));
+const DynamicRankersVoiceSearchLandscape = React.lazy(() => import('./pages/blogs/DynamicRankersVoiceSearchLandscape'));
+const EmbracingFutureDynamicRankers = React.lazy(() => import('./pages/blogs/EmbracingFutureDynamicRankers'));
+const EvolutionHyperPersonalizedUx2026 = React.lazy(() => import('./pages/blogs/EvolutionHyperPersonalizedUx2026'));
+const FutureOfAiCreativeIndustries = React.lazy(() => import('./pages/blogs/FutureOfAiCreativeIndustries'));
+const FutureOfAiEducationPersonalizedLearning = React.lazy(() => import('./pages/blogs/FutureOfAiEducationPersonalizedLearning'));
+const FutureOfAiEmotionalIntelligence = React.lazy(() => import('./pages/blogs/FutureOfAiEmotionalIntelligence'));
+const FutureOfAiHealthcareDiagnostics = React.lazy(() => import('./pages/blogs/FutureOfAiHealthcareDiagnostics'));
+const FutureOfAiLegalTechAutomatedContracts = React.lazy(() => import('./pages/blogs/FutureOfAiLegalTechAutomatedContracts'));
+const FutureOfAiNarrowToGeneralIntelligence = React.lazy(() => import('./pages/blogs/FutureOfAiNarrowToGeneralIntelligence'));
+const FutureOfAiSpaceExploration = React.lazy(() => import('./pages/blogs/FutureOfAiSpaceExploration'));
+const FutureOfWebsitesAccessibilityCompliance = React.lazy(() => import('./pages/blogs/FutureOfWebsitesAccessibilityCompliance'));
+const FutureOfWebsitesBeyondBrowser = React.lazy(() => import('./pages/blogs/FutureOfWebsitesBeyondBrowser'));
+const FutureOfWebsitesDynamicLayoutsMood = React.lazy(() => import('./pages/blogs/FutureOfWebsitesDynamicLayoutsMood'));
+const FutureOfWebsitesEdgeComputing = React.lazy(() => import('./pages/blogs/FutureOfWebsitesEdgeComputing'));
+const FutureOfWebsitesImmersiveVrar = React.lazy(() => import('./pages/blogs/FutureOfWebsitesImmersiveVrar'));
+const FutureOfWebsitesIntegratedMicroServices = React.lazy(() => import('./pages/blogs/FutureOfWebsitesIntegratedMicroServices'));
+const FutureOfWebsitesVoiceControlledNavigation = React.lazy(() => import('./pages/blogs/FutureOfWebsitesVoiceControlledNavigation'));
+const FutureProofingContentStrategyAiSolutions = React.lazy(() => import('./pages/blogs/FutureProofingContentStrategyAiSolutions'));
+const GenerativeAiCorporateBranding = React.lazy(() => import('./pages/blogs/GenerativeAiCorporateBranding'));
+const HarnessingAiSolutionsMentalHealth2026 = React.lazy(() => import('./pages/blogs/HarnessingAiSolutionsMentalHealth2026'));
+const ImpactAiGigEconomy2026 = React.lazy(() => import('./pages/blogs/ImpactAiGigEconomy2026'));
+const NeuralInterfacesUltimateFutureOfAi = React.lazy(() => import('./pages/blogs/NeuralInterfacesUltimateFutureOfAi'));
+const QuantumComputingFutureOfAi2026 = React.lazy(() => import('./pages/blogs/QuantumComputingFutureOfAi2026'));
+const RoleDynamicRankersCreatorEconomy = React.lazy(() => import('./pages/blogs/RoleDynamicRankersCreatorEconomy'));
+const ScalingVenturesLocalizedAiSolutions = React.lazy(() => import('./pages/blogs/ScalingVenturesLocalizedAiSolutions'));
+const SecurityChallengesAiSolutionEra2026 = React.lazy(() => import('./pages/blogs/SecurityChallengesAiSolutionEra2026'));
+const SmartCitiesAiSolutions2026 = React.lazy(() => import('./pages/blogs/SmartCitiesAiSolutions2026'));
+const WebsiteIntelligentAgent2026 = React.lazy(() => import('./pages/blogs/WebsiteIntelligentAgent2026'));
+
+// Added routes for files that were missing routes
+const BuildingSustainableDigitalEcosystems = React.lazy(() => import('./pages/blogs/BuildingSustainableDigitalEcosystems'));
+const DataPrivacyDynamicRankers = React.lazy(() => import('./pages/blogs/DataPrivacyDynamicRankers'));
+const DynamicRankersAdaptiveMarketing = React.lazy(() => import('./pages/blogs/DynamicRankersAdaptiveMarketing'));
+const EthicsOfAi2026DeepDive = React.lazy(() => import('./pages/blogs/EthicsOfAi2026DeepDive'));
+const MobileFirstToAiFirstDesign2026 = React.lazy(() => import('./pages/blogs/MobileFirstToAiFirstDesign2026'));
+
 // Homepage components wrapper
 const HomePage = () => (
   <>
@@ -195,12 +249,15 @@ function App() {
             <Route path="/blog/future-of-ai-narrow-to-general-intelligence" element={<FutureOfAiNarrowToGeneralIntelligence />} />
             <Route path="/blog/dynamic-rankers-future-digital-visibility" element={<DynamicRankersFutureDigitalVisibility />} />
             <Route path="/blog/future-of-websites-dynamic-layouts-mood" element={<FutureOfWebsitesDynamicLayoutsMood />} />
-            <Route path="/blog/harnessing-ai-solutions-mental-health-2026" element={<HarnessingAiSolutionsMentalHealth2026 />} />
             <Route path="/blog/future-of-ai-legal-tech-automated-contracts" element={<FutureOfAiLegalTechAutomatedContracts />} />
             <Route path="/blog/dynamic-rankers-performance-marketing" element={<DynamicRankersPerformanceMarketing />} />
             <Route path="/blog/future-of-websites-accessibility-compliance" element={<FutureOfWebsitesAccessibilityCompliance />} />
-            <Route path="/blog/ai-solutions-modern-agriculture-2026" element={<AiSolutionsModernAgriculture2026 />} />
             <Route path="/blog/embracing-future-dynamic-rankers" element={<EmbracingFutureDynamicRankers />} /> {/* DYNAMIC ROUTE ADDED HERE */}
+            <Route path="/blog/building-sustainable-digital-ecosystems" element={<BuildingSustainableDigitalEcosystems />} />
+            <Route path="/blog/data-privacy-dynamic-rankers" element={<DataPrivacyDynamicRankers />} />
+            <Route path="/blog/dynamic-rankers-adaptive-marketing" element={<DynamicRankersAdaptiveMarketing />} />
+            <Route path="/blog/ethics-of-ai-2026-deep-dive" element={<EthicsOfAi2026DeepDive />} />
+            <Route path="/blog/mobile-first-to-ai-first-design-2026" element={<MobileFirstToAiFirstDesign2026 />} />
 
             <Route path="/career" element={<Careers />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
