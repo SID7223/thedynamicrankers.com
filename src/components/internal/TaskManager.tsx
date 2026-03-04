@@ -1,5 +1,4 @@
 import React from 'react';
-import { Virtuoso } from 'react-virtuoso';
 import Avatar from './Avatar';
 
 interface Task {
@@ -43,7 +42,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
     const assignedUser = safeOperatives.find(op => op.id === task.assigned_to);
 
     return (
-      <div className="px-4 py-0.5">
+      <div className="px-0 py-0.5">
         <div
           onClick={() => setActiveTaskId(task.id)}
           className={`w-full text-left px-4 py-4 rounded-xl transition-all cursor-pointer border shadow-sm ${activeTaskId === task.id ? 'bg-[#353739] border-zinc-700/50' : 'bg-[#2d2e30]/50 border-transparent hover:bg-[#353739]/50'}`}
@@ -86,45 +85,14 @@ const TaskManager: React.FC<TaskManagerProps> = ({
   };
 
   return (
-    <div className="space-y-4 flex flex-col h-full bg-[#2d2e30] border-r border-zinc-800/50">
-      <div className="px-6 pt-6 flex items-center justify-between mb-2">
-        <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] font-sans">Active Directives</h3>
-        <div className="px-2 py-0.5 bg-zinc-800/60 rounded text-[9px] text-zinc-500 font-bold border border-zinc-700/50 select-none">
-          {safeTasks.length}
+    <div className="space-y-1">
+      {safeTasks.length === 0 ? (
+        <div className="py-8 bg-zinc-800/20 rounded-2xl border border-dashed border-zinc-800/50 text-center">
+          <p className="text-[10px] text-zinc-700 uppercase tracking-[0.2em] font-bold font-sans">No Orders Logged</p>
         </div>
-      </div>
-      <div className="flex-1">
-        {safeTasks.length === 0 ? (
-          <div className="px-6 mt-4">
-            <div className="py-8 bg-zinc-800/20 rounded-2xl border border-dashed border-zinc-800/50 text-center">
-              <p className="text-[10px] text-zinc-700 uppercase tracking-[0.2em] font-bold font-sans">No Orders Logged</p>
-            </div>
-          </div>
-        ) : (
-          <Virtuoso
-            style={{ height: '100%' }}
-            data={safeTasks}
-            itemContent={(index) => <TaskRow index={index} />}
-            className="custom-scrollbar"
-          />
-        )}
-      </div>
-
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #374151;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #4b5563;
-        }
-      `}</style>
+      ) : (
+        safeTasks.map((_, index) => <TaskRow key={index} index={index} />)
+      )}
     </div>
   );
 };
