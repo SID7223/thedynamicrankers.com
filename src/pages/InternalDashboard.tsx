@@ -10,7 +10,8 @@ import {
   AlertCircle,
   Hash,
   Users,
-  Clock
+  Clock,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TaskManager from '../components/internal/TaskManager';
@@ -50,6 +51,7 @@ const InternalDashboard = () => {
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [streamStatus, setStreamStatus] = useState<'connecting' | 'stable' | 'failed'>('connecting');
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState<string>(new Date().toISOString());
+  const [showDirectiveDetails, setShowDirectiveDetails] = useState(true);
 
   useEffect(() => {
     const savedSession = sessionStorage.getItem('internal_session');
@@ -97,10 +99,7 @@ const InternalDashboard = () => {
             } else if (data.type === 'TASK_TOGGLE') {
                setTasks(prev => prev.map(t => t.id === data.payload.id ? { ...t, status: data.payload.status } : t));
             } else if (data.type === 'CHAT_MSG') {
-               // Update global message state to trigger re-renders in children if needed
                setLastMessageTimestamp(new Date().toISOString());
-
-               // Mark as unread if it's not the active task
                if (activeTaskId !== data.payload.task_id) {
                  setTasks(prev => prev.map(t => t.id === data.payload.task_id ? { ...t, hasUnread: true } : t));
                }
@@ -115,7 +114,6 @@ const InternalDashboard = () => {
         };
         eventSource.onerror = () => {
           setStreamStatus('failed');
-          // Reconnect logic
           setTimeout(() => {
             if (session) setStreamStatus('connecting');
           }, 5000);
@@ -258,26 +256,22 @@ const InternalDashboard = () => {
             )}
 
             <div className="space-y-4">
-              <div className="relative group">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#2d2e30] border border-zinc-700/50 px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-all rounded-2xl shadow-inner font-sans"
-                  placeholder="Organization Email"
-                  required
-                />
-              </div>
-              <div className="relative group">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#2d2e30] border border-zinc-700/50 px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-all rounded-2xl shadow-inner font-sans"
-                  placeholder="Security Key"
-                  required
-                />
-              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-[#2d2e30] border border-zinc-700/50 px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-all rounded-2xl shadow-inner font-sans"
+                placeholder="Organization Email"
+                required
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-[#2d2e30] border border-zinc-700/50 px-5 py-4 text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/40 transition-all rounded-2xl shadow-inner font-sans"
+                placeholder="Security Key"
+                required
+              />
             </div>
 
             <button
@@ -289,12 +283,6 @@ const InternalDashboard = () => {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
-
-          <div className="mt-12 text-center">
-            <p className="text-[10px] text-zinc-700 uppercase tracking-[0.2em] font-bold font-sans">
-              Encrypted via DR Sovereign Security Protocols
-            </p>
-          </div>
         </motion.div>
       </div>
     );
@@ -304,7 +292,8 @@ const InternalDashboard = () => {
 
   return (
     <div className="flex h-screen bg-[#1f1f1f] text-zinc-300 font-sans selection:bg-indigo-500/30 overflow-hidden">
-      <div className="w-80 bg-[#2d2e30] flex flex-col shadow-2xl z-20">
+      {/* Sidebar */}
+      <div className="w-80 bg-[#2d2e30] flex flex-col shadow-2xl z-20 shrink-0">
         <div className="p-6 flex items-center justify-between border-b border-zinc-800/50 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
@@ -341,6 +330,7 @@ const InternalDashboard = () => {
             setActiveTaskId={(id) => {
               setActiveTaskId(id);
               setTasks(prev => prev.map(t => t.id === id ? { ...t, hasUnread: false } : t));
+              setShowDirectiveDetails(true);
             }}
             onToggleStatus={handleToggleTaskStatus}
             onAssignTask={handleAssignTask}
@@ -368,8 +358,9 @@ const InternalDashboard = () => {
         </div>
       </div>
 
+      {/* Main Stream Area */}
       <div className="flex-1 flex flex-col relative overflow-hidden bg-[#1f1f1f]">
-        <div className="h-20 px-10 flex items-center justify-between border-b border-zinc-800/50 bg-[#1f1f1f]/80 backdrop-blur-xl z-10 shadow-sm">
+        <div className="h-20 px-10 flex items-center justify-between border-b border-zinc-800/50 bg-[#1f1f1f]/80 backdrop-blur-xl z-10 shadow-sm shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
               <Hash className="w-5 h-5 text-indigo-500" />
@@ -382,67 +373,86 @@ const InternalDashboard = () => {
           <PresenceIndicator operatives={operatives} status={streamStatus} />
         </div>
 
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <SlackStream taskId={activeTaskId} currentUser={session} operatives={operatives} key={`stream-${activeTaskId}-${lastMessageTimestamp}`} />
+        <div className="flex-1 flex overflow-hidden">
+          {/* Chat Column */}
+          <div className="flex-1 flex flex-col min-w-0">
+            <SlackStream taskId={activeTaskId} currentUser={session} operatives={operatives} key={`stream-${activeTaskId}-${lastMessageTimestamp}`} />
+          </div>
+
+          {/* Directive Sidebar (Integrated into layout) */}
+          <AnimatePresence>
+            {activeTask && showDirectiveDetails && (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 360 }}
+                exit={{ opacity: 0, width: 0 }}
+                className="border-l border-zinc-800/50 bg-[#2d2e30]/50 backdrop-blur-xl shrink-0 flex flex-col overflow-hidden relative"
+              >
+                <div className="p-8 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-10">
+                        <h3 className="font-bold text-white tracking-tight text-2xl font-sans">Directive</h3>
+                        <div className="flex items-center gap-2">
+                            <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] border font-sans ${activeTask.status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400 shadow-[0_0_15px_rgba(129,140,248,0.15)]'}`}>
+                                {activeTask.status}
+                            </div>
+                            <button
+                                onClick={() => setShowDirectiveDetails(false)}
+                                className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 transition-colors"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 -mr-4">
+                        <p className="text-[15px] text-zinc-300 leading-relaxed mb-12 font-sans opacity-90">
+                            {activeTask.description || 'No supplementary data provided for this command.'}
+                        </p>
+
+                        <div className="space-y-10">
+                            <div className="flex items-center gap-5">
+                                <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
+                                    <Calendar className="w-5 h-5 text-indigo-400" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Target Date</span>
+                                    <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.due_date ? new Date(activeTask.due_date).toLocaleDateString() : '02/03/3333'}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-5">
+                                <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
+                                    <Users className="w-5 h-5 text-indigo-400" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Assigned To</span>
+                                    <span className="text-zinc-100 text-[14px] font-bold font-sans">{activeTask.assigned_username || 'Awaiting Resource'}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-5">
+                                <div className="w-11 h-11 bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-700/30 shadow-sm">
+                                    <Clock className="w-5 h-5 text-indigo-400" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Established</span>
+                                    <span className="text-zinc-100 text-[14px] font-bold font-sans">{new Date(activeTask.created_at).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-8 mt-auto">
+                        <button
+                            onClick={() => handleToggleTaskStatus(activeTask.id, activeTask.status)}
+                            className="w-full py-4.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all border border-zinc-700/50 shadow-xl active:scale-[0.98] font-sans h-14"
+                        >
+                            {activeTask.status === 'completed' ? 'Re-Open Directive' : 'Finalize Handshake'}
+                        </button>
+                    </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        {activeTask && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="absolute top-24 right-10 bottom-10 w-80 bg-[#2d2e30]/80 backdrop-blur-2xl border border-zinc-700/30 rounded-3xl p-8 hidden xl:flex flex-col shadow-2xl z-30 overflow-hidden"
-          >
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-bold text-white tracking-tight text-lg font-sans">Directive</h3>
-              <div className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-[0.2em] border font-sans ${activeTask.status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500'}`}>
-                {activeTask.status}
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
-              <p className="text-[14px] text-zinc-400 leading-relaxed mb-10 font-sans">
-                {activeTask.description || 'No supplementary data provided for this command.'}
-              </p>
-
-              <div className="space-y-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
-                    <Calendar className="w-4 h-4 text-zinc-500" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[9px] text-zinc-600 uppercase tracking-[0.2em] font-bold mb-0.5 font-sans">Target Date</span>
-                    <span className="text-zinc-200 text-[13px] font-bold font-sans">{activeTask.due_date ? new Date(activeTask.due_date).toLocaleDateString() : 'ASAP'}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
-                    <Users className="w-4 h-4 text-zinc-500" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[9px] text-zinc-600 uppercase tracking-[0.2em] font-bold mb-0.5 font-sans">Assigned To</span>
-                    <span className="text-zinc-200 text-[13px] font-bold font-sans">{activeTask.assigned_username || 'Awaiting Resource'}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 bg-zinc-800/50 rounded-xl flex items-center justify-center border border-zinc-700/30">
-                    <Clock className="w-4 h-4 text-zinc-500" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[9px] text-zinc-600 uppercase tracking-[0.2em] font-bold mb-0.5 font-sans">Established</span>
-                    <span className="text-zinc-200 text-[13px] font-bold font-sans">{new Date(activeTask.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => handleToggleTaskStatus(activeTask.id, activeTask.status)}
-              className="mt-10 w-full py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl text-xs font-bold uppercase tracking-[0.2em] transition-all border border-zinc-700/50 shadow-lg font-sans"
-            >
-              {activeTask.status === 'completed' ? 'Re-Open Directive' : 'Finalize Handshake'}
-            </button>
-          </motion.div>
-        )}
       </div>
 
       <AnimatePresence>
