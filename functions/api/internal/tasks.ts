@@ -15,8 +15,10 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
             'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
           ).all();
           results = dbResults || [];
-        } catch (dbErr) {
-          console.error('D1 Tasks Query Failed:', dbErr);
+        } catch (dbErr: any) {
+          console.error('D1 Tasks Query Failed:', dbErr.message);
+          // Return empty array instead of 500
+          results = [];
         }
       }
       return new Response(JSON.stringify(results), {
@@ -25,7 +27,10 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       });
     } catch (err: unknown) {
       console.error('Critical Tasks GET Error:', err);
-      return new Response(JSON.stringify({ error: 'GET_TASKS_FAILED', message: (err as Error).message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'X-Error': 'GET_TASKS_FAILED' }
+      });
     }
   }
 
