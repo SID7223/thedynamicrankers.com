@@ -52,8 +52,11 @@ const WhatIsDigitalMarketing: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>What is Digital Marketing | The Dynamic Rankers</title>
-        <meta name="description" content="Learn what digital marketing is and how The Dynamic Rankers use AI-powered strategies to transform your online presence and drive business growth." />
+        <title>The Ultimate Guide to Digital Growth | The Dynamic Rankers</title>
+        <meta name="description" content="Understand the fundamentals of digital marketing and why it is the most powerful tool for modern business growth. Clear, actionable insights for USA entrepreneurs." />
+        <meta property="og:title" content="The Ultimate Guide to Digital Growth | The Dynamic Rankers" />
+        <meta property="og:description" content="Understand the fundamentals of digital marketing and why it is the most powerful tool for modern business growth. Clear, actionable insights for USA entrepreneurs." />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 py-12">

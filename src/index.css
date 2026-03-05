@@ -8,6 +8,13 @@
   --y: 50%;
 }
 
+/* Set global scale to 90% for desktop view, excluding no-zoom pages */
+@media (min-width: 1024px) {
+  .main-content-wrapper:not(.no-zoom) {
+    zoom: 0.9;
+  }
+}
+
 /* ===== Background Color Animation Based on Mouse Movement ===== */
 body {
   background: radial-gradient(
@@ -25,6 +32,14 @@ body {
     hsl(210, 30%, 10%)
   );
   transition: background 0.2s ease;
+}
+
+.squircle {
+  border-radius: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* ===== Optional SVG Line Animations ===== */
@@ -53,4 +68,30 @@ body {
   100% {
     stroke-dashoffset: 0;
   }
+}
+
+/* Custom scrollbar for Internal Dashboard */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
 }

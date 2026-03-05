@@ -9,6 +9,9 @@ const FutureOfAiLegalTechAutomatedContracts: React.FC = () => {
       <Helmet>
         <title>The Future of AI in Legal Tech: Automated Contracts | The Dynamic Rankers</title>
         <meta name="description" content="Discover why The Future of AI in Legal Tech: Automated Contracts is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="The Future of AI in Legal Tech: Automated Contracts | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why The Future of AI in Legal Tech: Automated Contracts is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

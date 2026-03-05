@@ -5,9 +5,11 @@ const CopywritingServices = () => {
   return (
     <>
       <Helmet>
-        <title>Copywriting Services | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' expert approach to Copywriting Services with clear visuals and smart automation." />
-        <meta name="keywords" content="copywriting services, content writing, persuasive copy, The Dynamic Rankers" />
+        <title>High-Conversion Copywriting Services | The Dynamic Rankers</title>
+        <meta name="description" content="Turn readers into customers with persuasive, SEO-optimized copy. Our writers specialize in creating brand voices that sell and stories that stick." />
+        <meta property="og:title" content="High-Conversion Copywriting Services | The Dynamic Rankers" />
+        <meta property="og:description" content="Turn readers into customers with persuasive, SEO-optimized copy. Our writers specialize in creating brand voices that sell and stories that stick." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

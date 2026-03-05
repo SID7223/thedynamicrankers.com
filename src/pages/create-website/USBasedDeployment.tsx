@@ -5,9 +5,11 @@ const USBasedDeployment = () => {
   return (
     <>
       <Helmet>
-        <title>US-Based Deployment | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' take on US-Based Deployment with expert insight, visual clarity, and SEO-optimized strategy." />
-        <meta name="keywords" content="US deployment, CDN, server response time, The Dynamic Rankers" />
+        <title>Secure and Fast US-Based Hosting | The Dynamic Rankers</title>
+        <meta name="description" content="Enjoy lightning-fast load times and top-tier security with our US-based deployment. We ensure your site is always available and performing at its peak." />
+        <meta property="og:title" content="Secure and Fast US-Based Hosting | The Dynamic Rankers" />
+        <meta property="og:description" content="Enjoy lightning-fast load times and top-tier security with our US-based deployment. We ensure your site is always available and performing at its peak." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

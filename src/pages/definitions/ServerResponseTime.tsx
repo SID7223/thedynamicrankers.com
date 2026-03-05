@@ -5,11 +5,11 @@ const ServerResponseTime: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Server Response Time Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Server response time measures how quickly your infrastructure returns the first byte. Slow response creates friction for users and weakens search performance."
-        />
+        <title>Server Response Time Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Server response time measures how quickly your infrastructure returns the first byte. Slow response creates friction for users and weakens search performance." />
+        <meta property="og:title" content="Server Response Time Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Server response time measures how quickly your infrastructure returns the first byte. Slow response creates friction for users and weakens search performance." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

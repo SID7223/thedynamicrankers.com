@@ -9,6 +9,9 @@ const DynamicRankersFutureDigitalVisibility: React.FC = () => {
       <Helmet>
         <title>Why Dynamic Rankers is the Future of Digital Visibility | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Why Dynamic Rankers is the Future of Digital Visibility is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Why Dynamic Rankers is the Future of Digital Visibility | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Why Dynamic Rankers is the Future of Digital Visibility is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

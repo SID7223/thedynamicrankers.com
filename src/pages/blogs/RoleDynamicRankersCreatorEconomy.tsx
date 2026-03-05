@@ -9,6 +9,9 @@ const RoleDynamicRankersCreatorEconomy: React.FC = () => {
       <Helmet>
         <title>The Role of Dynamic Rankers in the New Creator Economy | The Dynamic Rankers</title>
         <meta name="description" content="Discover why The Role of Dynamic Rankers in the New Creator Economy is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="The Role of Dynamic Rankers in the New Creator Economy | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why The Role of Dynamic Rankers in the New Creator Economy is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

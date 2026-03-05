@@ -49,10 +49,10 @@ const Careers: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Careers - Your Website Name</title>
-        <meta name="description" content="View open positions and apply." />
-        <meta property="og:title" content="Careers - Your Website Name" />
-        <meta property="og:description" content="View open positions and apply." />
+        <title>Join Our Team of Digital Innovators | The Dynamic Rankers</title>
+        <meta name="description" content="Ready to build the future of digital marketing? Explore career opportunities at The Dynamic Rankers and join a team that values growth, creativity, and results." />
+        <meta property="og:title" content="Join Our Team of Digital Innovators | The Dynamic Rankers" />
+        <meta property="og:description" content="Ready to build the future of digital marketing? Explore career opportunities at The Dynamic Rankers and join a team that values growth, creativity, and results." />
         <meta property="og:type" content="website" />
       </Helmet>
 

@@ -5,11 +5,11 @@ const OnPageOptimization: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>On Page Optimization Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="On page optimization aligns structure, metadata, copy, and UX so pages rank better and convert more users. It connects technical SEO with persuasive content design."
-        />
+        <title>On Page Optimization Explained | The Dynamic Rankers</title>
+        <meta name="description" content="On page optimization aligns structure, metadata, copy, and UX so pages rank better and convert more users. It connects technical SEO with persuasive content design." />
+        <meta property="og:title" content="On Page Optimization Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="On page optimization aligns structure, metadata, copy, and UX so pages rank better and convert more users. It connects technical SEO with persuasive content design." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

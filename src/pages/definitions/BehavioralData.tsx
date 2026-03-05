@@ -5,11 +5,11 @@ const BehavioralData: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Behavioral Data Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Behavioral data tracks how people click, scroll, search, and navigate through your website. It gives your team direct evidence about what users care about and where they get stuck."
-        />
+        <title>Behavioral Data Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Behavioral data tracks how people click, scroll, search, and navigate through your website. It gives your team direct evidence about what users care about and where they get stuck." />
+        <meta property="og:title" content="Behavioral Data Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Behavioral data tracks how people click, scroll, search, and navigate through your website. It gives your team direct evidence about what users care about and where they get stuck." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">
@@ -67,5 +67,3 @@ const BehavioralData: React.FC = () => {
 };
 
 export default BehavioralData;
-
-

@@ -82,8 +82,12 @@ const BlogPost: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{post.title} - The Dynamic Rankers</title>
+        <title>{post.title} | The Dynamic Rankers</title>
         <meta name="description" content={post.content.substring(0, 160)} />
+        <meta property="og:title" content={post.title + " | The Dynamic Rankers"} />
+        <meta property="og:description" content={post.content.substring(0, 160)} />
+        <meta property="og:image" content={post.image} />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

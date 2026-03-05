@@ -5,8 +5,11 @@ const ConversionRate: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Conversion Rate Definition | The Dynamic Rankers</title>
+        <title>Conversion Rate Explained | The Dynamic Rankers</title>
         <meta name="description" content="Learn what conversion rate means in digital marketing and how The Dynamic Rankers optimize every touchpoint to maximize your business conversions and ROI." />
+        <meta property="og:title" content="Conversion Rate Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Learn what conversion rate means in digital marketing and how The Dynamic Rankers optimize every touchpoint to maximize your business conversions and ROI." />
+        <meta property="og:type" content="article" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 pt-32 pb-12">

@@ -6,10 +6,11 @@ const DigitalMarketingSolution = () => {
   return (
     <>
       <Helmet>
-        <title>Digital Marketing Solution USA - The Dynamic Rankers</title>
-        <meta name="description" content="Comprehensive digital marketing solutions for USA businesses. Boost your online presence with proven strategies from The Dynamic Rankers." />
-        <meta name="keywords" content="digital marketing solution, USA, online marketing, The Dynamic Rankers" />
-        <link rel="canonical" href="https://thedynamicrankers.com/digital-marketing/digital-marketing-solution" />
+        <title>Full-Stack Digital Marketing Solutions | The Dynamic Rankers</title>
+        <meta name="description" content="Discover comprehensive digital marketing solutions tailored to your business needs. We integrate SEO, content, and paid media into a single high-performance growth engine." />
+        <meta property="og:title" content="Full-Stack Digital Marketing Solutions | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover comprehensive digital marketing solutions tailored to your business needs. We integrate SEO, content, and paid media into a single high-performance growth engine." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

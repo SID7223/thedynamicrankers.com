@@ -9,6 +9,9 @@ const DecentralizedWebBusinessFuture: React.FC = () => {
       <Helmet>
         <title>Decentralized Web: What it Means for Your Business Future | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Decentralized Web: What it Means for Your Business Future is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Decentralized Web: What it Means for Your Business Future | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Decentralized Web: What it Means for Your Business Future is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

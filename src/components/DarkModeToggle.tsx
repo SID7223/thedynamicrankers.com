@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const DarkModeToggle = () => {
+  const location = useLocation();
+  const isOnboarding = location.pathname === '/onboarding';
   const [isDark, setIsDark] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     // Check for saved theme preference or default to light mode
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+    if (savedTheme === 'dark') {
       setIsDark(true);
       document.documentElement.classList.add('dark');
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -48,7 +53,7 @@ const DarkModeToggle = () => {
 
   return (
     <div 
-      className={`fixed top-20 right-6 z-40 transition-all duration-500 ease-out ${
+      className={`fixed ${isOnboarding ? 'top-4 md:top-6' : 'top-20'} right-6 z-[110] transition-all duration-500 ease-out ${
         isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
       }`}
     >

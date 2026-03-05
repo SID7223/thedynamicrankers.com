@@ -9,6 +9,9 @@ const FutureOfAiEmotionalIntelligence: React.FC = () => {
       <Helmet>
         <title>The Future of AI: Emotional Intelligence and Empathy | The Dynamic Rankers</title>
         <meta name="description" content="Discover why The Future of AI: Emotional Intelligence and Empathy is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="The Future of AI: Emotional Intelligence and Empathy | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why The Future of AI: Emotional Intelligence and Empathy is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

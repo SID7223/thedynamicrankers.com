@@ -6,9 +6,11 @@ const SEOServicesPage = () => {
   return (
     <>
       <Helmet>
-        <title>SEO Services | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' SEO Services with performance visuals and clean design." />
-        <meta name="keywords" content="SEO services, technical audit, backlinks, content optimization, The Dynamic Rankers" />
+        <title>Rank Higher and Drive More Traffic | The Dynamic Rankers</title>
+        <meta name="description" content="Dominate search engines with precision SEO services. We help your business climb the rankings, capture high-intent traffic, and stay ahead of the competition." />
+        <meta property="og:title" content="Rank Higher and Drive More Traffic | The Dynamic Rankers" />
+        <meta property="og:description" content="Dominate search engines with precision SEO services. We help your business climb the rankings, capture high-intent traffic, and stay ahead of the competition." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

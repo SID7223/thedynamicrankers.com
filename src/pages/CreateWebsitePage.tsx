@@ -33,9 +33,11 @@ const CreateWebsitePage = () => {
   return (
     <>
       <Helmet>
-        <title>Create Your Website - Professional Web Development USA | The Dynamic Rankers</title>
-        <meta name="description" content="Create a professional website with The Dynamic Rankers. Custom design, coding, SEO setup, and US-based deployment for businesses across USA." />
-        <meta name="keywords" content="website development, web design, USA, custom coding, SEO, The Dynamic Rankers" />
+        <title>Build a High-Performance Website | The Dynamic Rankers</title>
+        <meta name="description" content="Get a custom website that looks amazing and performs even better. We build fast, secure, and SEO-ready websites designed to convert visitors into loyal customers." />
+        <meta property="og:title" content="Build a High-Performance Website | The Dynamic Rankers" />
+        <meta property="og:description" content="Get a custom website that looks amazing and performs even better. We build fast, secure, and SEO-ready websites designed to convert visitors into loyal customers." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

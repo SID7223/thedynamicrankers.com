@@ -1,0 +1,70 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface Env {
+  DB?: D1Database;
+}
+
+export const onRequest = async (context: { request: Request; env: Env }) => {
+  const { request, env } = context;
+  const url = new URL(request.url);
+
+  if (!env.DB) {
+    return new Response(JSON.stringify({ error: 'Database binding missing' }), { status: 503 });
+  }
+
+  if (request.method === 'GET') {
+    try {
+      const { results } = await env.DB.prepare(
+        'SELECT i.*, c.name as customer_name FROM crm_invoices i JOIN crm_customers c ON i.customer_id = c.id ORDER BY i.created_at DESC'
+      ).all();
+      return new Response(JSON.stringify(results), { headers: { 'Content-Type': 'application/json' } });
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    }
+  }
+
+  if (request.method === 'POST') {
+    try {
+      const body = await request.json() as any;
+      const id = crypto.randomUUID();
+      await env.DB.prepare(
+        'INSERT INTO crm_invoices (id, customer_id, amount, description, status) VALUES (?, ?, ?, ?, ?)'
+      ).bind(
+        id,
+        body.customer_id,
+        body.amount,
+        body.description || null,
+        body.status || 'invoice_created'
+      ).run();
+
+      return new Response(JSON.stringify({ id, success: true }), { status: 201 });
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    }
+  }
+
+  if (request.method === 'PATCH') {
+    try {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response(JSON.stringify({ error: 'Missing ID' }), { status: 400 });
+      const body = await request.json() as any;
+
+      await env.DB.prepare('UPDATE crm_invoices SET status = ? WHERE id = ?').bind(body.status, id).run();
+      return new Response(JSON.stringify({ success: true }));
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    }
+  }
+
+  if (request.method === 'DELETE') {
+    try {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response(JSON.stringify({ error: 'Missing ID' }), { status: 400 });
+      await env.DB.prepare('DELETE FROM crm_invoices WHERE id = ?').bind(id).run();
+      return new Response(JSON.stringify({ success: true }));
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    }
+  }
+
+  return new Response('Method Not Allowed', { status: 405 });
+};

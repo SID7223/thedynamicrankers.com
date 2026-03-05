@@ -5,11 +5,11 @@ const Cdn: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>CDN Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="A CDN caches and serves static assets from edge locations closer to users, reducing latency and improving perceived performance worldwide."
-        />
+        <title>CDN Explained | The Dynamic Rankers</title>
+        <meta name="description" content="A CDN caches and serves static assets from edge locations closer to users, reducing latency and improving perceived performance worldwide." />
+        <meta property="og:title" content="CDN Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="A CDN caches and serves static assets from edge locations closer to users, reducing latency and improving perceived performance worldwide." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

@@ -5,11 +5,11 @@ const JavascriptAutomation: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>JavaScript Automation Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="JavaScript automation reduces manual effort by scripting repetitive workflows like reporting, validation checks, data extraction, and marketing operations."
-        />
+        <title>JavaScript Automation Explained | The Dynamic Rankers</title>
+        <meta name="description" content="JavaScript automation reduces manual effort by scripting repetitive workflows like reporting, validation checks, data extraction, and marketing operations." />
+        <meta property="og:title" content="JavaScript Automation Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="JavaScript automation reduces manual effort by scripting repetitive workflows like reporting, validation checks, data extraction, and marketing operations." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

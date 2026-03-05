@@ -5,11 +5,11 @@ const EditorialSeo: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Editorial SEO Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Editorial SEO combines strong narrative quality with search best practices so articles rank well while building trust and readability."
-        />
+        <title>Editorial SEO Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Editorial SEO combines strong narrative quality with search best practices so articles rank well while building trust and readability." />
+        <meta property="og:title" content="Editorial SEO Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Editorial SEO combines strong narrative quality with search best practices so articles rank well while building trust and readability." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

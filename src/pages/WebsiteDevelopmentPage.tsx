@@ -6,9 +6,11 @@ const WebsiteDevelopmentPage = () => {
   return (
     <>
       <Helmet>
-        <title>Website Development | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' Website Development service with performance visuals and clean design." />
-        <meta name="keywords" content="website development, responsive design, mobile-first, CMS, The Dynamic Rankers" />
+        <title>Expert Web Development Services | The Dynamic Rankers</title>
+        <meta name="description" content="Scale your business with professional web development. From complex web apps to sleek landing pages, we deliver high-quality code and exceptional user experiences." />
+        <meta property="og:title" content="Expert Web Development Services | The Dynamic Rankers" />
+        <meta property="og:description" content="Scale your business with professional web development. From complex web apps to sleek landing pages, we deliver high-quality code and exceptional user experiences." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

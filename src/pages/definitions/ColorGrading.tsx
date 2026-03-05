@@ -5,11 +5,11 @@ const ColorGrading: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Color Grading Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Color grading adjusts hue, contrast, saturation, and tonal balance so visuals feel cohesive and communicate the right emotional tone across campaigns."
-        />
+        <title>Color Grading Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Color grading adjusts hue, contrast, saturation, and tonal balance so visuals feel cohesive and communicate the right emotional tone across campaigns." />
+        <meta property="og:title" content="Color Grading Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Color grading adjusts hue, contrast, saturation, and tonal balance so visuals feel cohesive and communicate the right emotional tone across campaigns." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

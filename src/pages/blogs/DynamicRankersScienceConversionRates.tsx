@@ -9,6 +9,9 @@ const DynamicRankersScienceConversionRates: React.FC = () => {
       <Helmet>
         <title>Dynamic Rankers and the Science of Conversion Rates | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Dynamic Rankers and the Science of Conversion Rates is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Dynamic Rankers and the Science of Conversion Rates | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Dynamic Rankers and the Science of Conversion Rates is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

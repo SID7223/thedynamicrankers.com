@@ -9,6 +9,9 @@ const SecurityChallengesAiSolutionEra2026: React.FC = () => {
       <Helmet>
         <title>Security Challenges in the AI Solution Era of 2026 | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Security Challenges in the AI Solution Era of 2026 is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Security Challenges in the AI Solution Era of 2026 | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Security Challenges in the AI Solution Era of 2026 is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">

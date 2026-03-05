@@ -32,9 +32,11 @@ const CustomerSupportPage = () => {
   return (
     <>
       <Helmet>
-        <title>Customer Support | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' Customer Support service with performance visuals and clean design." />
-        <meta name="keywords" content="customer support, live chat, AI bots, CRM automation, ticket resolution, The Dynamic Rankers" />
+        <title>24/7 World-Class Customer Support | The Dynamic Rankers</title>
+        <meta name="description" content="Deliver exceptional customer experiences with our 24/7 support solutions. We combine AI efficiency with human empathy to ensure your customers always feel valued." />
+        <meta property="og:title" content="24/7 World-Class Customer Support | The Dynamic Rankers" />
+        <meta property="og:description" content="Deliver exceptional customer experiences with our 24/7 support solutions. We combine AI efficiency with human empathy to ensure your customers always feel valued." />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <div

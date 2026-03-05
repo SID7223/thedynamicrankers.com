@@ -5,11 +5,11 @@ const PredictiveAnalysis: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Predictive Analysis Definition | The Dynamic Rankers</title>
-        <meta
-          name="description"
-          content="Predictive analysis uses historical performance data and current behavioral signals to estimate future outcomes such as lead quality, campaign performance, and churn risk."
-        />
+        <title>Predictive Analysis Explained | The Dynamic Rankers</title>
+        <meta name="description" content="Predictive analysis uses historical performance data and current behavioral signals to estimate future outcomes such as lead quality, campaign performance, and churn risk." />
+        <meta property="og:title" content="Predictive Analysis Explained | The Dynamic Rankers" />
+        <meta property="og:description" content="Predictive analysis uses historical performance data and current behavioral signals to estimate future outcomes such as lead quality, campaign performance, and churn risk." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 pt-32 px-8 pb-8">

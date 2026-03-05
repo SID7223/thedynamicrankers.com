@@ -33,9 +33,11 @@ const ContentCreationPage = () => {
   return (
     <>
       <Helmet>
-        <title>Content Creation Services USA - The Dynamic Rankers</title>
-        <meta name="description" content="Professional content creation services in USA. Copywriting, video editing, blog planning, and social media design from The Dynamic Rankers." />
-        <meta name="keywords" content="content creation, copywriting, video editing, blog writing, social media design, USA, The Dynamic Rankers" />
+        <title>Professional Content Creation Services | The Dynamic Rankers</title>
+        <meta name="description" content="Elevate your brand with high-quality content that resonates. From expert copywriting to professional video editing, we create assets that drive engagement and sales." />
+        <meta property="og:title" content="Professional Content Creation Services | The Dynamic Rankers" />
+        <meta property="og:description" content="Elevate your brand with high-quality content that resonates. From expert copywriting to professional video editing, we create assets that drive engagement and sales." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">

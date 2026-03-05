@@ -5,9 +5,11 @@ const DesignYourSite = () => {
   return (
     <>
       <Helmet>
-        <title>Design Your Site | The Dynamic Rankers</title>
-        <meta name="description" content="Explore The Dynamic Rankers' expert approach to Design Your Site with clear visuals and smart automation." />
-        <meta name="keywords" content="website design, custom design, brand identity, The Dynamic Rankers" />
+        <title>Sleek and Modern Website Design | The Dynamic Rankers</title>
+        <meta name="description" content="Experience Apple-level design combined with Google-level performance. Our website designs are built to capture attention and guide users toward conversion." />
+        <meta property="og:title" content="Sleek and Modern Website Design | The Dynamic Rankers" />
+        <meta property="og:description" content="Experience Apple-level design combined with Google-level performance. Our website designs are built to capture attention and guide users toward conversion." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="p-8">

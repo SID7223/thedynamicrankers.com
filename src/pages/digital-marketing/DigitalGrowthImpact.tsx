@@ -6,8 +6,11 @@ const DigitalGrowthImpact: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Digital Growth Impact | The Dynamic Rankers</title>
-        <meta name="description" content="Discover how digital marketing transforms business growth with The Dynamic Rankers. Learn about conversion rates, audience targeting, and data-driven strategies." />
+        <title>Measure and Accelerate Your Success | The Dynamic Rankers</title>
+        <meta name="description" content="Analyze the real-world impact of digital growth strategies on your business. Learn how to track KPIs and optimize your marketing for maximum long-term profitability." />
+        <meta property="og:title" content="Measure and Accelerate Your Success | The Dynamic Rankers" />
+        <meta property="og:description" content="Analyze the real-world impact of digital growth strategies on your business. Learn how to track KPIs and optimize your marketing for maximum long-term profitability." />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 py-12">

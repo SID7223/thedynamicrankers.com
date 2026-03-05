@@ -9,6 +9,9 @@ const BuildingSustainableDigitalEcosystems: React.FC = () => {
       <Helmet>
         <title>Building Sustainable Digital Ecosystems for the Future | The Dynamic Rankers</title>
         <meta name="description" content="Discover why Building Sustainable Digital Ecosystems for the Future is essential for your success in 2026 and beyond." />
+        <meta property="og:title" content="Building Sustainable Digital Ecosystems for the Future | The Dynamic Rankers" />
+        <meta property="og:description" content="Discover why Building Sustainable Digital Ecosystems for the Future is essential for your success in 2026 and beyond." />
+        <meta property="og:type" content="article" />
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
