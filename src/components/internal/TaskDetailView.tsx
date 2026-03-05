@@ -44,7 +44,7 @@ interface TaskDetailViewProps {
   onUpdate: (id: number, data: Partial<Task>) => void;
   onDelete: (id: number) => void;
   onClose: () => void;
-  lastMessageTimestamp: number;
+  lastMessageTimestamp: string;
 }
 
 const TaskDetailView: React.FC<TaskDetailViewProps> = ({

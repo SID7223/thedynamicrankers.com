@@ -51,7 +51,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
   const fetchMessages = useCallback(async () => {
     if (taskId === null) return;
     try {
-      const res = await fetch(`/api/internal/tasks?action=messages&taskId=${taskId}`);
+      const res = await fetch(`/api/internal/chat?taskId=${taskId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -63,10 +63,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
   useEffect(() => {
     fetchMessages();
-    const eventSource = new EventSource('/api/internal/tasks?stream=true');
+    const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'new_message' && (data.taskId === taskId || data.taskId === null)) {
+      if (data.type === 'CHAT_MSG' && (data.payload.task_id === taskId || data.payload.task_id === 0)) {
         fetchMessages();
         if (scrollRef.current) {
           const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 100;
@@ -101,10 +101,11 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
     setSending(true);
     try {
-      const res = await fetch('/api/internal/tasks', {
+      const res = await fetch('/api/internal/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          senderId: currentUser.id,
           action: 'message',
           taskId,
           content: input,

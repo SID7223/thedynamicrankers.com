@@ -81,7 +81,7 @@ const InternalDashboard: React.FC = () => {
     try {
       const [tasksRes, usersRes] = await Promise.all([
         fetch('/api/internal/tasks'),
-        fetch('/api/internal/auth?action=users')
+        fetch('/api/internal/users')
       ]);
 
       if (tasksRes.ok && usersRes.ok) {
@@ -104,15 +104,16 @@ const InternalDashboard: React.FC = () => {
     setLoading(false);
 
     // SSE for real-time updates
-    const eventSource = new EventSource('/api/internal/tasks?stream=true');
+    const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'task_update' || data.type === 'new_task') {
+      if (data.type === 'SYNC_TASKS' || data.type === 'task_update' || data.type === 'new_task') {
         fetchInitialData();
-      } else if (data.type === 'new_message') {
+      } else if (data.type === 'CHAT_MSG' || data.type === 'new_message') {
         setLastMessageTimestamp(new Date().toISOString());
-        if (data.taskId !== activeTaskId) {
-          setTasks(prev => prev.map(t => t.id === data.taskId ? { ...t, hasUnread: true } : t));
+        const taskId = data.payload?.task_id || data.taskId;
+        if (taskId && taskId !== activeTaskId) {
+          setTasks(prev => prev.map(t => t.id === taskId ? { ...t, hasUnread: true } : t));
         }
       }
     };
@@ -152,7 +153,7 @@ const InternalDashboard: React.FC = () => {
       const res = await fetch('/api/internal/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData)
+        body: JSON.stringify({ ...taskData, created_by: session?.id || 1 })
       });
       if (res.ok) {
         setIsNewTaskModalOpen(false);
@@ -165,10 +166,10 @@ const InternalDashboard: React.FC = () => {
 
   const handleUpdateTask = async (taskId: number, updates: TaskUpdateInput) => {
     try {
-      const res = await fetch('/api/internal/tasks', {
-        method: 'PUT',
+      const res = await fetch(`/api/internal/tasks?id=${taskId}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: taskId, ...updates })
+        body: JSON.stringify(updates)
       });
       if (res.ok) {
         if (taskId === activeTaskId) {
