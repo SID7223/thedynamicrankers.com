@@ -1,12 +1,4 @@
-/**
- * Internal SSE Stream Protocol (Edge-Optimized)
- *
- * This stream provides real-time updates for the Sovereign Node dashboard.
- * In a serverless environment like Cloudflare Pages, maintaining a "global"
- * state for triggers usually requires Durable Objects.
- * For this implementation, we optimize the polling and delivery logic.
- */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Env {
   DB?: D1Database;
 }
@@ -26,39 +18,36 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         }
       };
 
-      // Send initial heartbeat
       sendEvent({ type: 'HEARTBEAT', timestamp: new Date().toISOString() });
 
-      // Track last seen IDs to only push new events
       let lastMessageId = 0;
-      let lastTaskId = 0;
 
-      // Initial check to set the baseline
+
       if (env.DB) {
         try {
           const lastMsg = await env.DB.prepare('SELECT id FROM messages ORDER BY id DESC LIMIT 1').first() as { id: number } | null;
           if (lastMsg) lastMessageId = lastMsg.id;
 
-          const lastTsk = await env.DB.prepare('SELECT id FROM tasks ORDER BY id DESC LIMIT 1').first() as { id: number } | null;
-          if (lastTsk) lastTaskId = lastTsk.id;
+
         } catch (err) {
           console.error('Initial baseline check failed:', err);
         }
       }
 
-      // 1. High-frequency Database Polling (Simulated Trigger)
       const pollInterval = setInterval(async () => {
         if (!env.DB) return;
 
         try {
-          // Check for new messages
-          const { results: newMessages } = await env.DB.prepare(
-            'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.id > ? ORDER BY id ASC'
-          ).bind(lastMessageId).all();
+          // Check for updates (messages, tasks, or deleted tasks)
+          // For simplicity in this mock-SSE, we'll check counts or latest IDs
+          const counts = await env.DB.prepare('SELECT (SELECT MAX(id) FROM messages) as msg, (SELECT MAX(id) FROM tasks) as tsk, (SELECT COUNT(*) FROM tasks) as tsk_count').first() as any;
 
-          if (newMessages && newMessages.length > 0) {
-            for (const item of newMessages) {
-              const msg = item as any;
+          if (counts.msg > lastMessageId) {
+            const { results: newMessages } = await env.DB.prepare(
+              'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.id > ? ORDER BY id ASC'
+            ).bind(lastMessageId).all();
+
+            for (const msg of (newMessages || []) as any[]) {
               sendEvent({
                 type: 'CHAT_MSG',
                 payload: {
@@ -73,40 +62,22 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
             }
           }
 
-          // Check for new tasks
-          const { results: newTasks } = await env.DB.prepare(
-            'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id WHERE t.id > ? ORDER BY id ASC'
-          ).bind(lastTaskId).all();
+          // Trigger a refresh event for any change in tasks (created, deleted, or updated status/assignee)
+          // In a real production app, we'd track a 'last_updated' timestamp on the tasks table
+          sendEvent({ type: 'SYNC_TASKS' });
 
-          if (newTasks && newTasks.length > 0) {
-            for (const item of newTasks) {
-              const task = item as any;
-              sendEvent({
-                type: 'TASK_CREATED',
-                payload: task
-              });
-              lastTaskId = Math.max(lastTaskId, task.id);
-            }
-          }
         } catch (err) {
           console.error('SSE Poll Error:', err);
         }
       }, 3000);
 
-      // 2. Continuous Heartbeat
       const heartbeat = setInterval(() => {
         sendEvent({ type: 'HEARTBEAT', timestamp: new Date().toISOString() });
       }, 30000);
 
-      // 3. Presence Simulation
-      const presenceSim = setInterval(() => {
-          sendEvent({ type: 'PRESENCE_UPDATE', active_users: ['SID', 'Eric'] });
-      }, 15000);
-
       request.signal.addEventListener('abort', () => {
         clearInterval(pollInterval);
         clearInterval(heartbeat);
-        clearInterval(presenceSim);
         try {
           controller.close();
         } catch {
