@@ -13,7 +13,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   if (request.method === 'GET') {
     try {
       const { results } = await env.DB.prepare(
-        'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.status DESC, t.created_at DESC'
+        'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.created_at DESC'
       ).all();
       return new Response(JSON.stringify(results || []), {
         status: 200,
@@ -28,13 +28,14 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
     try {
       const body = await request.json() as any;
       const result = await env.DB.prepare(
-        'INSERT INTO tasks (title, description, assigned_to, due_date, status, created_by) VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO tasks (title, description, assigned_to, due_date, priority, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)'
       ).bind(
         body.title || 'Untitled Directive',
         body.description || null,
         body.assigned_to || null,
         body.due_date || null,
-        'pending',
+        body.priority || 'Medium',
+        body.status || 'todo',
         body.created_by || 1
       ).run();
 
@@ -59,6 +60,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const values = [];
 
       if (body.status !== undefined) { updates.push('status = ?'); values.push(body.status); }
+      if (body.priority !== undefined) { updates.push('priority = ?'); values.push(body.priority); }
       if (body.assigned_to !== undefined) { updates.push('assigned_to = ?'); values.push(body.assigned_to); }
       if (body.title !== undefined) { updates.push('title = ?'); values.push(body.title); }
       if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
