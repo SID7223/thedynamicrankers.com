@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { User, Phone, Mail, MapPin, FileText, ChevronLeft, Save, CheckCircle2 } from 'lucide-react';
+import {
+  ChevronLeft,
+  Save,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  FileText,
+  CheckCircle2,
+  Clock
+} from 'lucide-react';
 
 interface Customer {
-  id: string;
+  id: number;
   name: string;
   phone: string;
   email: string;
@@ -21,8 +31,8 @@ const STAGES = ['Discovery', 'Trial', 'Presentation', 'Paperwork', 'Checkout', '
 
 const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, onUpdate }) => {
   const [formData, setFormData] = useState<Customer | null>(null);
-  const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -78,18 +88,18 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
   const currentStageIndex = STAGES.indexOf(formData.sales_stage);
 
   return (
-    <div className="h-full flex flex-col bg-[#1f1f1f]">
+    <div className="h-full flex flex-col bg-white dark:bg-[#1f1f1f] transition-colors duration-300">
       {/* Header */}
-      <div className="px-6 lg:px-10 py-4 lg:py-6 border-b border-zinc-800/50 flex items-center justify-between bg-[#1f1f1f]/80 backdrop-blur-xl shrink-0">
+      <div className="px-6 lg:px-10 py-4 lg:py-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-white/80 dark:bg-[#1f1f1f]/80 backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-4 lg:gap-6 min-w-0">
           <button
             onClick={onBack}
-            className="p-2 lg:p-2.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-xl transition-all border border-transparent lg:border-zinc-800/50 shrink-0"
+            className="p-2 lg:p-2.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-all border border-transparent lg:border-zinc-200 dark:border-zinc-800/50 shrink-0"
           >
             <ChevronLeft size={20} />
           </button>
           <div className="min-w-0">
-            <h2 className="text-lg lg:text-xl font-bold text-white tracking-tight truncate">{formData.name}</h2>
+            <h2 className="text-lg lg:text-xl font-bold text-zinc-900 dark:text-white tracking-tight truncate">{formData.name}</h2>
             <p className="text-zinc-500 text-[10px] lg:text-xs font-medium uppercase tracking-widest mt-0.5 truncate">Profile & Intel</p>
           </div>
         </div>
@@ -109,9 +119,9 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
 
           {/* Sales Ladder */}
           <section className="overflow-x-auto lg:overflow-visible -mx-6 px-6 pb-6 lg:pb-0 lg:mx-0 lg:px-0 scrollbar-none">
-            <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-8 font-sans">Sales Pipeline Ladder</h3>
+            <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-8 font-sans">Sales Pipeline Ladder</h3>
             <div className="relative min-w-[500px] lg:min-w-0 px-2">
-              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-zinc-800 -translate-y-1/2" />
+              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-zinc-100 dark:bg-zinc-800 -translate-y-1/2" />
               <div
                 className="absolute top-1/2 left-0 h-0.5 bg-indigo-500 -translate-y-1/2 transition-all duration-500"
                 style={{ width: `${(currentStageIndex / (STAGES.length - 1)) * 100}%` }}
@@ -128,12 +138,12 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
                     >
                       <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
                         isCurrent ? 'bg-indigo-600 border-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.4)]' :
-                        isActive ? 'bg-zinc-800 border-indigo-500/50' : 'bg-zinc-900 border-zinc-800'
+                        isActive ? 'bg-white dark:bg-zinc-800 border-indigo-500/50' : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800'
                       }`}>
-                        {isActive ? <CheckCircle2 size={18} className={isCurrent ? 'text-white' : 'text-indigo-400'} /> : <div className="w-2 h-2 rounded-full bg-zinc-700 group-hover:bg-zinc-500" />}
+                        {isActive ? <CheckCircle2 size={18} className={isCurrent ? 'text-white' : 'text-indigo-600 dark:text-indigo-400'} /> : <div className="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700 group-hover:bg-zinc-400 dark:group-hover:bg-zinc-500" />}
                       </div>
                       <span className={`absolute top-14 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${
-                        isCurrent ? 'text-indigo-400' : 'text-zinc-600 group-hover:text-zinc-400'
+                        isCurrent ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-400 dark:text-zinc-600 group-hover:text-zinc-900 dark:group-hover:text-zinc-400'
                       }`}>
                         {stage}
                       </span>
@@ -146,49 +156,49 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 pt-10">
             {/* Contact Info */}
-            <div className="space-y-8 bg-[#262728] border border-zinc-800/50 p-6 lg:p-8 rounded-3xl">
-              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Contact Information</h3>
+            <div className="space-y-8 bg-zinc-50 dark:bg-[#262728] border border-zinc-200 dark:border-zinc-800/50 p-6 lg:p-8 rounded-3xl shadow-sm">
+              <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Contact Information</h3>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-2">
-                    <User size={12} className="text-indigo-400" /> Full Name
+                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+                    <User size={12} className="text-indigo-600 dark:text-indigo-400" /> Full Name
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
+                    className="w-full bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-2">
-                    <Mail size={12} className="text-indigo-400" /> Email Address
+                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+                    <Mail size={12} className="text-indigo-600 dark:text-indigo-400" /> Email Address
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
+                    className="w-full bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.email}
                     onChange={e => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-2">
-                    <Phone size={12} className="text-indigo-400" /> Phone Number
+                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+                    <Phone size={12} className="text-indigo-600 dark:text-indigo-400" /> Phone Number
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
+                    className="w-full bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.phone}
                     onChange={e => setFormData({...formData, phone: e.target.value})}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-2">
-                    <MapPin size={12} className="text-indigo-400" /> Physical Address
+                  <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-2">
+                    <MapPin size={12} className="text-indigo-600 dark:text-indigo-400" /> Physical Address
                   </label>
                   <input
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
+                    className="w-full bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-900 dark:text-white focus:ring-1 focus:ring-indigo-500/50 outline-none transition-all"
                     value={formData.address}
                     onChange={e => setFormData({...formData, address: e.target.value})}
                   />
@@ -197,15 +207,15 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
             </div>
 
             {/* Notes Section */}
-            <div className="bg-[#262728] border border-zinc-800/50 p-6 lg:p-8 rounded-3xl flex flex-col min-h-[300px] lg:min-h-0">
-              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Strategic Notes & Intel</h3>
+            <div className="bg-zinc-50 dark:bg-[#262728] border border-zinc-200 dark:border-zinc-800/50 p-6 lg:p-8 rounded-3xl flex flex-col min-h-[300px] lg:min-h-0 shadow-sm">
+              <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Strategic Notes & Intel</h3>
               <div className="flex-1 flex flex-col space-y-2">
                  <div className="flex items-center gap-2 mb-2">
-                    <FileText size={12} className="text-indigo-400" />
-                    <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Internal Ledger</span>
+                    <FileText size={12} className="text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">Internal Ledger</span>
                  </div>
                  <textarea
-                  className="flex-1 w-full bg-zinc-900/50 border border-zinc-800 rounded-2xl px-5 py-4 text-white focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none leading-relaxed text-sm lg:text-base"
+                  className="flex-1 w-full bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-4 text-zinc-900 dark:text-white focus:ring-1 focus:ring-indigo-500/50 outline-none resize-none leading-relaxed text-sm lg:text-base"
                   placeholder="Enter strategic observations..."
                   value={formData.notes}
                   onChange={e => setFormData({...formData, notes: e.target.value})}
