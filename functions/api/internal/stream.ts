@@ -22,13 +22,10 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
 
       let lastMessageId = 0;
 
-
       if (env.DB) {
         try {
           const lastMsg = await env.DB.prepare('SELECT id FROM messages ORDER BY id DESC LIMIT 1').first() as { id: number } | null;
           if (lastMsg) lastMessageId = lastMsg.id;
-
-
         } catch (err) {
           console.error('Initial baseline check failed:', err);
         }
@@ -38,13 +35,12 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         if (!env.DB) return;
 
         try {
-          // Check for updates (messages, tasks, or deleted tasks)
-          // For simplicity in this mock-SSE, we'll check counts or latest IDs
+          // Check for updates
           const counts = await env.DB.prepare('SELECT (SELECT MAX(id) FROM messages) as msg, (SELECT MAX(id) FROM tasks) as tsk, (SELECT COUNT(*) FROM tasks) as tsk_count').first() as any;
 
-          if (counts.msg > lastMessageId) {
+          if (counts && counts.msg > lastMessageId) {
             const { results: newMessages } = await env.DB.prepare(
-              'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.id > ? ORDER BY id ASC'
+              'SELECT m.*, COALESCE(m.timestamp, m.created_at) as timestamp, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.id > ? ORDER BY id ASC'
             ).bind(lastMessageId).all();
 
             for (const msg of (newMessages || []) as any[]) {
@@ -54,7 +50,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
                   id: msg.id,
                   task_id: msg.task_id || 0,
                   content: msg.content,
-                  sender: msg.sender_name,
+                  sender_name: msg.sender_name,
                   timestamp: msg.timestamp
                 }
               });
@@ -62,8 +58,6 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
             }
           }
 
-          // Trigger a refresh event for any change in tasks (created, deleted, or updated status/assignee)
-          // In a real production app, we'd track a 'last_updated' timestamp on the tasks table
           sendEvent({ type: 'SYNC_TASKS' });
 
         } catch (err) {

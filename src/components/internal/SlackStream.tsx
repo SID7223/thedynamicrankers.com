@@ -49,9 +49,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
   const recordingInterval = useRef<any>(null);
 
   const fetchMessages = useCallback(async () => {
-    if (taskId === null) return;
+    const effectiveTaskId = taskId ?? 0;
     try {
-      const res = await fetch(`/api/internal/tasks?action=messages&taskId=${taskId}`);
+      const res = await fetch(`/api/internal/chat?taskId=${effectiveTaskId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -63,10 +63,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
   useEffect(() => {
     fetchMessages();
-    const eventSource = new EventSource('/api/internal/tasks?stream=true');
+    const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'new_message' && (data.taskId === taskId || data.taskId === null)) {
+      if (data.type === 'CHAT_MSG' && (data.payload.task_id === (taskId || 0))) {
         fetchMessages();
         if (scrollRef.current) {
           const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 100;
@@ -101,11 +101,11 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
     setSending(true);
     try {
-      const res = await fetch('/api/internal/tasks', {
+      const res = await fetch('/api/internal/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'message',
+          senderId: currentUser.id,
           taskId,
           content: input,
           attachments
@@ -193,7 +193,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
           return (
             <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group`}>
               <div className={`flex max-w-[85%] gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-                <Avatar name={msg.sender_name} size="sm" />
+                <Avatar name={msg.sender_name || "?"} size="sm" />
                 <div className="flex flex-col">
                   <div className={`px-4 py-2.5 rounded-2xl text-sm ${isOwn ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 rounded-tl-none shadow-sm'}`}>
                     {msg.attachments && msg.attachments.length > 0 && (
@@ -222,7 +222,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
                     {msg.content}
                   </div>
                   <div className={`flex items-center gap-2 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "..."}</span>
                     {isOwn && <div className="flex"><CheckCheck size={12} className={isRead ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-300 dark:text-zinc-600"} /></div>}
                   </div>
                 </div>
