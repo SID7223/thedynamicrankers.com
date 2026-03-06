@@ -10,10 +10,24 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
   if (request.method === 'GET') {
     try {
-      const { results } = await env.DB.prepare(
-        'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id ORDER BY t.created_at DESC'
-      ).all();
-      return new Response(JSON.stringify(results || []), {
+      const { results } = await env.DB.prepare(`
+        SELECT t.*, u.name as assigned_name, creator.name as creator_name,
+        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', user_id, 'name', name))
+         FROM task_assignees ta
+         JOIN users u2 ON ta.user_id = u2.id
+         WHERE ta.task_id = t.id) as assignees
+        FROM tasks t
+        LEFT JOIN users u ON t.assigned_to = u.id
+        LEFT JOIN users creator ON t.created_by = creator.id
+        ORDER BY t.created_at DESC
+      `).all();
+
+      const processedResults = (results || []).map((r: any) => ({
+        ...r,
+        assignees: JSON.parse(r.assignees || '[]')
+      }));
+
+      return new Response(JSON.stringify(processedResults), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -43,25 +57,30 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         taskNumber,
         body.title || 'Untitled Directive',
         body.description || null,
-        body.assigned_to || null,
+        body.assignees && body.assignees[0] ? body.assignees[0] : null,
         body.due_date || null,
         body.priority || 'Medium',
         body.status || 'todo',
         body.created_by
       ).run();
 
-      // 2. Create the associated chat room
+      // 2. Handle Multiple Assignees
+      if (body.assignees && Array.isArray(body.assignees)) {
+        for (const userId of body.assignees) {
+          await env.DB.prepare(
+            'INSERT OR IGNORE INTO task_assignees (id, task_id, user_id) VALUES (?, ?, ?)'
+          ).bind(crypto.randomUUID(), taskId, userId).run();
+        }
+      }
+
+      // 3. Create the associated chat room
       await env.DB.prepare(
         'INSERT INTO chat_rooms (id, type, task_id) VALUES (?, ?, ?)'
       ).bind(crypto.randomUUID(), 'task', taskId).run();
 
-      const newTask = await env.DB.prepare(
-        'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id WHERE t.id = ?'
-      ).bind(taskId).first();
-
-      return new Response(JSON.stringify(newTask), { status: 201, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ id: taskId, success: true }), { status: 201 });
     } catch (err: any) {
-      return new Response(JSON.stringify({ error: 'POST_TASK_FAILED', message: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'POST_TASK_FAILED', message: err.message }), { status: 500 });
     }
   }
 
@@ -76,7 +95,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       if (body.status !== undefined) { updates.push('status = ?'); values.push(body.status); }
       if (body.priority !== undefined) { updates.push('priority = ?'); values.push(body.priority); }
-      if (body.assigned_to !== undefined) { updates.push('assigned_to = ?'); values.push(body.assigned_to); }
       if (body.title !== undefined) { updates.push('title = ?'); values.push(body.title); }
       if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
       if (body.due_date !== undefined) { updates.push('due_date = ?'); values.push(body.due_date); }
@@ -87,7 +105,24 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         await env.DB.prepare(query).bind(...values, id).run();
       }
 
-      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      // Handle Multiple Assignees update
+      if (body.assignees !== undefined && Array.isArray(body.assignees)) {
+        // Delete old assignees and insert new ones
+        await env.DB.prepare('DELETE FROM task_assignees WHERE task_id = ?').bind(id).run();
+        for (const userId of body.assignees) {
+          await env.DB.prepare(
+            'INSERT INTO task_assignees (id, task_id, user_id) VALUES (?, ?, ?)'
+          ).bind(crypto.randomUUID(), id, userId).run();
+        }
+        // Update the primary assigned_to field for backward compat
+        if (body.assignees.length > 0) {
+          await env.DB.prepare('UPDATE tasks SET assigned_to = ? WHERE id = ?').bind(body.assignees[0], id).run();
+        } else {
+          await env.DB.prepare('UPDATE tasks SET assigned_to = NULL WHERE id = ?').bind(id).run();
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true }));
     } catch (err: any) {
       return new Response(JSON.stringify({ error: 'PATCH_TASK_FAILED', message: err.message }), { status: 500 });
     }
@@ -97,7 +132,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
     try {
       const id = url.searchParams.get('id');
       if (!id) return new Response(JSON.stringify({ error: 'Missing directive ID' }), { status: 400 });
-
       await env.DB.prepare('DELETE FROM tasks WHERE id = ?').bind(id).run();
       return new Response(JSON.stringify({ success: true }));
     } catch (err: any) {

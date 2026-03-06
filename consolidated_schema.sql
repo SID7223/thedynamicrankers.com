@@ -193,15 +193,38 @@ CREATE TRIGGER IF NOT EXISTS after_message_delete AFTER DELETE ON messages BEGIN
     DELETE FROM message_search_index WHERE message_id = old.id;
 END;
 
--- 15. Seed Initial Superusers
+-- 15. Task Assignees Table
+CREATE TABLE IF NOT EXISTS task_assignees (
+    id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(task_id, user_id)
+);
+
+-- 16. Task Attachments Table
+CREATE TABLE IF NOT EXISTS task_attachments (
+    id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    file_type TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    file_url TEXT NOT NULL,
+    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+);
+
+-- 17. Seed Initial Superusers
 -- Note: UUIDs generated for the seed users
 INSERT OR IGNORE INTO users (id, name, email, password_hash, role) VALUES
 ('u_001', 'SID', 'saadumar7223@gmail.com', '123456', 'superuser'),
 ('u_002', 'Eric', 'eric@thedynamicrankers.com', '123456', 'superuser');
 
--- 16. Initialize Global Chat Room
+-- 18. Initialize Global Chat Room
 INSERT OR IGNORE INTO chat_rooms (id, type, task_id) VALUES ('global-room', 'global', NULL);
 
--- 17. Seed Initial Members for Global Room
+-- 19. Seed Initial Members for Global Room
 INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_001', 'global-room', 'u_001');
 INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_002', 'global-room', 'u_002');

@@ -1,13 +1,33 @@
-[2024-03-XX] - INITIAL INDUSTRY OVERHAUL
------------------------------------------
-1. Migrated all tables (Core, Messaging, CRM) to TEXT PRIMARY KEY (UUID).
-2. Introduced 'chat_rooms' to unify Task and Global chat logic.
-3. Implemented SQLite FTS5 Full-Text Search for messages.
-4. Added support for message threading (parent_message_id).
-5. Standardized 'task_number' (e.g., TASK-101) for human-readable IDs.
-6. Unified CRM with the industry-level schema.
-7. Seeded SID and Eric with superuser roles.
+DATABASE SCHEMA UPDATE NOTICE - Fri Mar  6 15:10:09 UTC 2026
 
-[2024-03-XX] - ADDED CHAT ROOM MEMBERSHIP
-1. Added 'chat_room_members' table to track user membership in rooms.
-2. Initialized SID and Eric as members of 'global-room'.
+TABLE: tasks (ALREADY EXISTS)
+CHANGES: We are moving to a multi-assignee model. While we keep 'assigned_to' for backward compatibility (primary assignee), we are adding a junction table 'task_assignees' for multiple assignees.
+
+NEW TABLE: task_assignees
+SQL:
+CREATE TABLE IF NOT EXISTS task_assignees (
+    id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(task_id, user_id)
+);
+
+NEW TABLE: task_attachments
+SQL:
+CREATE TABLE IF NOT EXISTS task_attachments (
+    id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL,
+    file_name TEXT NOT NULL,
+    file_type TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    file_url TEXT NOT NULL,
+    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+);
+
+Migration Strategy:
+1. Execute the above SQL to create junction and attachment tables.
+2. The internal API logic in /api/internal/tasks now supports CRUD for these new tables.

@@ -38,7 +38,8 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       const processedResults = (results || []).map((r: any) => ({
         ...r,
-        attachments: JSON.parse(r.attachments || '[]')
+        attachments: JSON.parse(r.attachments || '[]'),
+        edited: !!r.edited
       }));
 
       return new Response(JSON.stringify(processedResults), { headers: { 'Content-Type': 'application/json' } });
@@ -92,6 +93,33 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       }
 
       return new Response(JSON.stringify({ id: messageId, success: true }), { status: 201 });
+    } catch (err: any) {
+      return new Response(err.message, { status: 500 });
+    }
+  }
+
+  if (request.method === 'PATCH') {
+    try {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response('Missing message ID', { status: 400 });
+      const body = await request.json() as any;
+
+      await env.DB.prepare(
+        'UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+      ).bind(body.content, id).run();
+
+      return new Response(JSON.stringify({ success: true }));
+    } catch (err: any) {
+      return new Response(err.message, { status: 500 });
+    }
+  }
+
+  if (request.method === 'DELETE') {
+    try {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response('Missing message ID', { status: 400 });
+      await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(id).run();
+      return new Response(JSON.stringify({ success: true }));
     } catch (err: any) {
       return new Response(err.message, { status: 500 });
     }

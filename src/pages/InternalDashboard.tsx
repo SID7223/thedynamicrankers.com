@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import {
   Shield,
   LayoutDashboard,
@@ -29,13 +30,37 @@ const InternalDashboard: React.FC = () => {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState<'tasks' | 'customers' | 'invoices' | 'appointments' | 'global-chat'>('tasks');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeView = (searchParams.get('view') as any) || 'tasks';
+  const activeTaskId = searchParams.get('task');
+  const selectedCustomerId = searchParams.get('customer');
+
+  const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null; invoice?: string | null; appointment?: string | null }) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (params.view !== undefined) newParams.set('view', params.view);
+
+    const fields: ('task' | 'customer' | 'invoice' | 'appointment')[] = ['task', 'customer', 'invoice', 'appointment'];
+    fields.forEach(field => {
+      if (params[field] === null) newParams.delete(field);
+      else if (params[field] !== undefined) newParams.set(field, params[field] as string);
+    });
+
+    setSearchParams(newParams, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  const setActiveView = (view: any) => updateNavigation({
+    view,
+    task: null,
+    customer: null,
+    invoice: null,
+    appointment: null
+  });
+  const setActiveTaskId = (task: string | null) => updateNavigation({ task });
+  const setSelectedCustomerId = (customer: string | null) => updateNavigation({ customer });
   const [tasks, setTasks] = useState<any[]>([]);
   const [operatives, setOperatives] = useState<any[]>([]);
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState(Date.now());
   const [isDark, setIsDark] = useState(true);
 

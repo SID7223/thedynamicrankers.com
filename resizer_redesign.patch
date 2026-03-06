@@ -1,0 +1,19 @@
+<<<<<<< SEARCH
+      <div onMouseDown={handleMouseDown} className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50">
+        <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
+        <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-600 transition-all flex flex-col items-center justify-center gap-1">
+           <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
+           <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
+           <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
+        </div>
+      </div>
+=======
+      <div onMouseDown={handleMouseDown} className="hidden lg:flex w-10 h-full -mx-5 cursor-col-resize group items-center justify-center relative z-50">
+        <div className="w-[2px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500 transition-colors" />
+        <div className="absolute top-1/2 -translate-y-1/2 w-3.5 h-20 bg-zinc-200 dark:bg-zinc-800 rounded-full border border-zinc-300 dark:border-zinc-700 group-hover:bg-indigo-600 group-hover:border-indigo-500 transition-all flex flex-col items-center justify-center gap-1.5 shadow-xl">
+           <div className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white" />
+           <div className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white" />
+           <div className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white" />
+        </div>
+      </div>
+>>>>>>> REPLACE

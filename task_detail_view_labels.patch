@@ -1,0 +1,38 @@
+<<<<<<< SEARCH
+                   <div className="grid grid-cols-12 items-center gap-4">
+                      <label className="col-span-5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">Due date</label>
+                      <div className="col-span-7">
+                         <input
+                            type="date"
+                            className="bg-transparent border-none p-0 text-sm font-bold text-zinc-900 dark:text-zinc-100 focus:ring-0 cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
+                            value={task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : ''}
+                            onChange={(e) => onUpdate(task.id, { due_date: e.target.value })}
+                         />
+                      </div>
+                   </div>
+              </div>
+            </div>
+          </div>
+=======
+                   <div className="grid grid-cols-12 items-center gap-4">
+                      <label className="col-span-5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">Due date</label>
+                      <div className="col-span-7">
+                         <input
+                            type="date"
+                            className="bg-transparent border-none p-0 text-sm font-bold text-zinc-900 dark:text-zinc-100 focus:ring-0 cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
+                            value={task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : ''}
+                            onChange={(e) => onUpdate(task.id, { due_date: e.target.value })}
+                         />
+                      </div>
+                   </div>
+
+                   <div className="grid grid-cols-12 items-center gap-4">
+                      <label className="col-span-5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">Labels</label>
+                      <div className="col-span-7 flex flex-wrap gap-1.5">
+                         <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-[10px] font-bold text-zinc-600 dark:text-zinc-400 rounded">STRATEGY</span>
+                      </div>
+                   </div>
+              </div>
+            </div>
+          </div>
+>>>>>>> REPLACE
