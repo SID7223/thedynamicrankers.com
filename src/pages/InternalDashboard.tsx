@@ -104,19 +104,18 @@ const InternalDashboard: React.FC = () => {
     setLoading(false);
 
     // SSE for real-time updates
-    const eventSource = new EventSource('/api/internal/tasks?stream=true');
+    const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'task_update' || data.type === 'new_task') {
-        fetchInitialData();
-      } else if (data.type === 'new_message') {
-        setLastMessageTimestamp(new Date().toISOString());
-        if (data.taskId !== activeTaskId) {
-          setTasks(prev => prev.map(t => t.id === data.taskId ? { ...t, hasUnread: true } : t));
-        }
-      }
-    };
-
+if (data.type === 'SYNC_TASKS') {
+  fetchInitialData();
+} else if (data.type === 'CHAT_MSG') {
+  setLastMessageTimestamp(new Date().toISOString());
+  if (data.payload.task_id !== activeTaskId) {
+    setTasks(prev => prev.map(t => t.id === data.payload.task_id ? { ...t, hasUnread: true } : t));
+  }
+}
+  };
     return () => eventSource.close();
   }, [fetchInitialData, activeTaskId]);
 

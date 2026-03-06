@@ -19,7 +19,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const { results } = await env.DB.prepare(`
         SELECT m.*, u.name as sender_name,
         (SELECT COUNT(*) FROM message_reads mr WHERE mr.message_id = m.id AND mr.user_id != m.sender_id) as read_count,
-        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM message_attachments ma WHERE ma.message_id = m.id) as attachments
+        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM attachments ma WHERE ma.message_id = m.id) as attachments
         FROM messages m
         JOIN users u ON m.sender_id = u.id
         WHERE m.task_id ${taskId === '0' ? 'IS NULL' : '= ?'}
@@ -59,7 +59,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (body.attachments && Array.isArray(body.attachments)) {
         for (const att of body.attachments) {
           await env.DB.prepare(
-            'INSERT INTO message_attachments (message_id, file_name, file_type, file_size, file_url) VALUES (?, ?, ?, ?, ?)'
+            'INSERT INTO attachments (message_id, file_name, file_type, file_size, file_url) VALUES (?, ?, ?, ?, ?)'
           ).bind(
             newMessageId,
             att.name,
