@@ -15,7 +15,8 @@ import {
   Plus,
   History,
   AtSign,
-  Hash
+  Hash,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -45,6 +46,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
+  const [processingFiles, setProcessingFiles] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -113,6 +115,77 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior });
+    }
+  };
+
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setProcessingFiles(true);
+    try {
+      const newAttachments = await Promise.all(
+        Array.from(files).map(async (file) => {
+          let dataUrl: string;
+          if (file.type.startsWith('image/')) {
+            dataUrl = await compressImage(file);
+          } else {
+            dataUrl = await fileToBase64(file);
+          }
+          return { name: file.name, type: file.type, url: dataUrl, size: file.size };
+        })
+      );
+      setAttachments(prev => [...prev, ...newAttachments]);
+    } catch (err) {
+      console.error('File Processing Failed:', err);
+    } finally {
+      setProcessingFiles(false);
     }
   };
 
@@ -204,15 +277,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
           }
           return part;
       });
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    Array.from(files).forEach(file => {
-      const url = URL.createObjectURL(file);
-      setAttachments(prev => [...prev, { name: file.name, type: file.type, url, size: file.size }]);
-    });
   };
 
   const startRecording = async () => {
@@ -430,7 +494,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
         )}
         <form onSubmit={handleSend} className="relative flex items-center gap-2 lg:gap-3">
           <input type="file" ref={fileInputRef} className="hidden" multiple onChange={handleFileSelect} />
-          <button type="button" onClick={() => fileInputRef.current?.click()} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Paperclip size={18} lg:size={20} /></button>
+          <button type="button" onClick={() => fileInputRef.current?.click()} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0" disabled={processingFiles}>
+            {processingFiles ? <Loader2 size={18} className="animate-spin text-indigo-500" /> : <Paperclip size={18} />}
+          </button>
           <div className="relative flex-1">
             <input
               ref={inputRef}
@@ -449,7 +515,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
             {showEmojiPicker && <div className="absolute bottom-full right-0 mb-4 z-[100] shadow-2xl"><EmojiPicker theme={Theme.DARK} onEmojiClick={(emojiData) => { setInput(prev => prev + emojiData.emoji); inputRef.current?.focus(); }} /></div>}
           </div>
           {isRecording ? <div className="flex items-center gap-2 lg:gap-3 bg-red-500/10 border border-red-500/20 px-3 py-1.5 lg:px-4 lg:py-2 rounded-xl"><div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /><span className="text-red-600 dark:text-red-500 font-mono text-xs lg:text-sm">{Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}</span><button type="button" onClick={() => stopRecording()} className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={16} /></button></div> : <button type="button" onClick={startRecording} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Mic size={18} lg:size={20} /></button>}
-          <button type="submit" className="p-2.5 lg:p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50 disabled:grayscale shrink-0" disabled={sending || isRecording}><Send size={18} /></button>
+          <button type="submit" className="p-2.5 lg:p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50 disabled:grayscale shrink-0" disabled={sending || isRecording || processingFiles}><Send size={18} /></button>
         </form>
       </div>
     </div>
