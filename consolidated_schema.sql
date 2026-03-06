@@ -84,6 +84,17 @@ CREATE TABLE IF NOT EXISTS message_attachments (
 );
 
 -- 7. Message Mentions Table
+-- 7. Chat Room Members
+CREATE TABLE IF NOT EXISTS chat_room_members (
+    id TEXT PRIMARY KEY,
+    room_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(room_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS message_mentions (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
@@ -190,3 +201,7 @@ INSERT OR IGNORE INTO users (id, name, email, password_hash, role) VALUES
 
 -- 16. Initialize Global Chat Room
 INSERT OR IGNORE INTO chat_rooms (id, type, task_id) VALUES ('global-room', 'global', NULL);
+
+-- 17. Seed Initial Members for Global Room
+INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_001', 'global-room', 'u_001');
+INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_002', 'global-room', 'u_002');

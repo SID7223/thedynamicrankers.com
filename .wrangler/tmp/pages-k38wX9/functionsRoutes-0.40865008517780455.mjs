@@ -8,6 +8,7 @@ import { onRequest as __api_internal_crm_customers_ts_onRequest } from "/app/fun
 import { onRequest as __api_internal_crm_invoices_ts_onRequest } from "/app/functions/api/internal/crm_invoices.ts"
 import { onRequest as __api_internal_presence_ts_onRequest } from "/app/functions/api/internal/presence.ts"
 import { onRequest as __api_internal_read_receipts_ts_onRequest } from "/app/functions/api/internal/read_receipts.ts"
+import { onRequest as __api_internal_room_members_ts_onRequest } from "/app/functions/api/internal/room_members.ts"
 import { onRequest as __api_internal_tasks_ts_onRequest } from "/app/functions/api/internal/tasks.ts"
 import { onRequestPost as __api_contact_ts_onRequestPost } from "/app/functions/api/contact.ts"
 import { onRequestPost as __api_onboarding_ts_onRequestPost } from "/app/functions/api/onboarding.ts"
@@ -83,6 +84,13 @@ export const routes = [
       method: "",
       middlewares: [],
       modules: [__api_internal_read_receipts_ts_onRequest],
+    },
+  {
+      routePath: "/api/internal/room_members",
+      mountPath: "/api/internal",
+      method: "",
+      middlewares: [],
+      modules: [__api_internal_room_members_ts_onRequest],
     },
   {
       routePath: "/api/internal/tasks",

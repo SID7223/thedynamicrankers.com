@@ -32,14 +32,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// ../.wrangler/tmp/bundle-XBfADI/strip-cf-connecting-ip-header.js
+// ../.wrangler/tmp/bundle-18OZvk/strip-cf-connecting-ip-header.js
 function stripCfConnectingIPHeader(input, init) {
   const request = new Request(input, init);
   request.headers.delete("CF-Connecting-IP");
   return request;
 }
 var init_strip_cf_connecting_ip_header = __esm({
-  "../.wrangler/tmp/bundle-XBfADI/strip-cf-connecting-ip-header.js"() {
+  "../.wrangler/tmp/bundle-18OZvk/strip-cf-connecting-ip-header.js"() {
     __name(stripCfConnectingIPHeader, "stripCfConnectingIPHeader");
     globalThis.fetch = new Proxy(globalThis.fetch, {
       apply(target, thisArg, argArray) {
@@ -592,13 +592,71 @@ var init_read_receipts = __esm({
   }
 });
 
-// api/internal/tasks.ts
+// api/internal/room_members.ts
 var onRequest7;
+var init_room_members = __esm({
+  "api/internal/room_members.ts"() {
+    init_functionsRoutes_0_40865008517780455();
+    init_strip_cf_connecting_ip_header();
+    onRequest7 = /* @__PURE__ */ __name(async (context) => {
+      const { request, env } = context;
+      const url = new URL(request.url);
+      if (!env.DB)
+        return new Response("DB binding missing", { status: 503 });
+      if (request.method === "GET") {
+        const roomId = url.searchParams.get("roomId");
+        if (!roomId)
+          return new Response("Missing roomId", { status: 400 });
+        try {
+          const { results } = await env.DB.prepare(`
+        SELECT u.id, u.name, u.role, rm.joined_at
+        FROM users u
+        JOIN chat_room_members rm ON u.id = rm.user_id
+        WHERE rm.room_id = ?
+        ORDER BY u.name ASC
+      `).bind(roomId).all();
+          return new Response(JSON.stringify(results || []), { headers: { "Content-Type": "application/json" } });
+        } catch (err) {
+          return new Response(err.message, { status: 500 });
+        }
+      }
+      if (request.method === "POST") {
+        try {
+          const { roomId, userId } = await request.json();
+          await env.DB.prepare(
+            "INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES (?, ?, ?)"
+          ).bind(crypto.randomUUID(), roomId, userId).run();
+          return new Response(JSON.stringify({ success: true }), { status: 201 });
+        } catch (err) {
+          return new Response(err.message, { status: 500 });
+        }
+      }
+      if (request.method === "DELETE") {
+        const roomId = url.searchParams.get("roomId");
+        const userId = url.searchParams.get("userId");
+        if (!roomId || !userId)
+          return new Response("Missing params", { status: 400 });
+        try {
+          await env.DB.prepare(
+            "DELETE FROM chat_room_members WHERE room_id = ? AND user_id = ?"
+          ).bind(roomId, userId).run();
+          return new Response(JSON.stringify({ success: true }));
+        } catch (err) {
+          return new Response(err.message, { status: 500 });
+        }
+      }
+      return new Response("Method Not Allowed", { status: 405 });
+    }, "onRequest");
+  }
+});
+
+// api/internal/tasks.ts
+var onRequest8;
 var init_tasks = __esm({
   "api/internal/tasks.ts"() {
     init_functionsRoutes_0_40865008517780455();
     init_strip_cf_connecting_ip_header();
-    onRequest7 = /* @__PURE__ */ __name(async (context) => {
+    onRequest8 = /* @__PURE__ */ __name(async (context) => {
       const { request, env } = context;
       const url = new URL(request.url);
       if (!env.DB)
@@ -27788,12 +27846,12 @@ var init_onboarding = __esm({
 });
 
 // _middleware.ts
-var onRequest8;
+var onRequest9;
 var init_middleware = __esm({
   "_middleware.ts"() {
     init_functionsRoutes_0_40865008517780455();
     init_strip_cf_connecting_ip_header();
-    onRequest8 = /* @__PURE__ */ __name(async (context) => {
+    onRequest9 = /* @__PURE__ */ __name(async (context) => {
       const { request, next } = context;
       const url = new URL(request.url);
       const response = await next();
@@ -27819,6 +27877,7 @@ var init_functionsRoutes_0_40865008517780455 = __esm({
     init_crm_invoices();
     init_presence();
     init_read_receipts();
+    init_room_members();
     init_tasks();
     init_contact();
     init_onboarding();
@@ -27895,11 +27954,18 @@ var init_functionsRoutes_0_40865008517780455 = __esm({
         modules: [onRequest6]
       },
       {
-        routePath: "/api/internal/tasks",
+        routePath: "/api/internal/room_members",
         mountPath: "/api/internal",
         method: "",
         middlewares: [],
         modules: [onRequest7]
+      },
+      {
+        routePath: "/api/internal/tasks",
+        mountPath: "/api/internal",
+        method: "",
+        middlewares: [],
+        modules: [onRequest8]
       },
       {
         routePath: "/api/contact",
@@ -27919,18 +27985,18 @@ var init_functionsRoutes_0_40865008517780455 = __esm({
         routePath: "/",
         mountPath: "/",
         method: "",
-        middlewares: [onRequest8],
+        middlewares: [onRequest9],
         modules: []
       }
     ];
   }
 });
 
-// ../.wrangler/tmp/bundle-XBfADI/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-18OZvk/middleware-loader.entry.ts
 init_functionsRoutes_0_40865008517780455();
 init_strip_cf_connecting_ip_header();
 
-// ../.wrangler/tmp/bundle-XBfADI/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-18OZvk/middleware-insertion-facade.js
 init_functionsRoutes_0_40865008517780455();
 init_strip_cf_connecting_ip_header();
 
@@ -28431,7 +28497,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-XBfADI/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-18OZvk/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -28465,7 +28531,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-XBfADI/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-18OZvk/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
