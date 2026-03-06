@@ -1,0 +1,46 @@
+POST-DEPLOYMENT DATABASE INITIALIZATION
+=======================================
+
+After you push this code to GitHub and it deploys to Cloudflare Pages, you MUST initialize your production D1 database to match the new industry-level schema.
+
+⚠️ WARNING: This will flush (delete) all existing testing data in your D1 database.
+
+STEP 1: Locate your Database Binding
+------------------------------------
+Ensure your 'wrangler.toml' or Cloudflare Dashboard has the D1 binding named 'DB'.
+
+STEP 2: Run the Initialization Command
+--------------------------------------
+Run the following command from your terminal to wipe the old schema and apply the new industry-level foundation:
+
+npx wrangler d1 execute dr-command-center --remote --command="
+PRAGMA foreign_keys = OFF;
+DROP TABLE IF EXISTS message_search_index;
+DROP TABLE IF EXISTS message_mentions;
+DROP TABLE IF EXISTS message_attachments;
+DROP TABLE IF EXISTS message_reads;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS task_permissions;
+DROP TABLE IF EXISTS chat_rooms;
+DROP TABLE IF EXISTS task_access_requests;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS crm_invoices;
+DROP TABLE IF EXISTS crm_appointments;
+DROP TABLE IF EXISTS crm_customers;
+DROP TABLE IF EXISTS notifications;
+PRAGMA foreign_keys = ON;"
+
+STEP 3: Apply the New Schema
+----------------------------
+Run this command to create the new tables and seed the initial superusers (SID & Eric):
+
+npx wrangler d1 execute dr-command-center --remote --file=consolidated_schema.sql
+
+STEP 4: Verify
+--------------
+Log in to your internal dashboard using:
+Email: saadumar7223@gmail.com
+Passkey: 123456
+
+Everything is now synchronized to the new industry standard.
