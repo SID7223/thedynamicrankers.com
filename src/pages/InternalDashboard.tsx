@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import {
   Shield,
   LayoutDashboard,
@@ -29,13 +30,31 @@ const InternalDashboard: React.FC = () => {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState<'tasks' | 'customers' | 'invoices' | 'appointments' | 'global-chat'>('tasks');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeView = (searchParams.get('view') as any) || 'tasks';
+  const activeTaskId = searchParams.get('task');
+  const selectedCustomerId = searchParams.get('customer');
+
+  const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null }) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (params.view !== undefined) newParams.set('view', params.view);
+
+    if (params.task === null) newParams.delete('task');
+    else if (params.task !== undefined) newParams.set('task', params.task);
+
+    if (params.customer === null) newParams.delete('customer');
+    else if (params.customer !== undefined) newParams.set('customer', params.customer);
+
+    setSearchParams(newParams);
+  }, [searchParams, setSearchParams]);
+
+  const setActiveView = (view: any) => updateNavigation({ view, task: null, customer: null });
+  const setActiveTaskId = (task: string | null) => updateNavigation({ task });
+  const setSelectedCustomerId = (customer: string | null) => updateNavigation({ customer });
   const [tasks, setTasks] = useState<any[]>([]);
   const [operatives, setOperatives] = useState<any[]>([]);
-  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState(Date.now());
   const [isDark, setIsDark] = useState(true);
 
