@@ -19,7 +19,17 @@ import {
   Paperclip,
   Share2,
   Eye as EyeIcon,
-  Plus
+  Plus,
+  Shield,
+  LayoutDashboard,
+  MessageSquare,
+  Users2,
+  Receipt,
+  CalendarCheck,
+  LogOut,
+  Sun,
+  Moon,
+  Menu
 } from 'lucide-react';
 import Avatar from './Avatar';
 import SlackStream from './SlackStream';
@@ -62,49 +72,60 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const [editBuffer, setEditBuffer] = useState({...task});
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+
+  // Resizable state
   const [leftWidth, setLeftWidth] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
 
-  const startResizing = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-  }, []);
-
-  const stopResizing = useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
-  const resize = useCallback((e: MouseEvent) => {
-    if (!isResizing || !containerRef.current) return;
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!containerRef.current || !leftColRef.current || !rightColRef.current) return;
 
     const containerRect = containerRef.current.getBoundingClientRect();
     const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
 
-    if (newLeftWidth >= 20 && newLeftWidth <= 80) {
-      setLeftWidth(newLeftWidth);
+    // Constrain between 15% and 85%
+    if (newLeftWidth >= 15 && newLeftWidth <= 85) {
+      const roundedWidth = Math.round(newLeftWidth * 100) / 100;
+
+      // Update DOM directly for max performance
+      leftColRef.current.style.width = `${roundedWidth}%`;
+      leftColRef.current.style.flexBasis = `${roundedWidth}%`;
+      rightColRef.current.style.width = `${100 - roundedWidth}%`;
+      rightColRef.current.style.flexBasis = `${100 - roundedWidth}%`;
+
+      // Also update state for persistence on re-renders
+      setLeftWidth(roundedWidth);
     }
-  }, [isResizing]);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    setIsResizing(false);
+    document.body.style.cursor = 'default';
+    document.body.style.userSelect = 'auto';
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  }, [handleMouseMove]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  }, [handleMouseMove, handleMouseUp]);
 
   useEffect(() => {
-    if (isResizing) {
-      window.addEventListener("mousemove", resize);
-      window.addEventListener("mouseup", stopResizing);
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
-    } else {
-      window.removeEventListener("mousemove", resize);
-      window.removeEventListener("mouseup", stopResizing);
-      document.body.style.cursor = "default";
-      document.body.style.userSelect = "auto";
-    }
     return () => {
-      window.removeEventListener("mousemove", resize);
-      window.removeEventListener("mouseup", stopResizing);
-      document.body.style.cursor = "default";
-      document.body.style.userSelect = "auto";
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'default';
+      document.body.style.userSelect = 'auto';
     };
-  }, [isResizing, resize, stopResizing]);
+  }, [handleMouseMove, handleMouseUp]);
 
   const statusWorkflow = [
     { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
@@ -135,9 +156,19 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-[#0B101A] transition-colors duration-300">
+    <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-[#0B101A] relative">
+
+      {/* Resizing Overlay (to catch mouse events over iframes/complex components) */}
+      {isResizing && (
+        <div className="fixed inset-0 z-[100] cursor-col-resize bg-transparent" />
+      )}
+
       {/* Left Column: Task Content (Main) */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ width: `${leftWidth}%`, flex: `0 0 ${leftWidth}%` }}>
+      <div
+        ref={leftColRef}
+        className="flex-none overflow-y-auto custom-scrollbar"
+        style={{ width: `${leftWidth}%`, flexBasis: `${leftWidth}%` }}
+      >
         <div className="p-6 lg:p-10 max-w-6xl mx-auto">
 
           {/* Top Header Navigation */}
@@ -151,29 +182,32 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                 {task.task_number || `DIR-${task.id.slice(0, 4).toUpperCase()}`}
               </div>
             </nav>
+
             <div className="flex items-center gap-2">
-               <button className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Share2 size={18} /></button>
-               <button className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><MoreHorizontal size={18} /></button>
-               <button onClick={onClose} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden"><X size={20} /></button>
+              <button className="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"><Share2 size={18} /></button>
+              <button className="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"><MoreHorizontal size={18} /></button>
+              <button onClick={onClose} className="p-2 text-zinc-400 hover:text-red-500 transition-colors ml-2"><X size={20} /></button>
             </div>
           </div>
 
-          {/* Title Section */}
-          <div className="mb-12">
+          {/* Title Area */}
+          <div className="mb-10">
             {isEditing ? (
-              <textarea
-                className="w-full bg-transparent text-4xl font-bold text-zinc-900 dark:text-white focus:outline-none resize-none border-none p-0 focus:ring-0"
-                value={editBuffer.title}
-                onChange={e => setEditBuffer({...editBuffer, title: e.target.value})}
-                rows={2}
+              <input
                 autoFocus
+                type="text"
+                value={editBuffer.title}
+                onChange={(e) => setEditBuffer({ ...editBuffer, title: e.target.value })}
+                className="text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white bg-transparent border-b-2 border-indigo-500 focus:outline-none w-full pb-2"
               />
             ) : (
               <div className="group relative">
-                <h1 className="text-4xl font-bold text-zinc-900 dark:text-white leading-tight tracking-tight pr-10">{task.title}</h1>
+                <h1 className="text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter mb-4 leading-none">
+                  {task.title}
+                </h1>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="absolute top-1 right-0 p-1.5 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-indigo-600 transition-all"
+                  className="absolute -right-10 top-2 p-2 text-zinc-300 opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-500"
                 >
                   <Edit2 size={18} />
                 </button>
@@ -181,35 +215,31 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             )}
           </div>
 
-          {/* Description Section */}
-          <div className="space-y-6 mb-16">
+          {/* Description Area */}
+          <div className="space-y-6 mb-12">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                 Description
-              </h3>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">Description</h3>
               {!isEditing && (
-                <button onClick={() => setIsEditing(true)} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Edit</button>
+                <button onClick={() => setIsEditing(true)} className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase hover:underline">Edit</button>
               )}
             </div>
-
             {isEditing ? (
               <div className="space-y-4">
                 <textarea
-                  rows={10}
-                  className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-6 py-5 text-zinc-800 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none font-sans text-lg leading-relaxed"
                   value={editBuffer.description || ''}
-                  onChange={e => setEditBuffer({...editBuffer, description: e.target.value})}
-                  placeholder="Provide a detailed overview of this directive..."
+                  onChange={(e) => setEditBuffer({ ...editBuffer, description: e.target.value })}
+                  className="w-full min-h-[200px] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-lg leading-relaxed"
+                  placeholder="Describe the directive objectives..."
                 />
-                <div className="flex items-center gap-3">
-                   <button onClick={handleSave} className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-500 transition-all">Save Changes</button>
-                   <button onClick={() => { setIsEditing(false); setEditBuffer({...task}); }} className="px-6 py-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white text-sm font-bold transition-all">Cancel</button>
+                <div className="flex justify-end gap-3">
+                   <button onClick={() => setIsEditing(false)} className="px-5 py-2 text-xs font-bold text-zinc-500 uppercase">Cancel</button>
+                   <button onClick={handleSave} className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest flex items-center gap-2"><Check size={14} /> Save</button>
                 </div>
               </div>
             ) : (
-              <div className="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed font-sans whitespace-pre-wrap">
-                {task.description || 'No strategic overview provided for this directive.'}
-              </div>
+              <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">
+                {task.description || 'No description provided for this directive.'}
+              </p>
             )}
           </div>
 
@@ -232,27 +262,32 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
       </div>
 
-      {/* Draggable Divider */}
+      {/* Draggable Divider (Styled exactly like image.png) */}
       <div
-        onMouseDown={startResizing}
-        className="hidden lg:flex w-3 h-full -mx-1.5 cursor-col-resize group items-center justify-center relative z-10 hover:bg-indigo-500/10 transition-colors"
+        onMouseDown={handleMouseDown}
+        className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50 hover:bg-indigo-500/10 transition-colors"
       >
         <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
-        <div className="absolute top-1/2 -translate-y-1/2 w-1 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-500 transition-all flex flex-col items-center justify-center gap-1">
-           <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
-           <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
-           <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
+        <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-600 transition-all flex flex-col items-center justify-center gap-1">
+           <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
+           <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
+           <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
         </div>
       </div>
+
       {/* Right Column: Metadata & Comms (Aside) */}
-      <div className="w-full lg:w-auto border-l border-zinc-100 dark:border-zinc-800/50 flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm" style={{ width: `${100 - leftWidth}%`, flex: `0 0 ${100 - leftWidth}%` }}>
+      <div
+        ref={rightColRef}
+        className="flex-none border-l border-zinc-100 dark:border-zinc-800/50 flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm"
+        style={{ width: `${100 - leftWidth}%`, flexBasis: `${100 - leftWidth}%` }}
+      >
 
         {/* Status Dropdown (Jira Style) */}
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50">
            <div className="relative">
               <button
                 onClick={() => setIsStatusOpen(!isStatusOpen)}
-                className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold transition-all hover:bg-zinc-50 dark:hover:bg-zinc-800/80 ${currentStatus.color}`}
+                className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all ${currentStatus.color}`}
               >
                 <span className="uppercase tracking-widest">{currentStatus.label}</span>
                 <ChevronDown size={14} className={`transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
