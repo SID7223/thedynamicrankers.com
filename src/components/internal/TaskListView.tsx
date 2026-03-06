@@ -112,7 +112,7 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
                 <div
                   key={task.id}
                   onClick={() => onSelectTask(task.id)}
-                  className="grid grid-cols-[1fr_180px_140px_160px_140px] gap-6 px-6 py-5 hover:bg-zinc-50 dark:hover:bg-zinc-50 dark:bg-[#1C2128] transition-all cursor-pointer group items-center"
+                  className="grid grid-cols-[1fr_180px_140px_160px_140px] gap-6 px-6 py-5 hover:bg-zinc-50 dark:hover:bg-white/5 dark:bg-transparent transition-all cursor-pointer group items-center"
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="relative">
