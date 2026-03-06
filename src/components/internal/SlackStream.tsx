@@ -49,9 +49,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
   const recordingInterval = useRef<any>(null);
 
   const fetchMessages = useCallback(async () => {
-    if (taskId === null) return;
+    const effectiveTaskId = taskId ?? 0;
     try {
-      const res = await fetch(`/api/internal/chat?taskId=${taskId}`);
+      const res = await fetch(`/api/internal/chat?taskId=${effectiveTaskId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
