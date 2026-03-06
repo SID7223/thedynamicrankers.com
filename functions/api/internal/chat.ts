@@ -27,18 +27,19 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       if (!finalRoomId) return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
 
-      const { results } = await env.DB.prepare(`
+      const { results } = await env.DB.prepare(\`
         SELECT m.*, m.message_content as content, m.created_at as timestamp, u.name as sender_name,
         (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM message_attachments ma WHERE ma.message_id = m.id) as attachments
         FROM messages m
         JOIN users u ON m.sender_id = u.id
         WHERE m.room_id = ?
         ORDER BY m.created_at ASC
-      `).bind(finalRoomId).all();
+      \`).bind(finalRoomId).all();
 
       const processedResults = (results || []).map((r: any) => ({
         ...r,
-        attachments: JSON.parse(r.attachments || '[]')
+        attachments: JSON.parse(r.attachments || '[]'),
+        edited: !!r.edited
       }));
 
       return new Response(JSON.stringify(processedResults), { headers: { 'Content-Type': 'application/json' } });
@@ -92,6 +93,33 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       }
 
       return new Response(JSON.stringify({ id: messageId, success: true }), { status: 201 });
+    } catch (err: any) {
+      return new Response(err.message, { status: 500 });
+    }
+  }
+
+  if (request.method === 'PATCH') {
+    try {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response('Missing message ID', { status: 400 });
+      const body = await request.json() as any;
+
+      await env.DB.prepare(
+        'UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+      ).bind(body.content, id).run();
+
+      return new Response(JSON.stringify({ success: true }));
+    } catch (err: any) {
+      return new Response(err.message, { status: 500 });
+    }
+  }
+
+  if (request.method === 'DELETE') {
+    try {
+      const id = url.searchParams.get('id');
+      if (!id) return new Response('Missing message ID', { status: 400 });
+      await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(id).run();
+      return new Response(JSON.stringify({ success: true }));
     } catch (err: any) {
       return new Response(err.message, { status: 500 });
     }

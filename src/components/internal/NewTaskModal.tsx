@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Calendar, AlignLeft, Shield, AlertCircle, Users } from 'lucide-react';
+import { X, Calendar, AlignLeft, Shield, AlertCircle, Users, Check } from 'lucide-react';
 
 interface NewTaskModalProps {
   onClose: () => void;
@@ -10,7 +10,7 @@ interface NewTaskModalProps {
     description: string;
     due_date: string;
     priority: string;
-    assigned_to: string | null;
+    assignees: string[];
   }) => void;
 }
 
@@ -19,12 +19,20 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('Medium');
-  const [assignedTo, setAssignedTo] = useState<string | null>(null);
+  const [assignees, setAssignees] = useState<string[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onSubmit({ title, description, due_date: dueDate, priority, assigned_to: assignedTo });
+    onSubmit({ title, description, due_date: dueDate, priority, assignees });
+  };
+
+  const toggleAssignee = (userId: string) => {
+    setAssignees(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
   };
 
   return (
@@ -54,7 +62,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto max-h-[70vh] custom-scrollbar">
+        <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto max-h-[75vh] custom-scrollbar">
           <div className="space-y-2">
             <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Command Title</label>
             <input
@@ -105,26 +113,35 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
                   onChange={(e) => setPriority(e.target.value)}
                   className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none shadow-sm"
                 >
-                  <option value="Low" className="bg-white dark:bg-[#161B22]">Low Priority</option>
-                  <option value="Medium" className="bg-white dark:bg-[#161B22]">Medium Priority</option>
-                  <option value="High" className="bg-white dark:bg-[#161B22]">High Priority</option>
+                  <option value="Low">Low Priority</option>
+                  <option value="Medium">Medium Priority</option>
+                  <option value="High">High Priority</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Primary Operative</label>
-            <div className="relative">
-              <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-300 dark:text-zinc-700" size={18} />
-              <select
-                value={assignedTo || ''}
-                onChange={(e) => setAssignedTo(e.target.value || null)}
-                className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none shadow-sm"
-              >
-                <option value="" className="bg-white dark:bg-[#161B22]">Unassigned</option>
-                {operatives.map(op => <option key={op.id} value={op.id} className="bg-white dark:bg-[#161B22]">{op.username}</option>)}
-              </select>
+          <div className="space-y-4">
+            <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Assign Tactical Team</label>
+            <div className="grid grid-cols-2 gap-3">
+              {operatives.map(op => {
+                const isSelected = assignees.includes(op.id);
+                return (
+                  <button
+                    key={op.id}
+                    type="button"
+                    onClick={() => toggleAssignee(op.id)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
+                      isSelected
+                        ? 'bg-indigo-600/10 border-indigo-600 text-indigo-600'
+                        : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700'
+                    }`}
+                  >
+                    <span className="text-xs font-bold uppercase tracking-wider truncate mr-2">{op.username}</span>
+                    {isSelected && <Check size={14} />}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
