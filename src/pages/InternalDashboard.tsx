@@ -35,20 +35,26 @@ const InternalDashboard: React.FC = () => {
   const activeTaskId = searchParams.get('task');
   const selectedCustomerId = searchParams.get('customer');
 
-  const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null }) => {
+  const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null; invoice?: string | null; appointment?: string | null }) => {
     const newParams = new URLSearchParams(searchParams);
     if (params.view !== undefined) newParams.set('view', params.view);
 
-    if (params.task === null) newParams.delete('task');
-    else if (params.task !== undefined) newParams.set('task', params.task);
+    const fields: ('task' | 'customer' | 'invoice' | 'appointment')[] = ['task', 'customer', 'invoice', 'appointment'];
+    fields.forEach(field => {
+      if (params[field] === null) newParams.delete(field);
+      else if (params[field] !== undefined) newParams.set(field, params[field] as string);
+    });
 
-    if (params.customer === null) newParams.delete('customer');
-    else if (params.customer !== undefined) newParams.set('customer', params.customer);
-
-    setSearchParams(newParams);
+    setSearchParams(newParams, { replace: true });
   }, [searchParams, setSearchParams]);
 
-  const setActiveView = (view: any) => updateNavigation({ view, task: null, customer: null });
+  const setActiveView = (view: any) => updateNavigation({
+    view,
+    task: null,
+    customer: null,
+    invoice: null,
+    appointment: null
+  });
   const setActiveTaskId = (task: string | null) => updateNavigation({ task });
   const setSelectedCustomerId = (customer: string | null) => updateNavigation({ customer });
   const [tasks, setTasks] = useState<any[]>([]);
