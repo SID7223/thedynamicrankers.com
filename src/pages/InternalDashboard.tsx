@@ -115,7 +115,7 @@ if (data.type === 'SYNC_TASKS') {
     setTasks(prev => prev.map(t => t.id === data.payload.task_id ? { ...t, hasUnread: true } : t));
   }
 }
-
+  };
     return () => eventSource.close();
   }, [fetchInitialData, activeTaskId]);
 
