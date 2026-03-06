@@ -1,42 +1,29 @@
 # Cloudflare D1 Database Maintenance Instructions
 
-To ensure your database is perfectly aligned with the latest dashboard updates, please run the following SQL commands in your Cloudflare D1 Console.
+To ensure your database is perfectly aligned with the latest dashboard updates and to resolve all "INVALID DATE" or syncing errors, please follow this "Flush & Rebuild" procedure.
 
-## 1. Standardize Attachments Table
-If your database currently uses `message_attachments`, run this to rename it to `attachments`:
+## ⚠️ WARNING
+This procedure will delete all existing data in your Command Center database. Since we are in the testing phase, this is the recommended way to ensure a perfectly clean schema.
 
-```sql
-ALTER TABLE message_attachments RENAME TO attachments;
-```
+## Instructions
 
-*Note: If the table 'attachments' already exists and has data, you may need to merge them manually.*
+1.  Open your **Cloudflare Dashboard**.
+2.  Navigate to **Workers & Pages** > **D1**.
+3.  Select your database (e.g., `dr-command-center`).
+4.  Click on the **Console** tab.
+5.  Copy and paste the entire content of the `FINAL_DATABASE_CLEANUP.sql` file (located in your repository root) into the console.
+6.  Click **Execute**.
 
-## 2. Ensure Column Consistency
-If your `messages` table is missing the `timestamp` column (using `created_at` instead), or vice versa, the application now handles both via `COALESCE`. However, for best performance, ensure at least one exists:
+## What this fixes:
+1.  **Redundant Tables:** Removes `message_attachments` and consolidates everything into `attachments`.
+2.  **Date Errors:** Standardizes on `timestamp` columns with default values, and ensures the backend uses `COALESCE` for backward compatibility.
+3.  **Global Comms:** Correctly configures the `messages` table to allow `task_id` to be NULL, which is required for the "Strategic Comms" (Global) view.
+4.  **UUID Support:** Ensures CRM tables (`crm_customers`, etc.) use TEXT primary keys for application-generated UUIDs.
 
-```sql
--- Add timestamp if missing
--- ALTER TABLE messages ADD COLUMN timestamp DATETIME DEFAULT CURRENT_TIMESTAMP;
-```
-
-## 3. Verify Constraints
-Ensure your `messages` table allows `task_id` to be NULL for Global Communications:
-
-```sql
--- This is usually the default, but you can check via:
--- PRAGMA table_info(messages);
-```
-
-## 4. Summary of Tables
-Your database should contain these core tables for the internal dashboard:
-- `users`
-- `tasks`
-- `messages`
-- `attachments`
-- `message_reads`
-- `message_reactions`
-
-You can verify your current tables with:
+## Verification
+After execution, you can verify the tables by running:
 ```sql
 SELECT name FROM sqlite_master WHERE type='table';
 ```
+
+You should see: `users`, `tasks`, `messages`, `attachments`, `message_reads`, `crm_customers`, `crm_invoices`, and `crm_appointments`.

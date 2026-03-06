@@ -250,7 +250,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
       <div className="w-full lg:w-[450px] bg-white dark:bg-[#06080D] flex flex-col h-full lg:h-[calc(100vh-0px)] overflow-hidden lg:sticky lg:top-0 transition-colors duration-300">
          <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/80 dark:bg-[#0B101A]/80 backdrop-blur-xl flex items-center justify-between">
            <h3 className="text-[11px] font-bold text-zinc-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-3">
-             Strategic Comms
+             Thread Comms
              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
            </h3>
          </div>
