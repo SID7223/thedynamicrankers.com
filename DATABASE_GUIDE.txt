@@ -1,0 +1,55 @@
+DATABASE ARCHITECTURE & MAINTENANCE GUIDE
+=========================================
+
+1. CORE PHILOSOPHY
+------------------
+This database is designed for high-concurrency messaging, task management, and CRM operations.
+It uses an "Industry-Level" approach:
+- UUID Strategy: Every primary record uses a TEXT UUID (v4).
+- Relational Integrity: Strict foreign keys and cascading deletes for children.
+- AI Ready: Structured data allows LLMs to easily traverse threads and task histories.
+- Search Optimized: FTS5 (Full-Text Search) is used for lightning-fast chat indexing.
+
+2. MAINTENANCE LINES (The Rules of Engagement)
+----------------------------------------------
+
+🔴 RED LINES (NEVER CHANGE)
+- Primary Key Strategy: Do not switch from UUIDs back to Integers.
+- Foreign Key Relationships: Core links between Users, Tasks, and Rooms are immutable.
+- Password/Auth Fields: Changing these will break the secure terminal access.
+- FTS5 Triggers: Modifying these will break global search functionality.
+
+🟡 YELLOW LINES (CHANGE WITH CAUTION)
+- Status Enums: (e.g., 'backlog', 'todo'). Changing these requires updating the Frontend & API.
+- Permission Levels: Adding new roles requires careful security auditing.
+- Table Constraints: Check constraints (CHECK IN (...)) should be updated alongside API validation.
+
+🟢 GREEN LINES (SAFE TO ITERATE)
+- UI Metadata: Adding new fields for user preferences or task tags.
+- Descriptive Fields: Modifying notes, descriptions, or display names.
+- Timestamps: Adding additional tracking (e.g., 'last_seen_at').
+
+3. SCHEMA UPDATES & MIGRATIONS
+------------------------------
+Any change to the schema must be documented in 'SCHEMA_NOTICE.txt'.
+A new migration SQL file must be created for any 'ALTER TABLE' operations.
+Never "flush" the database in production; only use migrations.
+
+4. ID GENERATION
+----------------
+All IDs MUST be generated in the application layer (Backend or Frontend) using
+standard UUID v4 (e.g., crypto.randomUUID() in JavaScript).
+Example: 'u_1234-5678-9012' for users, 't_1234...' for tasks.
+
+5. SEARCH INDEXING
+------------------
+The 'message_search_index' is a virtual table. You cannot query it directly like a normal table.
+Use: SELECT * FROM message_search_index WHERE content MATCH 'your_query';
+
+6. RED LINES FOR AI / HUMAN EDITORS
+------------------------------------
+- Do NOT delete the 'global-room' entry from 'chat_rooms'.
+- Do NOT disable PRAGMA foreign_keys = ON.
+- Do NOT bypass the application-layer ID generation.
+
+=========================================

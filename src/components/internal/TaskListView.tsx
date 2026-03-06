@@ -3,11 +3,12 @@ import { Plus, Search, Filter, Clock } from 'lucide-react';
 import Avatar from './Avatar';
 
 interface Task {
-  id: number;
+  id: string;
+  task_number: string;
   title: string;
   status: string;
   priority: string;
-  assigned_to: number | null;
+  assigned_to: string | null;
   assigned_name?: string;
   due_date: string | null;
   created_at: string;
@@ -15,14 +16,14 @@ interface Task {
 }
 
 interface User {
-  id: number;
+  id: string;
   username: string;
 }
 
 interface TaskListViewProps {
   tasks: Task[];
   operatives: User[];
-  onSelectTask: (id: number) => void;
+  onSelectTask: (id: string) => void;
   onCreateTask: () => void;
 }
 
@@ -33,9 +34,9 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
     .filter(t =>
       t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.assigned_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.id.toString().includes(searchTerm)
+      t.task_number.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => b.id - a.id); // Show newest first
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -116,7 +117,7 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="relative">
                        <div className="w-10 h-10 bg-zinc-50 dark:bg-[#161B22] rounded-xl flex items-center justify-center text-zinc-400 dark:text-zinc-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 border border-zinc-200 dark:border-zinc-800 transition-colors">
-                        <span className="text-[10px] font-bold">#{task.id.toString().padStart(3, '0')}</span>
+                        <span className="text-[10px] font-bold">{task.task_number.replace('TASK-', '#')}</span>
                       </div>
                       {task.hasUnread && (
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-500 rounded-full border-2 border-white dark:border-[#11161D] shadow-[0_0_10px_rgba(99,102,241,0.5)]" />

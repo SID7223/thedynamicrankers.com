@@ -6,9 +6,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  if (!env.DB || typeof env.DB.prepare !== 'function') {
-    return new Response(JSON.stringify({ error: 'D1 Binding "DB" missing or inactive' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!env.DB) return new Response('DB binding missing', { status: 503 });
 
   if (request.method === 'GET') {
     try {
@@ -27,21 +25,39 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   if (request.method === 'POST') {
     try {
       const body = await request.json() as any;
-      const result = await env.DB.prepare(
-        'INSERT INTO tasks (title, description, assigned_to, due_date, priority, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      const taskId = crypto.randomUUID();
+
+      // Calculate next task number
+      const lastTask = await env.DB.prepare('SELECT task_number FROM tasks ORDER BY created_at DESC LIMIT 1').first() as { task_number: string } | null;
+      let nextNum = 101;
+      if (lastTask && lastTask.task_number.startsWith('TASK-')) {
+        nextNum = parseInt(lastTask.task_number.replace('TASK-', '')) + 1;
+      }
+      const taskNumber = `TASK-${nextNum}`;
+
+      // 1. Create the task
+      await env.DB.prepare(
+        'INSERT INTO tasks (id, task_number, title, description, assigned_to, due_date, priority, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
       ).bind(
+        taskId,
+        taskNumber,
         body.title || 'Untitled Directive',
         body.description || null,
         body.assigned_to || null,
         body.due_date || null,
         body.priority || 'Medium',
         body.status || 'todo',
-        body.created_by || 1
+        body.created_by
       ).run();
+
+      // 2. Create the associated chat room
+      await env.DB.prepare(
+        'INSERT INTO chat_rooms (id, type, task_id) VALUES (?, ?, ?)'
+      ).bind(crypto.randomUUID(), 'task', taskId).run();
 
       const newTask = await env.DB.prepare(
         'SELECT t.*, u.name as assigned_name FROM tasks t LEFT JOIN users u ON t.assigned_to = u.id WHERE t.id = ?'
-      ).bind(result.meta.last_row_id).first();
+      ).bind(taskId).first();
 
       return new Response(JSON.stringify(newTask), { status: 201, headers: { 'Content-Type': 'application/json' } });
     } catch (err: any) {
@@ -52,10 +68,9 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   if (request.method === 'PATCH') {
     try {
       const id = url.searchParams.get('id');
-      if (!id) return new Response(JSON.stringify({ error: 'Missing directive ID' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      if (!id) return new Response(JSON.stringify({ error: 'Missing directive ID' }), { status: 400 });
 
       const body = await request.json() as any;
-
       const updates = [];
       const values = [];
 
@@ -67,13 +82,14 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (body.due_date !== undefined) { updates.push('due_date = ?'); values.push(body.due_date); }
 
       if (updates.length > 0) {
+        updates.push('updated_at = CURRENT_TIMESTAMP');
         const query = `UPDATE tasks SET ${updates.join(', ')} WHERE id = ?`;
         await env.DB.prepare(query).bind(...values, id).run();
       }
 
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (err: any) {
-      return new Response(JSON.stringify({ error: 'PATCH_TASK_FAILED', message: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'PATCH_TASK_FAILED', message: err.message }), { status: 500 });
     }
   }
 
@@ -89,5 +105,5 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
     }
   }
 
-  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405, headers: { 'Content-Type': 'application/json' } });
+  return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
 };
