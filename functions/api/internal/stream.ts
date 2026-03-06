@@ -54,7 +54,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
                   id: msg.id,
                   task_id: msg.task_id || 0,
                   content: msg.content,
-                  sender: msg.sender_name,
+                  sender_name: msg.sender_name,
                   timestamp: msg.timestamp
                 }
               });
