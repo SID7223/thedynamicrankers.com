@@ -222,19 +222,19 @@ const InternalDashboard: React.FC = () => {
               </div>
 
               <nav className="flex-1 space-y-2">
-                <button onClick={() => { setActiveView('tasks'); setActiveTaskId(null); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'tasks' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
+                <button onClick={() => { setActiveView('tasks'); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'tasks' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <LayoutDashboard size={20} /><span className="text-sm">Dashboard</span>
                 </button>
-                <button onClick={() => { setActiveView('global-chat'); setActiveTaskId(null); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'global-chat' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
+                <button onClick={() => { setActiveView('global-chat'); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'global-chat' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <MessageSquare size={20} /><span className="text-sm">Global Command</span>
                 </button>
-                <button onClick={() => { setActiveView('customers'); setActiveTaskId(null); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'customers' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
+                <button onClick={() => { setActiveView('customers'); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'customers' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <Users2 size={20} /><span className="text-sm">Customers</span>
                 </button>
-                <button onClick={() => { setActiveView('invoices'); setActiveTaskId(null); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'invoices' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
+                <button onClick={() => { setActiveView('invoices'); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'invoices' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <Receipt size={20} /><span className="text-sm">Invoices</span>
                 </button>
-                <button onClick={() => { setActiveView('appointments'); setActiveTaskId(null); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'appointments' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
+                <button onClick={() => { setActiveView('appointments'); }} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'appointments' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <CalendarCheck size={20} /><span className="text-sm">Appointments</span>
                 </button>
               </nav>
