@@ -10,7 +10,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
   if (request.method === 'GET') {
     try {
-      const { results } = await env.DB.prepare(\`
+      const { results } = await env.DB.prepare(`
         SELECT t.*, u.name as assigned_name, creator.name as creator_name,
         (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', user_id, 'name', name))
          FROM task_assignees ta
@@ -20,7 +20,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         LEFT JOIN users u ON t.assigned_to = u.id
         LEFT JOIN users creator ON t.created_by = creator.id
         ORDER BY t.created_at DESC
-      \`).all();
+      `).all();
 
       const processedResults = (results || []).map((r: any) => ({
         ...r,
@@ -47,7 +47,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (lastTask && lastTask.task_number.startsWith('TASK-')) {
         nextNum = parseInt(lastTask.task_number.replace('TASK-', '')) + 1;
       }
-      const taskNumber = \`TASK-\${nextNum}\`;
+      const taskNumber = `TASK-${nextNum}`;
 
       // 1. Create the task
       await env.DB.prepare(
@@ -101,7 +101,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       if (updates.length > 0) {
         updates.push('updated_at = CURRENT_TIMESTAMP');
-        const query = \`UPDATE tasks SET \${updates.join(', ')} WHERE id = ?\`;
+        const query = `UPDATE tasks SET ${updates.join(', ')} WHERE id = ?`;
         await env.DB.prepare(query).bind(...values, id).run();
       }
 
