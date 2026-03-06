@@ -72,12 +72,20 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
 
   const [leftWidth, setLeftWidth] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!containerRef.current || !leftColRef.current || !rightColRef.current) return;
+    if (!isDesktop || !containerRef.current || !leftColRef.current || !rightColRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
     if (newLeftWidth >= 15 && newLeftWidth <= 85) {
@@ -88,7 +96,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
       rightColRef.current.style.flexBasis = `${100 - roundedWidth}%`;
       setLeftWidth(roundedWidth);
     }
-  }, []);
+  }, [isDesktop]);
 
   const handleMouseUp = useCallback(() => {
     setIsResizing(false);
@@ -99,13 +107,14 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   }, [handleMouseMove]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!isDesktop) return;
     e.preventDefault();
     setIsResizing(true);
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove, handleMouseUp]);
+  }, [handleMouseMove, handleMouseUp, isDesktop]);
 
   const toggleAssignee = (userId: string) => {
     const currentAssigneeIds = (task.assignees || []).map(a => a.id);
@@ -153,12 +162,18 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   }
 
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-[#0B101A] relative">
+    <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full overflow-y-auto lg:overflow-hidden bg-white dark:bg-[#0B101A] relative">
       {isResizing && <div className="fixed inset-0 z-[100] cursor-col-resize bg-transparent" />}
 
-      <div ref={leftColRef} className="flex-none overflow-y-auto custom-scrollbar" style={{ width: `${leftWidth}%`, flexBasis: `${leftWidth}%` }}>
+      {/* Left Column: Task Content (Main) */}
+      <div
+        ref={leftColRef}
+        className="flex-none overflow-y-auto custom-scrollbar border-b lg:border-b-0 border-zinc-100 dark:border-zinc-800/50"
+        style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}
+      >
         <div className="p-6 lg:p-10 max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
+          {/* Top Header Navigation */}
+          <div className="flex items-center justify-between mb-8 lg:mb-10">
             <nav className="flex items-center gap-3 text-sm">
               <div className="flex items-center gap-2 text-zinc-500 hover:text-indigo-600 cursor-pointer transition-colors" onClick={onClose}>
                 <span className="font-medium">Directives</span>
@@ -197,20 +212,22 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             </div>
           </div>
 
-          <div className="mb-10">
+          {/* Title Area */}
+          <div className="mb-8 lg:mb-10">
             {isEditing ? (
               <input
                 autoFocus
                 type="text"
                 value={editBuffer.title}
                 onChange={(e) => setEditBuffer({ ...editBuffer, title: e.target.value })}
-                className="text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white bg-transparent border-b-2 border-indigo-500 focus:outline-none w-full pb-2"
+                className="text-3xl lg:text-5xl font-black text-zinc-900 dark:text-white bg-transparent border-b-2 border-indigo-500 focus:outline-none w-full pb-2 uppercase tracking-tighter"
               />
             ) : (
-              <h1 className="text-4xl lg:text-5xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter mb-4 leading-none">{task.title}</h1>
+              <h1 className="text-3xl lg:text-5xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter mb-4 leading-none">{task.title}</h1>
             )}
           </div>
 
+          {/* Description Area */}
           <div className="space-y-6 mb-12">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">Description</h3>
@@ -221,7 +238,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                 <textarea
                   value={editBuffer.description || ''}
                   onChange={(e) => setEditBuffer({ ...editBuffer, description: e.target.value })}
-                  className="w-full min-h-[200px] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-lg leading-relaxed"
+                  className="w-full min-h-[150px] lg:min-h-[200px] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-lg leading-relaxed"
                 />
                 <div className="flex justify-end gap-3">
                    <button onClick={() => setIsEditing(false)} className="px-5 py-2 text-xs font-bold text-zinc-500 uppercase">Cancel</button>
@@ -233,12 +250,13 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             )}
           </div>
 
+          {/* Attachments Placeholder */}
           <div className="space-y-6 border-t border-zinc-100 dark:border-zinc-800/50 pt-10">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">Attachments <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[10px] text-zinc-500">0</span></h3>
-              <button className="p-1.5 text-zinc-400 hover:text-indigo-600 transition-colors"><Plus size={18} /></button>
+              <button onClick={() => alert("Upload functionality integration pending R2 setup")} className="p-1.5 text-zinc-400 hover:text-indigo-600 transition-colors"><Plus size={18} /></button>
             </div>
-            <div onClick={() => alert("Upload functionality integration pending R2 setup")} className="border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-2xl p-10 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-indigo-500/30 transition-all">
+            <div onClick={() => alert("Upload functionality integration pending R2 setup")} className="border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-2xl p-8 lg:p-10 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-indigo-500/30 transition-all">
                 <div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><Paperclip className="w-6 h-6 text-zinc-400" /></div>
                 <p className="text-sm font-medium text-zinc-500">Drop files here to attach, or <span className="text-indigo-600 dark:text-indigo-400">browse</span></p>
             </div>
@@ -246,7 +264,11 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
       </div>
 
-      <div onMouseDown={handleMouseDown} className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50">
+      {/* Draggable Divider */}
+      <div
+        onMouseDown={handleMouseDown}
+        className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50"
+      >
         <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
         <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-600 transition-all flex flex-col items-center justify-center gap-1">
            <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
@@ -255,7 +277,13 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
       </div>
 
-      <div ref={rightColRef} className="flex-none border-l border-zinc-100 dark:border-zinc-800/50 flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm" style={{ width: `${100 - leftWidth}%`, flexBasis: `${100 - leftWidth}%` }}>
+      {/* Right Column: Metadata & Comms (Aside) */}
+      <div
+        ref={rightColRef}
+        className="flex-none flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm lg:h-full lg:overflow-hidden"
+        style={isDesktop ? { width: `${100 - leftWidth}%`, flexBasis: `${100 - leftWidth}%` } : { width: '100%' }}
+      >
+        {/* Status Dropdown */}
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50">
            <div className="relative">
               <button
@@ -283,6 +311,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
+           {/* Details Accordion */}
            <div className="border-b border-zinc-100 dark:border-zinc-800/50">
               <button onClick={() => setIsDetailsExpanded(!isDetailsExpanded)} className="w-full px-6 py-4 flex items-center justify-between group">
                  <div className="flex items-center gap-2">
@@ -346,11 +375,12 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
               )}
            </div>
 
-           <div className="flex flex-col h-[600px] border-b border-zinc-100 dark:border-zinc-800/50">
+           {/* Strategic Comms */}
+           <div className="flex flex-col h-[600px] lg:h-full border-b border-zinc-100 dark:border-zinc-800/50">
               <div className="px-6 py-4 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
                  <h4 className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em] flex items-center gap-2">Strategic Comms <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /></h4>
               </div>
-              <div className="flex-1 min-h-0 bg-white dark:bg-[#06080D]">
+              <div className="flex-1 min-h-[400px] bg-white dark:bg-[#06080D]">
                  <SlackStream taskId={task.id} currentUser={currentUser} operatives={operatives} key={`stream-${task.id}-${lastMessageTimestamp}`} />
               </div>
            </div>
