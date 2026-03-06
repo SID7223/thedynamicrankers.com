@@ -22,7 +22,8 @@ import {
   FileText,
   Download,
   Archive,
-  Copy
+  Copy,
+  User
 } from 'lucide-react';
 import Avatar from './Avatar';
 import SlackStream from './SlackStream';
@@ -36,6 +37,7 @@ interface Task {
   priority: string;
   assigned_to: string | null;
   assigned_name?: string;
+  creator_name?: string;
   due_date: string | null;
   created_at: string;
   assignees?: { id: string; name: string }[];
@@ -67,6 +69,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
   const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
+  const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [showCopyFeedback, setShowCopyFeedback] = useState(false);
 
@@ -134,11 +137,11 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   };
 
   const statusWorkflow = [
-    { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
-    { value: 'todo', label: 'To Do', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
-    { value: 'in_progress', label: 'In Progress', icon: PlayCircle, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/30' },
-    { value: 'review', label: 'In Review', icon: Eye, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-900/30' },
-    { value: 'done', label: 'Done', icon: CheckCircle2, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-100 dark:bg-emerald-900/30' }
+    { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500' },
+    { value: 'todo', label: 'To Do', icon: Circle, color: 'text-zinc-500' },
+    { value: 'in_progress', label: 'In Progress', icon: PlayCircle, color: 'text-blue-600 dark:text-blue-400' },
+    { value: 'review', label: 'In Review', icon: Eye, color: 'text-amber-600 dark:text-amber-400' },
+    { value: 'done', label: 'Done', icon: CheckCircle2, color: 'text-emerald-600 dark:text-emerald-400' }
   ];
 
   const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[0];
@@ -165,14 +168,8 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
     <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full overflow-y-auto lg:overflow-hidden bg-white dark:bg-[#0B101A] relative">
       {isResizing && <div className="fixed inset-0 z-[100] cursor-col-resize bg-transparent" />}
 
-      {/* Left Column: Task Content (Main) */}
-      <div
-        ref={leftColRef}
-        className="flex-none overflow-y-auto custom-scrollbar border-b lg:border-b-0 border-zinc-100 dark:border-zinc-800/50"
-        style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}
-      >
+      <div ref={leftColRef} className="flex-none overflow-y-auto custom-scrollbar border-b lg:border-b-0 border-zinc-100 dark:border-zinc-800/50" style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}>
         <div className="p-6 lg:p-10 max-w-6xl mx-auto">
-          {/* Top Header Navigation */}
           <div className="flex items-center justify-between mb-8 lg:mb-10">
             <nav className="flex items-center gap-3 text-sm">
               <div className="flex items-center gap-2 text-zinc-500 hover:text-indigo-600 cursor-pointer transition-colors" onClick={onClose}>
@@ -185,19 +182,13 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             </nav>
 
             <div className="flex items-center gap-2 relative">
-              <button
-                onClick={handleShare}
-                className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors relative"
-              >
+              <button onClick={handleShare} className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors relative">
                 <Share2 size={18} />
                 {showCopyFeedback && <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-900 text-white text-[10px] rounded whitespace-nowrap">Link Copied!</span>}
               </button>
 
               <div className="relative">
-                <button
-                  onClick={() => setIsMoreOpen(!isMoreOpen)}
-                  className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors"
-                >
+                <button onClick={() => setIsMoreOpen(!isMoreOpen)} className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors">
                   <MoreHorizontal size={18} />
                 </button>
                 {isMoreOpen && (
@@ -212,7 +203,6 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             </div>
           </div>
 
-          {/* Title Area */}
           <div className="mb-8 lg:mb-10">
             {isEditing ? (
               <input
@@ -227,7 +217,6 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             )}
           </div>
 
-          {/* Description Area */}
           <div className="space-y-6 mb-12">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">Description</h3>
@@ -250,7 +239,6 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
             )}
           </div>
 
-          {/* Attachments Placeholder */}
           <div className="space-y-6 border-t border-zinc-100 dark:border-zinc-800/50 pt-10">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">Attachments <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[10px] text-zinc-500">0</span></h3>
@@ -264,11 +252,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
       </div>
 
-      {/* Draggable Divider */}
-      <div
-        onMouseDown={handleMouseDown}
-        className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50"
-      >
+      <div onMouseDown={handleMouseDown} className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50">
         <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
         <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-600 transition-all flex flex-col items-center justify-center gap-1">
            <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
@@ -277,30 +261,17 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
       </div>
 
-      {/* Right Column: Metadata & Comms (Aside) */}
-      <div
-        ref={rightColRef}
-        className="flex-none flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm lg:h-full lg:overflow-hidden"
-        style={isDesktop ? { width: `${100 - leftWidth}%`, flexBasis: `${100 - leftWidth}%` } : { width: '100%' }}
-      >
-        {/* Status Dropdown */}
+      <div ref={rightColRef} className="flex-none flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm lg:h-full lg:overflow-hidden" style={isDesktop ? { width: `${100 - leftWidth}%`, flexBasis: `${100 - leftWidth}%` } : { width: '100%' }}>
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50">
            <div className="relative">
-              <button
-                onClick={() => setIsStatusOpen(!isStatusOpen)}
-                className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all ${currentStatus.color}`}
-              >
+              <button onClick={() => setIsStatusOpen(!isStatusOpen)} className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all ${currentStatus.color}`}>
                 <span className="uppercase tracking-widest">{currentStatus.label}</span>
                 <ChevronDown size={14} className={`transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
               </button>
               {isStatusOpen && (
                 <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
                    {statusWorkflow.map((status) => (
-                     <button
-                        key={status.value}
-                        onClick={() => { onUpdate(task.id, { status: status.value }); setIsStatusOpen(false); }}
-                        className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}
-                     >
+                     <button key={status.value} onClick={() => { onUpdate(task.id, { status: status.value }); setIsStatusOpen(false); }} className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}>
                         <status.icon size={14} className={status.color} />
                         <span className={`text-xs font-bold uppercase tracking-widest ${status.value === task.status ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}`}>{status.label}</span>
                      </button>
@@ -311,7 +282,6 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-           {/* Details Accordion */}
            <div className="border-b border-zinc-100 dark:border-zinc-800/50">
               <button onClick={() => setIsDetailsExpanded(!isDetailsExpanded)} className="w-full px-6 py-4 flex items-center justify-between group">
                  <div className="flex items-center gap-2">
@@ -321,6 +291,16 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
               </button>
               {isDetailsExpanded && (
                 <div className="px-6 pb-8 space-y-6">
+                   {/* Assigned By */}
+                   <div className="grid grid-cols-12 items-start gap-4">
+                      <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Assigned by</label>
+                      <div className="col-span-8 flex items-center gap-2">
+                         <Avatar name={task.creator_name || 'System'} size="xs" />
+                         <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{task.creator_name || 'System'}</span>
+                      </div>
+                   </div>
+
+                   {/* Assignee */}
                    <div className="grid grid-cols-12 items-start gap-4">
                       <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Assignee</label>
                       <div className="col-span-8 relative">
@@ -350,23 +330,41 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                          )}
                       </div>
                    </div>
+
+                   {/* Priority */}
                    <div className="grid grid-cols-12 items-start gap-4">
                       <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Priority</label>
-                      <div className="col-span-8">
-                         <div className="flex items-center gap-2 p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer text-zinc-900 dark:text-zinc-100 font-bold">
+                      <div className="col-span-8 relative">
+                         <div onClick={() => setIsPriorityOpen(!isPriorityOpen)} className="flex items-center gap-2 p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer text-zinc-900 dark:text-zinc-100 font-bold">
                             <AlertCircle size={14} className={task.priority === 'High' ? 'text-red-500' : task.priority === 'Medium' ? 'text-amber-500' : 'text-blue-500'} />
                             <span className="text-sm">{task.priority}</span>
                          </div>
+                         {isPriorityOpen && (
+                            <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                               {['High', 'Medium', 'Low'].map(p => (
+                                  <button key={p} onClick={() => { onUpdate(task.id, { priority: p }); setIsPriorityOpen(false); }} className="w-full px-4 py-2.5 text-left text-xs font-bold text-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                     {p}
+                                  </button>
+                               ))}
+                            </div>
+                         )}
                       </div>
                    </div>
+
+                   {/* Due Date */}
                    <div className="grid grid-cols-12 items-start gap-4">
                       <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Due date</label>
                       <div className="col-span-8">
-                         <div className="p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                            {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
-                         </div>
+                         <input
+                            type="date"
+                            className="bg-transparent border-none p-0 text-sm font-bold text-zinc-900 dark:text-zinc-100 focus:ring-0 cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
+                            value={task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : ''}
+                            onChange={(e) => onUpdate(task.id, { due_date: e.target.value })}
+                         />
                       </div>
                    </div>
+
+                   {/* Labels */}
                    <div className="grid grid-cols-12 items-start gap-4">
                       <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Labels</label>
                       <div className="col-span-8"><div className="flex flex-wrap gap-1.5"><span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-[10px] font-bold text-zinc-600 dark:text-zinc-400 rounded">STRATEGY</span></div></div>
@@ -375,7 +373,6 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
               )}
            </div>
 
-           {/* Strategic Comms */}
            <div className="flex flex-col h-[600px] lg:h-full border-b border-zinc-100 dark:border-zinc-800/50">
               <div className="px-6 py-4 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
                  <h4 className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em] flex items-center gap-2">Strategic Comms <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /></h4>
