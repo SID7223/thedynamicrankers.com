@@ -27,14 +27,14 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
       if (!finalRoomId) return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
 
-      const { results } = await env.DB.prepare(\`
+      const { results } = await env.DB.prepare(`
         SELECT m.*, m.message_content as content, m.created_at as timestamp, u.name as sender_name,
         (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM message_attachments ma WHERE ma.message_id = m.id) as attachments
         FROM messages m
         JOIN users u ON m.sender_id = u.id
         WHERE m.room_id = ?
         ORDER BY m.created_at ASC
-      \`).bind(finalRoomId).all();
+      `).bind(finalRoomId).all();
 
       const processedResults = (results || []).map((r: any) => ({
         ...r,
