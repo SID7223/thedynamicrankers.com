@@ -29,6 +29,7 @@ const OnboardingPage = React.lazy(() => import('./pages/OnboardingPage'));
 
 // Internal Command Center
 const InternalDashboard = React.lazy(() => import('./pages/InternalDashboard'));
+const MessageHistoryPage = React.lazy(() => import('./pages/MessageHistoryPage'));
 
 // ✅ ADDED: Message page route target
 const MessagePage = React.lazy(() => import('./pages/MessagePage'));
@@ -349,6 +350,7 @@ function App() {
 
             {/* Internal Command Center */}
             <Route path="/internal" element={<InternalDashboard />} />
+            <Route path="/internal/message-history/:messageId" element={<MessageHistoryPage />} />
           </Routes>
         </Suspense>
         

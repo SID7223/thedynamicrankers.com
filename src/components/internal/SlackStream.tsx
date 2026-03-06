@@ -12,9 +12,11 @@ import {
   Edit2,
   Check,
   Trash2,
-  Plus
+  Plus,
+  History
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import Avatar from './Avatar';
 
@@ -36,6 +38,7 @@ interface SlackStreamProps {
 }
 
 const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operatives }) => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -111,7 +114,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       const res = await fetch(`/api/internal/chat?id=${msgId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: editBuffer })
+        body: JSON.stringify({ content: editBuffer, userId: currentUser.id })
       });
       if (res.ok) {
         setEditingMessageId(null);
@@ -171,7 +174,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       >
         {messages.map((msg) => {
           const isOwn = msg.sender_id === currentUser.id;
-          const canEdit = isOwn || currentUser.role === 'admin' || currentUser.role === 'superuser';
           const isEditing = editingMessageId === msg.id;
 
           return (
@@ -182,7 +184,14 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[100px]">{msg.sender_name}</span>
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase shrink-0">{new Date(msg.timestamp || msg.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {msg.edited && <span className="text-[10px] text-zinc-400 italic shrink-0">(edited)</span>}
+                    {msg.edited && (
+                      <button
+                        onClick={() => navigate(`/internal/message-history/${msg.id}`)}
+                        className="text-[10px] text-indigo-500 dark:text-indigo-400 italic shrink-0 hover:underline flex items-center gap-1 font-bold"
+                      >
+                         <History size={10} /> (edited)
+                      </button>
+                    )}
                   </div>
 
                   <div className="relative group/content">
@@ -236,20 +245,24 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                       )}
                     </div>
 
-                    {canEdit && !isEditing && (
+                    {!isEditing && (
                       <div className="absolute left-full top-0 ml-2 opacity-0 group-hover/content:opacity-100 transition-opacity flex items-center gap-0.5 lg:gap-1">
-                        <button
-                          onClick={() => { setEditingMessageId(msg.id); setEditBuffer(msg.content); }}
-                          className="p-1 lg:p-1.5 text-zinc-400 hover:text-indigo-500 transition-colors"
-                        >
-                          <Edit2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(msg.id)}
-                          className="p-1 lg:p-1.5 text-zinc-400 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 size={12} />
-                        </button>
+                        {isOwn && (
+                          <button
+                            onClick={() => { setEditingMessageId(msg.id); setEditBuffer(msg.content); }}
+                            className="p-1 lg:p-1.5 text-zinc-400 hover:text-indigo-500 transition-colors"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                        )}
+                        {(isOwn || currentUser.role === 'admin' || currentUser.role === 'superuser') && (
+                          <button
+                            onClick={() => handleDelete(msg.id)}
+                            className="p-1 lg:p-1.5 text-zinc-400 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>

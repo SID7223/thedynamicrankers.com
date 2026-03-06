@@ -103,6 +103,18 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const id = url.searchParams.get('id');
       if (!id) return new Response('Missing message ID', { status: 400 });
       const body = await request.json() as any;
+      const userId = body.userId;
+
+      // Security check: Verify sender
+      const message = await env.DB.prepare('SELECT sender_id, message_content FROM messages WHERE id = ?').bind(id).first() as { sender_id: string; message_content: string } | null;
+      if (!message) return new Response('Message not found', { status: 404 });
+      if (message.sender_id !== userId) return new Response('Unauthorized edit', { status: 403 });
+
+      // Only proceed if content is different
+      if (message.message_content === body.content) return new Response(JSON.stringify({ success: true }));
+
+      // Save to history before update
+      await env.DB.prepare('INSERT INTO message_edits (id, message_id, old_content) VALUES (?, ?, ?)').bind(crypto.randomUUID(), id, message.message_content).run();
 
       await env.DB.prepare(
         'UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
