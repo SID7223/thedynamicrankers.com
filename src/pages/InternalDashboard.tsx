@@ -9,6 +9,7 @@ import {
   Receipt,
   CalendarCheck,
   Moon,
+  MessageSquare,
   Sun
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,6 +17,7 @@ import Avatar from '../components/internal/Avatar';
 import TaskListView from '../components/internal/TaskListView';
 import TaskDetailView from '../components/internal/TaskDetailView';
 import NewTaskModal from '../components/internal/NewTaskModal';
+import SlackStream from '../components/internal/SlackStream';
 import CRMCustomers from '../components/internal/CRMCustomers';
 import CRMInvoices from '../components/internal/CRMInvoices';
 import CRMAppointments from '../components/internal/CRMAppointments';
@@ -50,48 +52,42 @@ interface TaskCreateInput {
   due_date: string | null;
 }
 
-interface TaskUpdateInput {
-  title?: string;
-  description?: string;
-  status?: string;
-  priority?: string;
-  assigned_to?: number | null;
-  due_date?: string | null;
-}
+const statusWorkflow = [
+  { value: 'backlog', label: 'Backlog' },
+  { value: 'todo', label: 'To Do' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'review', label: 'Review' },
+  { value: 'done', label: 'Done' }
+];
 
 const InternalDashboard: React.FC = () => {
-  const [session, setSession] = useState<User | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [operatives, setOperatives] = useState<User[]>([]);
+  const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeView, setActiveView] = useState<'tasks' | 'customers' | 'invoices' | 'appointments' | 'global_comms'>('tasks');
+  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<any>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
-
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [operatives, setOperatives] = useState<User[]>([]);
-  const [activeView, setActiveView] = useState<'tasks' | 'customers' | 'invoices' | 'appointments'>('tasks');
-  const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
-  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [lastMessageTimestamp, setLastMessageTimestamp] = useState<string>(new Date().toISOString());
-
+  const [lastMessageTimestamp, setLastMessageTimestamp] = useState(Date.now());
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+  const [isDark, setIsDark] = useState(localStorage.getItem('theme') === 'dark');
 
   const fetchInitialData = useCallback(async () => {
     try {
       const [tasksRes, usersRes] = await Promise.all([
         fetch('/api/internal/tasks'),
-        fetch('/api/internal/auth?action=users')
+        fetch('/api/internal/users')
       ]);
-
-      if (tasksRes.ok && usersRes.ok) {
-        const tasksData = await tasksRes.json();
-        const usersData = await usersRes.json();
-        setTasks(tasksData);
-        setOperatives(usersData);
-      }
-    } catch {
-      console.error('Failed to fetch tactical data');
+      if (tasksRes.ok) setTasks(await tasksRes.json());
+      if (usersRes.ok) setOperatives(await usersRes.json());
+    } catch (err) {
+      console.error('DATA_FETCH_FAILED', err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -100,45 +96,40 @@ const InternalDashboard: React.FC = () => {
     if (savedSession) {
       setSession(JSON.parse(savedSession));
       fetchInitialData();
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
+  }, [fetchInitialData]);
 
-    // SSE for real-time updates
-    const eventSource = new EventSource('/api/internal/tasks?stream=true');
+  useEffect(() => {
+    if (!session) return;
+    const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'task_update' || data.type === 'new_task') {
-        fetchInitialData();
-      } else if (data.type === 'new_message') {
-        setLastMessageTimestamp(new Date().toISOString());
-        if (data.taskId !== activeTaskId) {
-          setTasks(prev => prev.map(t => t.id === data.taskId ? { ...t, hasUnread: true } : t));
-        }
-      }
+      if (data.type === 'SYNC_TASKS') fetchInitialData();
+      if (data.type === 'CHAT_MSG') setLastMessageTimestamp(Date.now());
     };
-
     return () => eventSource.close();
-  }, [fetchInitialData, activeTaskId]);
+  }, [session, fetchInitialData]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setAuthError('');
     try {
       const res = await fetch('/api/internal/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'login', email, password })
+        body: JSON.stringify({ email, password })
       });
       if (res.ok) {
-        const userData = await res.json();
-        sessionStorage.setItem('dr_internal_session', JSON.stringify(userData));
-        setSession(userData);
+        const data = await res.json();
+        sessionStorage.setItem('dr_internal_session', JSON.stringify(data));
+        setSession(data);
         fetchInitialData();
       } else {
-        setAuthError('INVALID CREDENTIALS');
+        setAuthError('INVALID_CREDENTIALS');
       }
     } catch {
-      setAuthError('CONNECTION FAILED');
+      setAuthError('AUTH_SERVER_ERROR');
     }
   };
 
@@ -147,51 +138,45 @@ const InternalDashboard: React.FC = () => {
     setSession(null);
   };
 
-  const handleCreateTask = async (taskData: TaskCreateInput) => {
+  const handleCreateTask = async (input: TaskCreateInput) => {
     try {
       const res = await fetch('/api/internal/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData)
+        body: JSON.stringify({ ...input, created_by: session.id })
       });
       if (res.ok) {
         setIsNewTaskModalOpen(false);
         fetchInitialData();
       }
-    } catch {
-      console.error('Failed to initialize directive');
+    } catch (err) {
+      console.error('CREATE_FAILED', err);
     }
   };
 
-  const handleUpdateTask = async (taskId: number, updates: TaskUpdateInput) => {
+  const handleUpdateTask = async (id: number, updates: any) => {
     try {
-      const res = await fetch('/api/internal/tasks', {
-        method: 'PUT',
+      const res = await fetch(`/api/internal/tasks?id=${id}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: taskId, ...updates })
+        body: JSON.stringify(updates)
       });
-      if (res.ok) {
-        if (taskId === activeTaskId) {
-           setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...updates, hasUnread: false } : t));
-        } else {
-           fetchInitialData();
-        }
-      }
-    } catch {
-      console.error('Failed to update directive');
+      if (res.ok) fetchInitialData();
+    } catch (err) {
+      console.error('UPDATE_FAILED', err);
     }
   };
 
-  const handleDeleteTask = async (taskId: number) => {
-    if (!window.confirm('TERMINATE DIRECTIVE?')) return;
+  const handleDeleteTask = async (id: number) => {
+    if (!confirm('TERMINATE_DIRECTIVE?')) return;
     try {
-      const res = await fetch(`/api/internal/tasks?id=${taskId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/internal/tasks?id=${id}`, { method: 'DELETE' });
       if (res.ok) {
         setActiveTaskId(null);
         fetchInitialData();
       }
-    } catch {
-      console.error('Failed to purge directive');
+    } catch (err) {
+      console.error('DELETE_FAILED', err);
     }
   };
 
@@ -254,6 +239,13 @@ const InternalDashboard: React.FC = () => {
                 <button onClick={() => setActiveView('tasks')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'tasks' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <LayoutDashboard size={20} /><span className="text-sm">Dashboard</span>
                 </button>
+
+                <button onClick={() => setActiveView('global_comms')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'global_comms' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
+                  <MessageSquare size={20} /><span className="text-sm">Strategic Comms</span>
+                </button>
+
+                <div className="mx-5 my-2 border-t border-zinc-200 dark:border-zinc-800/50" />
+
                 <button onClick={() => setActiveView('customers')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'customers' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
                   <Users2 size={20} /><span className="text-sm">Customers</span>
                 </button>
@@ -329,6 +321,19 @@ const InternalDashboard: React.FC = () => {
           )}
           {activeView === 'invoices' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10 transition-colors duration-300"><CRMInvoices /></div>}
           {activeView === 'appointments' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10 transition-colors duration-300"><CRMAppointments /></div>}
+          {activeView === 'global_comms' && (
+            <div className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-[#0B101A] transition-colors duration-300">
+              <div className="p-6 lg:p-10 border-b border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/80 dark:bg-[#0B101A]/80 backdrop-blur-xl">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-3">
+                  Strategic Comms (Global)
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                </h3>
+              </div>
+              <div className="flex-1 flex flex-col min-h-0">
+                <SlackStream taskId={0} currentUser={session} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <AnimatePresence>{isNewTaskModalOpen && <NewTaskModal onClose={() => setIsNewTaskModalOpen(false)} operatives={operatives} onSubmit={handleCreateTask} />}</AnimatePresence>

@@ -51,7 +51,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
   const fetchMessages = useCallback(async () => {
     if (taskId === null) return;
     try {
-      const res = await fetch(`/api/internal/tasks?action=messages&taskId=${taskId}`);
+      const res = await fetch(`/api/internal/chat?taskId=${taskId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -63,14 +63,27 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
   useEffect(() => {
     fetchMessages();
-    const eventSource = new EventSource('/api/internal/tasks?stream=true');
+    const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'new_message' && (data.taskId === taskId || data.taskId === null)) {
-        fetchMessages();
-        if (scrollRef.current) {
-          const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 100;
-          if (!isAtBottom) setNewMessagesCount(prev => prev + 1);
+      if (data.type === 'CHAT_MSG') {
+        const msgTask = data.payload.task_id === 0 ? null : data.payload.task_id;
+        const currentTask = taskId === 0 ? null : taskId;
+
+        if (msgTask === currentTask) {
+          setMessages(prev => {
+            if (prev.some(m => m.id === data.payload.id)) return prev;
+            return [...prev, {
+              ...data.payload,
+              read_count: 0,
+              attachments: []
+            }];
+          });
+
+          if (scrollRef.current) {
+            const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 100;
+            if (!isAtBottom) setNewMessagesCount(prev => prev + 1);
+          }
         }
       }
     };
@@ -101,44 +114,44 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
 
     setSending(true);
     try {
-      const res = await fetch('/api/internal/tasks', {
+      const res = await fetch('/api/internal/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'message',
-          taskId,
-          content: input,
-          attachments
+          taskId: taskId,
+          senderId: currentUser.id,
+          content: input.trim(),
+          attachments: attachments
         })
       });
+
       if (res.ok) {
         setInput('');
         setAttachments([]);
         fetchMessages();
-        setShowEmojiPicker(false);
       }
     } catch {
-      console.error('TRANSMIT_ERROR');
+      console.error('SEND_FAILURE');
     } finally {
       setSending(false);
     }
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    for (const file of Array.from(files)) {
+    Array.from(files).forEach(file => {
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onloadend = () => {
         setAttachments(prev => [...prev, {
           name: file.name,
           type: file.type,
-          url: event.target?.result as string
+          url: reader.result as string
         }]);
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
   const startRecording = async () => {
@@ -147,28 +160,29 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
 
-      const chunks: BlobPart[] = [];
+      const chunks: Blob[] = [];
       mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onloadend = () => {
           setAttachments(prev => [...prev, {
-            name: `voice_note_${Date.now()}.webm`,
+            name: `voice-note-${Date.now()}.webm`,
             type: 'audio/webm',
-            url: event.target?.result as string
+            url: reader.result as string
           }]);
         };
         reader.readAsDataURL(blob);
-        stream.getTracks().forEach(track => track.stop());
       };
 
       mediaRecorder.start();
       setIsRecording(true);
       setRecordingTime(0);
-      recordingInterval.current = setInterval(() => setRecordingTime(prev => prev + 1), 1000);
-    } catch {
-      console.error('MIC_ACCESS_DENIED');
+      recordingInterval.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error('REC_FAILURE', err);
     }
   };
 
@@ -178,6 +192,16 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
     }
     setIsRecording(false);
     if (recordingInterval.current) clearInterval(recordingInterval.current);
+  };
+
+  const formatTime = (ts: string) => {
+    try {
+      const date = new Date(ts);
+      if (isNaN(date.getTime())) return 'UNKNOWN';
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return 'INVALID';
+    }
   };
 
   return (
@@ -222,7 +246,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
                     {msg.content}
                   </div>
                   <div className={`flex items-center gap-2 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{formatTime(msg.timestamp)}</span>
                     {isOwn && <div className="flex"><CheckCheck size={12} className={isRead ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-300 dark:text-zinc-600"} /></div>}
                   </div>
                 </div>

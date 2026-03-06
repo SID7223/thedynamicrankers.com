@@ -16,14 +16,17 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
     try {
       // Get messages with read status and attachments
+      // Using COALESCE for timestamp/created_at to handle schema variations
       const { results } = await env.DB.prepare(`
-        SELECT m.*, u.name as sender_name,
+        SELECT m.*,
+        COALESCE(m.timestamp, m.created_at) as timestamp,
+        u.name as sender_name,
         (SELECT COUNT(*) FROM message_reads mr WHERE mr.message_id = m.id AND mr.user_id != m.sender_id) as read_count,
-        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM message_attachments ma WHERE ma.message_id = m.id) as attachments
+        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM attachments ma WHERE ma.message_id = m.id) as attachments
         FROM messages m
         JOIN users u ON m.sender_id = u.id
         WHERE m.task_id ${taskId === '0' ? 'IS NULL' : '= ?'}
-        ORDER BY m.timestamp ASC
+        ORDER BY timestamp ASC
       `).bind(...(taskId === '0' ? [] : [taskId])).all();
 
       const processedResults = results.map((r: any) => ({
@@ -55,11 +58,11 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       // Auto-mark as read by sender
       await env.DB.prepare('INSERT INTO message_reads (message_id, user_id) VALUES (?, ?)').bind(newMessageId, body.senderId).run();
 
-      // Handle attachments
+      // Handle attachments - using standardized 'attachments' table
       if (body.attachments && Array.isArray(body.attachments)) {
         for (const att of body.attachments) {
           await env.DB.prepare(
-            'INSERT INTO message_attachments (message_id, file_name, file_type, file_size, file_url) VALUES (?, ?, ?, ?, ?)'
+            'INSERT INTO attachments (message_id, file_name, file_type, file_size, file_url) VALUES (?, ?, ?, ?, ?)'
           ).bind(
             newMessageId,
             att.name,
