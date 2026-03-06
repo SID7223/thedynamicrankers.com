@@ -13,7 +13,9 @@ import {
   Check,
   Trash2,
   Plus,
-  History
+  History,
+  AtSign,
+  Hash
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -50,6 +52,13 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editBuffer, setEditBuffer] = useState('');
 
+  // Mentions State
+  const [allTasks, setAllTasks] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionType, setSuggestionType] = useState<'user' | 'task' | null>(null);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+  const [cursorPos, setCursorPos] = useState(0);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,11 +75,40 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     }
   }, [taskId]);
 
+  const fetchTasks = useCallback(async () => {
+      try {
+          const res = await fetch('/api/internal/tasks');
+          const data = await res.json();
+          setAllTasks(Array.isArray(data) ? data : []);
+      } catch (err) {
+          console.error('Fetch Tasks Failed:', err);
+      }
+  }, []);
+
   useEffect(() => {
     fetchMessages();
+    fetchTasks();
     const interval = setInterval(fetchMessages, 3000);
     return () => clearInterval(interval);
-  }, [fetchMessages]);
+  }, [fetchMessages, fetchTasks]);
+
+  useEffect(() => {
+    const mentionMatch = input.slice(0, cursorPos).match(/[@#](\w*)$/);
+    if (mentionMatch) {
+      const type = mentionMatch[0].startsWith('@') ? 'user' : 'task';
+      const query = mentionMatch[1].toLowerCase();
+      setSuggestionType(type);
+
+      if (type === 'user') {
+        setFilteredSuggestions(operatives.filter(op => op.username.toLowerCase().includes(query)));
+      } else {
+        setFilteredSuggestions(allTasks.filter(t => t.task_number.toLowerCase().includes(query) || t.title.toLowerCase().includes(query)));
+      }
+      setShowSuggestions(filteredSuggestions.length > 0);
+    } else {
+      setShowSuggestions(false);
+    }
+  }, [input, cursorPos, operatives, allTasks, filteredSuggestions.length]);
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     if (scrollRef.current) {
@@ -133,6 +171,39 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     } catch (err) {
       console.error('Delete Failed:', err);
     }
+  };
+
+  const handleSuggestionClick = (suggestion: any) => {
+    const textBefore = input.slice(0, cursorPos).replace(/[@#](\w*)$/, '');
+    const textAfter = input.slice(cursorPos);
+    const tag = suggestionType === 'user' ? `@${suggestion.username}` : `#${suggestion.task_number}`;
+
+    setInput(`${textBefore}${tag} ${textAfter}`);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  };
+
+  const renderContent = (content: string) => {
+      const parts = content.split(/(@\w+|#TASK-\d+)/g);
+      return parts.map((part, i) => {
+          if (part.startsWith('@')) {
+              return <span key={i} className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline cursor-pointer">{part}</span>;
+          }
+          if (part.startsWith('#TASK-')) {
+              const taskNum = part.substring(1);
+              const task = allTasks.find(t => t.task_number === taskNum);
+              return (
+                  <span
+                    key={i}
+                    onClick={() => task && navigate(`/internal?view=tasks&task=${task.id}`)}
+                    className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline cursor-pointer inline-flex items-center gap-1 bg-emerald-500/10 px-1.5 py-0.5 rounded-md border border-emerald-500/20"
+                  >
+                      <Hash size={10} />{part}
+                  </span>
+              );
+          }
+          return part;
+      });
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,7 +312,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                           </div>
                         </div>
                       ) : (
-                        msg.content
+                        renderContent(msg.content)
                       )}
                     </div>
 
@@ -307,7 +378,45 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
         )}
       </AnimatePresence>
 
-      <div className="p-3 lg:p-6 bg-zinc-50 dark:bg-[#0B101A] border-t border-zinc-200 dark:border-zinc-800/50">
+      <div className="p-3 lg:p-6 bg-zinc-50 dark:bg-[#0B101A] border-t border-zinc-200 dark:border-zinc-800/50 relative">
+        {/* Suggestion Popover */}
+        <AnimatePresence>
+          {showSuggestions && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="absolute bottom-full left-6 mb-4 w-[280px] bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-[110]"
+            >
+              <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">{suggestionType === 'user' ? 'Tag Operative' : 'Link Directive'}</span>
+                {suggestionType === 'user' ? <AtSign size={14} className="text-zinc-400" /> : <Hash size={14} className="text-zinc-400" />}
+              </div>
+              <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                {filteredSuggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSuggestionClick(s)}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors text-left"
+                  >
+                    {suggestionType === 'user' ? (
+                      <>
+                        <Avatar name={s.username} size="xs" />
+                        <span className="text-sm font-bold text-zinc-900 dark:text-white">{s.username}</span>
+                      </>
+                    ) : (
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-zinc-900 dark:text-white">{s.task_number}</span>
+                        <span className="text-[10px] text-zinc-500 truncate">{s.title}</span>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 lg:gap-3 mb-3 lg:mb-4 p-2 lg:p-3 bg-white dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-zinc-800/50 shadow-sm">
             {attachments.map((att, i) => (
@@ -323,7 +432,19 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
           <input type="file" ref={fileInputRef} className="hidden" multiple onChange={handleFileSelect} />
           <button type="button" onClick={() => fileInputRef.current?.click()} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Paperclip size={18} lg:size={20} /></button>
           <div className="relative flex-1">
-            <input ref={inputRef} type="text" placeholder={isRecording ? "Recording..." : "Message..."} className={`w-full bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 lg:px-5 lg:py-3.5 pr-10 lg:pr-12 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm ${isRecording ? 'opacity-50 pointer-events-none' : ''}`} value={input} onChange={(e) => setInput(e.target.value)} />
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder={isRecording ? "Recording..." : "Message (@operative or #TASK-XXX)"}
+              className={`w-full bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 lg:px-5 lg:py-3.5 pr-10 lg:pr-12 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm ${isRecording ? 'opacity-50 pointer-events-none' : ''}`}
+              value={input}
+              onChange={(e) => {
+                  setInput(e.target.value);
+                  setCursorPos(e.target.selectionStart || 0);
+              }}
+              onKeyUp={(e) => setCursorPos((e.target as HTMLInputElement).selectionStart || 0)}
+              onClick={(e) => setCursorPos((e.target as HTMLInputElement).selectionStart || 0)}
+            />
             <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-600 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><Smile size={18} lg:size={20} /></button>
             {showEmojiPicker && <div className="absolute bottom-full right-0 mb-4 z-[100] shadow-2xl"><EmojiPicker theme={Theme.DARK} onEmojiClick={(emojiData) => { setInput(prev => prev + emojiData.emoji); inputRef.current?.focus(); }} /></div>}
           </div>

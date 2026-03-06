@@ -1,12 +1,13 @@
 DATABASE UPDATE NOTICE
 ----------------------
-Added 'message_edits' table to track historical content for edited chat messages.
+Added 'message_task_mentions' table to track when tasks are tagged in chat messages.
 
 SQL:
-CREATE TABLE IF NOT EXISTS message_edits (
+CREATE TABLE IF NOT EXISTS message_task_mentions (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
-    old_content TEXT NOT NULL,
-    edited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+    task_id TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
