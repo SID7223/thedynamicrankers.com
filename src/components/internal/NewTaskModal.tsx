@@ -4,13 +4,13 @@ import { X, Calendar, AlignLeft, Shield, AlertCircle, Users } from 'lucide-react
 
 interface NewTaskModalProps {
   onClose: () => void;
-  operatives: { id: number; username: string }[];
+  operatives: { id: string; username: string }[];
   onSubmit: (data: {
     title: string;
     description: string;
     due_date: string;
     priority: string;
-    assigned_to: number | null;
+    assigned_to: string | null;
   }) => void;
 }
 
@@ -19,7 +19,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('Medium');
-  const [assignedTo, setAssignedTo] = useState<number | null>(null);
+  const [assignedTo, setAssignedTo] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +63,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="What needs to be done?"
-              className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 text-zinc-900 dark:text-white placeholder-zinc-300 dark:placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+              className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-4 text-zinc-900 dark:text-white placeholder-zinc-300 dark:placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all shadow-sm"
             />
           </div>
 
@@ -76,7 +76,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add more tactical details..."
-                className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-3.5 text-zinc-900 dark:text-white placeholder-zinc-300 dark:placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all resize-none font-sans"
+                className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white placeholder-zinc-300 dark:placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all resize-none font-sans shadow-sm"
               />
             </div>
           </div>
@@ -91,7 +91,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-3.5 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all [color-scheme:light] dark:[color-scheme:dark]"
+                  className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all [color-scheme:light] dark:[color-scheme:dark] shadow-sm"
                 />
               </div>
             </div>
@@ -103,11 +103,11 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-3.5 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none"
+                  className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none shadow-sm"
                 >
-                  <option value="Low" className="bg-white dark:bg-[#161B22]">Low</option>
-                  <option value="Medium" className="bg-white dark:bg-[#161B22]">Medium</option>
-                  <option value="High" className="bg-white dark:bg-[#161B22]">High</option>
+                  <option value="Low" className="bg-white dark:bg-[#161B22]">Low Priority</option>
+                  <option value="Medium" className="bg-white dark:bg-[#161B22]">Medium Priority</option>
+                  <option value="High" className="bg-white dark:bg-[#161B22]">High Priority</option>
                 </select>
               </div>
             </div>
@@ -119,8 +119,8 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
               <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-300 dark:text-zinc-700" size={18} />
               <select
                 value={assignedTo || ''}
-                onChange={(e) => setAssignedTo(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-3.5 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none"
+                onChange={(e) => setAssignedTo(e.target.value || null)}
+                className="w-full bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all appearance-none shadow-sm"
               >
                 <option value="" className="bg-white dark:bg-[#161B22]">Unassigned</option>
                 {operatives.map(op => <option key={op.id} value={op.id} className="bg-white dark:bg-[#161B22]">{op.username}</option>)}
@@ -132,13 +132,13 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 font-bold text-xs hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors uppercase tracking-widest"
+              className="flex-1 px-4 py-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 font-bold text-xs hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors uppercase tracking-widest"
             >
-              Abord Command
+              Abort Command
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-4 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 uppercase tracking-widest"
+              className="flex-1 px-4 py-5 rounded-2xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 uppercase tracking-widest"
             >
               Deploy Directive
             </button>

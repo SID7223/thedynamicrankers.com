@@ -1,50 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  ArrowLeft,
-  Edit2,
+  X,
   Trash2,
-  Save,
-
-  Calendar,
-  Clock,
-  AlertCircle,
+  Edit2,
+  Check,
   Users,
-  CheckCircle2,
+  Calendar,
+  AlertCircle,
+  Clock,
+  ChevronLeft,
+  Circle,
   PlayCircle,
-
-  Archive,
-  Layout
+  Eye,
+  CheckCircle2,
+  ChevronDown,
+  MoreHorizontal,
+  ChevronRight,
+  Paperclip,
+  Share2,
+  Eye as EyeIcon,
+  Plus
 } from 'lucide-react';
 import Avatar from './Avatar';
 import SlackStream from './SlackStream';
 
 interface Task {
-  id: number;
+  id: string;
+  task_number: string;
   title: string;
   description: string | null;
   status: string;
   priority: string;
-  assigned_to: number | null;
+  assigned_to: string | null;
   assigned_name?: string;
   due_date: string | null;
   created_at: string;
-  created_by: number;
-}
-
-interface User {
-  id: number;
-  username: string;
-  role: string;
 }
 
 interface TaskDetailViewProps {
   task: Task;
-  operatives: User[];
-  currentUser: User;
-  onUpdate: (id: number, data: Partial<Task>) => void;
-  onDelete: (id: number) => void;
+  operatives: any[];
+  currentUser: any;
+  onUpdate: (id: string, updates: any) => void;
+  onDelete: (id: string) => void;
   onClose: () => void;
-  lastMessageTimestamp: string;
+  lastMessageTimestamp: number;
+  isGlobal?: boolean;
 }
 
 const TaskDetailView: React.FC<TaskDetailViewProps> = ({
@@ -54,209 +55,280 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   onUpdate,
   onDelete,
   onClose,
-  lastMessageTimestamp
+  lastMessageTimestamp,
+  isGlobal = false
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editBuffer, setEditBuffer] = useState({
-    title: task.title,
-    description: task.description || '',
-    priority: task.priority,
-    assigned_to: task.assigned_to,
-    due_date: task.due_date || ''
-  });
+  const [editBuffer, setEditBuffer] = useState({...task});
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
 
-  useEffect(() => {
-    setEditBuffer({
-      title: task.title,
-      description: task.description || '',
-      priority: task.priority,
-      assigned_to: task.assigned_to,
-      due_date: task.due_date || ''
-    });
-  }, [task]);
+  const statusWorkflow = [
+    { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
+    { value: 'todo', label: 'To Do', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
+    { value: 'in_progress', label: 'In Progress', icon: PlayCircle, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+    { value: 'review', label: 'In Review', icon: Eye, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-900/30' },
+    { value: 'done', label: 'Done', icon: CheckCircle2, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-100 dark:bg-emerald-900/30' }
+  ];
+
+  const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[0];
 
   const handleSave = () => {
     onUpdate(task.id, editBuffer);
     setIsEditing(false);
   };
 
-  const statusWorkflow = [
-    { label: 'Backlog', value: 'backlog' },
-    { label: 'To Do', value: 'todo' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'Review', value: 'review' },
-    { label: 'Done', value: 'done' }
-  ];
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'done': return <CheckCircle2 size={16} />;
-      case 'review': return <Layout size={16} />;
-      case 'in_progress': return <PlayCircle size={16} />;
-      case 'todo': return <Clock size={16} />;
-      case 'backlog': return <Archive size={16} />;
-      default: return <AlertCircle size={16} />;
-    }
-  };
+  if (isGlobal) {
+    return (
+      <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#06080D]">
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white uppercase tracking-tight">Global Command Center</h2>
+        </div>
+        <div className="flex-1 overflow-hidden">
+           <SlackStream taskId="0" currentUser={currentUser} operatives={operatives} key="global-stream" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-[#06080D] transition-colors duration-300">
-      {/* Left Column: Details */}
-      <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar border-r border-zinc-200 dark:border-zinc-800/50">
-        {/* Header */}
-        <div className="p-6 lg:p-10 border-b border-zinc-100 dark:border-zinc-800/30 bg-white/80 dark:bg-[#11161D]/50 backdrop-blur-md sticky top-0 z-10 flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <button onClick={onClose} className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors group">
-              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-              <span className="text-xs font-bold uppercase tracking-widest">Back to Ledger</span>
-            </button>
-            <div className="flex items-center gap-3">
-              {currentUser.id === task.created_by && (
-                <>
-                  {isEditing ? (
-                    <button onClick={handleSave} className="p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-xl hover:bg-emerald-500/20 transition-all"><Save size={18} /></button>
-                  ) : (
-                    <button onClick={() => setIsEditing(true)} className="p-2.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 rounded-xl hover:bg-indigo-500/20 transition-all"><Edit2 size={18} /></button>
-                  )}
-                  <button onClick={() => onDelete(task.id)} className="p-2.5 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 rounded-xl hover:bg-red-500/20 transition-all"><Trash2 size={18} /></button>
-                </>
-              )}
-            </div>
-          </div>
+    <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-[#0B101A] transition-colors duration-300">
+      {/* Left Column: Task Content (Main) */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="p-6 lg:p-10 max-w-6xl mx-auto">
 
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-[10px] font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800/50 px-2 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700/50">DIRECTIVE-{task.id.toString().padStart(3, '0')}</span>
-              <div className="flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
-                {getStatusIcon(task.status)}
-                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{task.status.replace('_', ' ')}</span>
+          {/* Top Header Navigation */}
+          <div className="flex items-center justify-between mb-10">
+            <nav className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-2 text-zinc-500 hover:text-indigo-600 cursor-pointer transition-colors" onClick={onClose}>
+                <span className="font-medium">Directives</span>
               </div>
+              <ChevronRight size={14} className="text-zinc-300" />
+              <div className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[11px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
+                {task.task_number || `DIR-${task.id.slice(0, 4).toUpperCase()}`}
+              </div>
+            </nav>
+            <div className="flex items-center gap-2">
+               <button className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><Share2 size={18} /></button>
+               <button className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><MoreHorizontal size={18} /></button>
+               <button onClick={onClose} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden"><X size={20} /></button>
             </div>
-            {isEditing ? (
-              <input
-                className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-3.5 text-2xl font-bold text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-                value={editBuffer.title}
-                onChange={e => setEditBuffer({...editBuffer, title: e.target.value})}
-              />
-            ) : (
-              <h1 className="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight leading-tight">{task.title}</h1>
-            )}
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-6 lg:p-10 space-y-12 pb-24">
-          <section>
-            <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-4">Description</h3>
+          {/* Title Section */}
+          <div className="mb-12">
             {isEditing ? (
               <textarea
-                rows={6}
-                className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-4 text-zinc-800 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 resize-none font-sans"
-                value={editBuffer.description}
-                onChange={e => setEditBuffer({...editBuffer, description: e.target.value})}
+                className="w-full bg-transparent text-4xl font-bold text-zinc-900 dark:text-white focus:outline-none resize-none border-none p-0 focus:ring-0"
+                value={editBuffer.title}
+                onChange={e => setEditBuffer({...editBuffer, title: e.target.value})}
+                rows={2}
+                autoFocus
               />
             ) : (
-              <p className="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed font-sans font-medium whitespace-pre-wrap">{task.description || 'No strategic overview provided.'}</p>
+              <div className="group relative">
+                <h1 className="text-4xl font-bold text-zinc-900 dark:text-white leading-tight tracking-tight pr-10">{task.title}</h1>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="absolute top-1 right-0 p-1.5 opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-indigo-600 transition-all"
+                >
+                  <Edit2 size={18} />
+                </button>
+              </div>
             )}
-          </section>
+          </div>
 
-          <section className="bg-zinc-50 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 rounded-3xl p-8">
-            <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-8">Metadata & Intelligence</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 bg-white dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-zinc-700/30 shadow-sm dark:shadow-xl"><Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Assignee</span>
-                  {isEditing ? (
-                    <select value={editBuffer.assigned_to || ''} onChange={(e) => setEditBuffer({...editBuffer, assigned_to: e.target.value ? parseInt(e.target.value) : null})} className="bg-transparent text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans outline-none">
-                      <option value="" className="bg-white dark:bg-zinc-900 text-zinc-500">Unassigned</option>
-                      {operatives.map(op => <option key={op.id} value={op.id} className="bg-white dark:bg-zinc-900">{op.username}</option>)}
-                    </select>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Avatar name={task.assigned_name || '?'} size="xs" />
-                      <span className="text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans">{task.assigned_name || 'Unassigned'}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 bg-white dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-zinc-700/30 shadow-sm dark:shadow-xl"><Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Target Date</span>
-                  {isEditing ? (
-                    <input
-                      type="date"
-                      className="bg-transparent text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans outline-none [color-scheme:light] dark:[color-scheme:dark]"
-                      value={editBuffer.due_date}
-                      onChange={e => setEditBuffer({...editBuffer, due_date: e.target.value})}
-                    />
-                  ) : (
-                    <span className="text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans">{task.due_date ? new Date(task.due_date).toLocaleDateString() : 'TBD'}</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 bg-white dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-zinc-700/30 shadow-sm dark:shadow-xl"><AlertCircle className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Priority</span>
-                  {isEditing ? (
-                    <select value={editBuffer.priority} onChange={(e) => setEditBuffer({...editBuffer, priority: e.target.value})} className="bg-transparent text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans outline-none">
-                      <option value="Low" className="bg-white dark:bg-zinc-900">Low Priority</option>
-                      <option value="Medium" className="bg-white dark:bg-zinc-900">Medium Priority</option>
-                      <option value="High" className="bg-white dark:bg-zinc-900">High Priority</option>
-                    </select>
-                  ) : (
-                    <span className="text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans uppercase tracking-widest">{task.priority} Priority</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 bg-white dark:bg-zinc-800/80 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-zinc-700/30 shadow-sm dark:shadow-xl"><Clock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] font-bold mb-1 font-sans">Strategic Birth</span>
-                  <span className="text-zinc-900 dark:text-zinc-100 text-sm font-bold font-sans">{new Date(task.created_at).toLocaleDateString()}</span>
-                </div>
-              </div>
+          {/* Description Section */}
+          <div className="space-y-6 mb-16">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                 Description
+              </h3>
+              {!isEditing && (
+                <button onClick={() => setIsEditing(true)} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Edit</button>
+              )}
             </div>
-          </section>
 
-          <section>
-             <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-8">Status Evolution</h3>
-             <div className="flex flex-wrap gap-4">
-               {statusWorkflow.map((status) => (
-                 <button
-                  key={status.value}
-                  onClick={() => onUpdate(task.id, { status: status.value })}
-                  className={`px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all border flex items-center gap-3 ${
-                    task.status === status.value
-                      ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/30'
-                      : 'bg-zinc-100 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-500 hover:border-zinc-400 dark:hover:border-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
-                  }`}
-                 >
-                   {getStatusIcon(status.value)}
-                   {status.label}
-                 </button>
-               ))}
-             </div>
-          </section>
+            {isEditing ? (
+              <div className="space-y-4">
+                <textarea
+                  rows={10}
+                  className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl px-6 py-5 text-zinc-800 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none font-sans text-lg leading-relaxed"
+                  value={editBuffer.description || ''}
+                  onChange={e => setEditBuffer({...editBuffer, description: e.target.value})}
+                  placeholder="Provide a detailed overview of this directive..."
+                />
+                <div className="flex items-center gap-3">
+                   <button onClick={handleSave} className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-500 transition-all">Save Changes</button>
+                   <button onClick={() => { setIsEditing(false); setEditBuffer({...task}); }} className="px-6 py-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white text-sm font-bold transition-all">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed font-sans whitespace-pre-wrap">
+                {task.description || 'No strategic overview provided for this directive.'}
+              </div>
+            )}
+          </div>
+
+          {/* Attachments Placeholder (Jira Style) */}
+          <div className="space-y-6 border-t border-zinc-100 dark:border-zinc-800/50 pt-10">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                 Attachments
+                 <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[10px] text-zinc-500">0</span>
+              </h3>
+              <button className="p-1.5 text-zinc-400 hover:text-indigo-600 transition-colors"><Plus size={18} /></button>
+            </div>
+            <div className="border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-2xl p-10 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-indigo-500/30 transition-all">
+                <div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Paperclip className="w-6 h-6 text-zinc-400" />
+                </div>
+                <p className="text-sm font-medium text-zinc-500">Drop files here to attach, or <span className="text-indigo-600 dark:text-indigo-400">browse</span></p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Comment Stream */}
-      <div className="w-full lg:w-[450px] bg-white dark:bg-[#06080D] flex flex-col h-full lg:h-[calc(100vh-0px)] overflow-hidden lg:sticky lg:top-0 transition-colors duration-300">
-         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/80 dark:bg-[#0B101A]/80 backdrop-blur-xl flex items-center justify-between">
-           <h3 className="text-[11px] font-bold text-zinc-900 dark:text-white uppercase tracking-[0.2em] flex items-center gap-3">
-             Strategic Comms
-             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-           </h3>
-         </div>
-         <div className="flex-1 flex flex-col min-h-0">
-           <SlackStream taskId={task.id} currentUser={currentUser} operatives={operatives} key={`stream-${task.id}-${lastMessageTimestamp}`} />
-         </div>
+      {/* Right Column: Metadata & Comms (Aside) */}
+      <div className="w-full lg:w-[420px] border-l border-zinc-100 dark:border-zinc-800/50 flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm">
+
+        {/* Status Dropdown (Jira Style) */}
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50">
+           <div className="relative">
+              <button
+                onClick={() => setIsStatusOpen(!isStatusOpen)}
+                className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold transition-all hover:bg-zinc-50 dark:hover:bg-zinc-800/80 ${currentStatus.color}`}
+              >
+                <span className="uppercase tracking-widest">{currentStatus.label}</span>
+                <ChevronDown size={14} className={`transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isStatusOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                   {statusWorkflow.map((status) => (
+                     <button
+                        key={status.value}
+                        onClick={() => {
+                          onUpdate(task.id, { status: status.value });
+                          setIsStatusOpen(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}
+                     >
+                        <status.icon size={14} className={status.color} />
+                        <span className={`text-xs font-bold uppercase tracking-widest ${status.value === task.status ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                          {status.label}
+                        </span>
+                     </button>
+                   ))}
+                </div>
+              )}
+           </div>
+        </div>
+
+        {/* Details & Metadata Area */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+
+           {/* Details Accordion */}
+           <div className="border-b border-zinc-100 dark:border-zinc-800/50">
+              <button
+                onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+                className="w-full px-6 py-4 flex items-center justify-between group"
+              >
+                 <div className="flex items-center gap-2">
+                    <ChevronDown size={16} className={`text-zinc-400 transition-transform ${!isDetailsExpanded ? '-rotate-90' : ''}`} />
+                    <h4 className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Details</h4>
+                 </div>
+              </button>
+
+              {isDetailsExpanded && (
+                <div className="px-6 pb-8 space-y-6">
+                   {/* Assignee Row */}
+                   <div className="grid grid-cols-12 items-start gap-4">
+                      <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Assignee</label>
+                      <div className="col-span-8">
+                         <div className="flex items-center gap-3 group/field cursor-pointer p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                            <Avatar name={task.assigned_name || '?'} size="xs" />
+                            <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{task.assigned_name || 'Unassigned'}</span>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Priority Row */}
+                   <div className="grid grid-cols-12 items-start gap-4">
+                      <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Priority</label>
+                      <div className="col-span-8">
+                         <div className="flex items-center gap-2 p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer text-zinc-900 dark:text-zinc-100 font-bold">
+                            <AlertCircle size={14} className={task.priority === 'High' ? 'text-red-500' : task.priority === 'Medium' ? 'text-amber-500' : 'text-blue-500'} />
+                            <span className="text-sm">{task.priority}</span>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Due Date Row */}
+                   <div className="grid grid-cols-12 items-start gap-4">
+                      <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Due date</label>
+                      <div className="col-span-8">
+                         <div className="p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                            {task.due_date ? new Date(task.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'None'}
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Labels Placeholder */}
+                   <div className="grid grid-cols-12 items-start gap-4">
+                      <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Labels</label>
+                      <div className="col-span-8">
+                         <div className="flex flex-wrap gap-1.5 p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                            <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-[10px] font-bold text-zinc-600 dark:text-zinc-400 rounded">STRATEGY</span>
+                            <span className="text-zinc-300 text-[10px] font-bold uppercase tracking-wider">None</span>
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Strategic Birth */}
+                   <div className="grid grid-cols-12 items-start gap-4">
+                      <label className="col-span-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400 mt-1">Birth</label>
+                      <div className="col-span-8 text-sm font-bold text-zinc-400 px-1">
+                        {new Date(task.created_at).toLocaleDateString()}
+                      </div>
+                   </div>
+                </div>
+              )}
+           </div>
+
+           {/* Comms (Thread) Section - Integrated into Sidebar */}
+           <div className="flex flex-col h-[600px] border-b border-zinc-100 dark:border-zinc-800/50">
+              <div className="px-6 py-4 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/20">
+                 <h4 className="text-[11px] font-bold text-zinc-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                    Strategic Comms
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                 </h4>
+                 <div className="flex items-center gap-2">
+                   <Users size={14} className="text-zinc-400" />
+                   <span className="text-[10px] font-bold text-zinc-400 uppercase">Live</span>
+                 </div>
+              </div>
+              <div className="flex-1 min-h-0 bg-white dark:bg-[#06080D]">
+                 <SlackStream
+                    taskId={task.id}
+                    currentUser={currentUser}
+                    operatives={operatives}
+                    key={`stream-${task.id}-${lastMessageTimestamp}`}
+                 />
+              </div>
+           </div>
+
+           {/* Danger Zone */}
+           <div className="p-8">
+              <button
+                onClick={() => { if(confirm('Delete directive?')) onDelete(task.id); }}
+                className="w-full py-3 flex items-center justify-center gap-2 text-zinc-400 hover:text-red-500 transition-all text-xs font-bold uppercase tracking-widest border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl hover:border-red-500/50"
+              >
+                 <Trash2 size={14} />
+                 Archive Directive
+              </button>
+           </div>
+        </div>
       </div>
     </div>
   );

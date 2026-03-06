@@ -1,0 +1,100 @@
+OPERATIONS HUB: SYSTEM ARCHITECTURE & DATA BRIEFING
+===================================================
+
+This document provides a comprehensive technical briefing on the industry-level
+architecture implemented for the Operations Hub. It defines how data flows,
+how systems interact, and the strict rules for maintaining this infrastructure.
+
+1. CORE DATABASE STRATEGY
+-------------------------
+- Primary Keys: All tables use TEXT UUID v4 (e.g., 'u_7a2b-4c91...').
+  Use Case: Prevents ID guessing (enumeration attacks), ensures IDs are unique
+  across different environments (Local vs Production), and is the industry
+  standard for scalable systems.
+- Foreign Keys: Strict relational integrity. If a Task is deleted, its
+  associated messages and attachments are automatically scrubbed (ON DELETE CASCADE).
+- Search: Uses SQLite FTS5 (Full-Text Search).
+  Use Case: Allows instant "Google-like" searching across millions of messages
+  without slowing down the database.
+
+2. TABLE-BY-TABLE BRIEFING
+--------------------------
+
+[USERS TABLE]
+- Use Case: Identity Management & Authentication.
+- Fields: id, name, email, password_hash, role, timezone.
+- Industry Standard: One-way hashing (plaintext only used for initial seed).
+
+[TASKS TABLE]
+- Use Case: Strategic Directives.
+- Fields: id, task_number (e.g. TASK-101), title, description, status, priority.
+- Key Logic: Uses 'task_number' for human reference, but 'id' (UUID) for all
+  backend links. This separates "Human View" from "Machine Data".
+
+[CHAT_ROOMS TABLE]
+- Use Case: Communication Containers.
+- Types: 'global' (The 1 main channel) and 'task' (Created per directive).
+- Key Logic: Every Task MUST have exactly one corresponding entry here.
+
+[MESSAGES TABLE]
+- Use Case: Threaded Strategic Comms.
+- Fields: id, room_id, sender_id, parent_message_id, content, type.
+- Threading Logic: If 'parent_message_id' is NULL, it's a top-level post.
+  If it contains a UUID, it's a reply in a thread.
+
+[CRM TABLES (Customers, Invoices, Appointments)]
+- Use Case: Business Operations & Financial Tracking.
+- Relationship: Invoices and Appointments are hard-linked to a Customer UUID.
+
+3. OPERATIONAL GUIDELINES (THE "LINES")
+---------------------------------------
+
+🔴 RED LINES (CRITICAL - NEVER MODIFY WITHOUT SENIOR REVIEW)
+- PK/FK Structure: Changing "TEXT id" to "INTEGER id" will break every API.
+- UUID Generation: Always generate IDs in the code (crypto.randomUUID()),
+  never let the database "auto-increment" for primary keys.
+- Global Room: The 'global-room' record in 'chat_rooms' must never be deleted.
+
+🟡 YELLOW LINES (CAUTION - REQUIRES SCHEMA_NOTICE.txt UPDATE)
+- Enum Values: Status names (e.g., 'todo') or Role names ('admin').
+- Column Additions: Adding new fields to existing tables.
+- Indexing: Modifying triggers or FTS5 search virtual tables.
+
+🟢 GREEN LINES (ITERATIVE - SAFE TO MODIFY)
+- Display Labels: Changing how a status looks in the UI.
+- Metadata: Adding optional user preferences (e.g., 'avatar_url').
+- Formatting: Improving how logs or descriptions are parsed.
+
+4. AI & DATA INGESTION
+----------------------
+This schema is "AI-Ready". Because every message has a 'room_id' and
+'parent_message_id', an AI agent can reconstruct entire conversation
+histories and decision trees with 100% accuracy.
+
+===================================================
+
+5. CODE EXAMPLES FOR CORE OPERATIONS (USE CASES)
+-----------------------------------------------
+
+[USE CASE: Sending a Global Message]
+SQL:
+INSERT INTO messages (id, room_id, sender_id, message_content, message_type)
+VALUES ('msg_uuid', 'global-room', 'u_001', 'Strategic update incoming.', 'text');
+
+[USE CASE: Creating a Threaded Reply]
+SQL:
+INSERT INTO messages (id, room_id, sender_id, parent_message_id, message_content)
+VALUES ('reply_uuid', 'room_uuid', 'u_002', 'msg_uuid', 'Acknowledged, SID.');
+
+[USE CASE: Global Search]
+SQL:
+SELECT m.* FROM messages m
+JOIN message_search_index idx ON m.id = idx.message_id
+WHERE message_search_index MATCH 'Strategic';
+
+[USE CASE: Linking a Task to a Room]
+Logic: When a Task is created, a Room record is automatically generated in the API.
+SQL:
+INSERT INTO chat_rooms (id, type, task_id) VALUES ('new_room_uuid', 'task', 'task_uuid');
+
+===================================================

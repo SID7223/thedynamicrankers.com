@@ -3,100 +3,96 @@ import {
   Send,
   Paperclip,
   Smile,
+  Mic,
   X,
   FileText,
   CheckCheck,
-  Mic,
-  Square,
-  ChevronDown
+  ChevronDown,
+  Square
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import Avatar from './Avatar';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
-  id: number;
-  task_id: number | null;
-  sender_id: number;
+  id: string;
+  sender_id: string;
   sender_name: string;
   content: string;
   timestamp: string;
-  read_count: number;
-  attachments?: { name: string; type: string; url: string }[];
+  created_at?: string;
+  message_type: string;
+  attachments?: any[];
+  parent_message_id?: string | null;
 }
 
 interface SlackStreamProps {
-  taskId: number | null;
-  currentUser: { id: number; username: string };
+  taskId: string;
+  currentUser: any;
+  operatives: any[];
 }
 
 const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [attachments, setAttachments] = useState<{ name: string; type: string; url: string }[]>([]);
   const [sending, setSending] = useState(false);
+  const [attachments, setAttachments] = useState<any[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [newMessagesCount, setNewMessagesCount] = useState(0);
+  const [isAtBottom, setIsAtBottom] = useState(true);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
-  const [newMessagesCount, setNewMessagesCount] = useState(0);
-  const [isDark] = useState(document.documentElement.classList.contains('dark'));
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingInterval = useRef<any>(null);
 
   const fetchMessages = useCallback(async () => {
-    if (taskId === null) return;
     try {
       const res = await fetch(`/api/internal/chat?taskId=${taskId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
       }
-    } catch {
-      console.error('COMM_FAILURE');
+    } catch (err) {
+      console.error('Fetch Messages Failed:', err);
     }
   }, [taskId]);
 
   useEffect(() => {
     fetchMessages();
-    const eventSource = new EventSource('/api/internal/stream');
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'CHAT_MSG' && (data.payload.task_id === taskId || data.payload.task_id === 0)) {
-        fetchMessages();
-        if (scrollRef.current) {
-          const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 100;
-          if (!isAtBottom) setNewMessagesCount(prev => prev + 1);
-        }
-      }
-    };
-    return () => eventSource.close();
-  }, [taskId, fetchMessages]);
+    const interval = setInterval(fetchMessages, 5000);
+    return () => clearInterval(interval);
+  }, [fetchMessages]);
 
-  useEffect(() => {
-    if (newMessagesCount === 0) scrollToBottom();
-  }, [messages, newMessagesCount]);
-
-  const scrollToBottom = () => {
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior
+      });
       setNewMessagesCount(0);
     }
   };
 
+  useEffect(() => {
+    if (isAtBottom) scrollToBottom('auto');
+    else setNewMessagesCount(prev => prev + 1);
+  }, [messages, isAtBottom]);
+
   const handleScroll = () => {
-    if (scrollRef.current) {
-      const isAtBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop <= scrollRef.current.clientHeight + 10;
-      if (isAtBottom) setNewMessagesCount(0);
-    }
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    const atBottom = scrollHeight - scrollTop - clientHeight < 50;
+    setIsAtBottom(atBottom);
+    if (atBottom) setNewMessagesCount(0);
   };
 
-  const handleSend = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
     if ((!input.trim() && attachments.length === 0) || sending) return;
 
     setSending(true);
@@ -105,37 +101,41 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          senderId: currentUser.id,
-          action: 'message',
           taskId,
-          content: input,
-          attachments
+          senderId: currentUser.id,
+          content: input.trim(),
+          attachments: attachments.map(a => ({
+            name: a.name,
+            type: a.type,
+            size: a.size,
+            url: a.url
+          }))
         })
       });
+
       if (res.ok) {
         setInput('');
         setAttachments([]);
         fetchMessages();
-        setShowEmojiPicker(false);
+        scrollToBottom();
       }
-    } catch {
-      console.error('TRANSMIT_ERROR');
+    } catch (err) {
+      console.error('Send Message Failed:', err);
     } finally {
       setSending(false);
     }
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    for (const file of Array.from(files)) {
+    const files = Array.from(e.target.files || []);
+    for (const file of files) {
       const reader = new FileReader();
       reader.onload = (event) => {
         setAttachments(prev => [...prev, {
           name: file.name,
           type: file.type,
-          url: event.target?.result as string
+          size: file.size,
+          url: event.target?.result
         }]);
       };
       reader.readAsDataURL(file);
@@ -147,17 +147,18 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
+      const chunks: Blob[] = [];
 
-      const chunks: BlobPart[] = [];
       mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = (e) => {
           setAttachments(prev => [...prev, {
-            name: `voice_note_${Date.now()}.webm`,
+            name: `voice-note-${Date.now()}.webm`,
             type: 'audio/webm',
-            url: event.target?.result as string
+            size: blob.size,
+            url: e.target?.result
           }]);
         };
         reader.readAsDataURL(blob);
@@ -168,8 +169,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
       setIsRecording(true);
       setRecordingTime(0);
       recordingInterval.current = setInterval(() => setRecordingTime(prev => prev + 1), 1000);
-    } catch {
-      console.error('MIC_ACCESS_DENIED');
+    } catch (err) {
+      console.error('Mic Access Denied:', err);
     }
   };
 
@@ -182,7 +183,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#1f1f1f] relative overflow-hidden transition-colors duration-300">
+    <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#06080D] relative overflow-hidden transition-colors duration-300">
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -190,13 +191,12 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
       >
         {messages.map((msg) => {
           const isOwn = msg.sender_id === currentUser.id;
-          const isRead = msg.read_count > 0;
           return (
             <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group`}>
               <div className={`flex max-w-[85%] gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                 <Avatar name={msg.sender_name} size="sm" />
                 <div className="flex flex-col">
-                  <div className={`px-4 py-2.5 rounded-2xl text-sm ${isOwn ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 rounded-tl-none shadow-sm'}`}>
+                  <div className={`px-4 py-2.5 rounded-2xl text-sm ${isOwn ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-[#11161D] text-zinc-900 dark:text-zinc-200 rounded-tl-none shadow-sm border border-transparent dark:border-zinc-800/50'}`}>
                     {msg.attachments && msg.attachments.length > 0 && (
                       <div className="space-y-3 mb-2">
                         {msg.attachments.map((att, i) => (
@@ -223,8 +223,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
                     {msg.content}
                   </div>
                   <div className={`flex items-center gap-2 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {isOwn && <div className="flex"><CheckCheck size={12} className={isRead ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-300 dark:text-zinc-600"} /></div>}
+                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{new Date(msg.timestamp || msg.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    {isOwn && <div className="flex"><CheckCheck size={12} className="text-indigo-600 dark:text-indigo-400" /></div>}
                   </div>
                 </div>
               </div>
@@ -286,7 +286,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
         )}
       </AnimatePresence>
 
-      <div className="p-4 lg:p-6 bg-zinc-50 dark:bg-[#111111] border-t border-zinc-200 dark:border-zinc-800/50 transition-colors duration-300">
+      <div className="p-4 lg:p-6 bg-zinc-50 dark:bg-[#0B101A] border-t border-zinc-200 dark:border-zinc-800/50 transition-colors duration-300">
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-3 mb-4 p-3 bg-white dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-zinc-800/50 shadow-sm">
             {attachments.map((att, i) => (
@@ -302,9 +302,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
           <input type="file" ref={fileInputRef} className="hidden" multiple onChange={handleFileSelect} />
           <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Paperclip size={20} /></button>
           <div className="relative flex-1">
-            <input ref={inputRef} type="text" placeholder={isRecording ? "Recording voice note..." : "Transmit command data..."} className={`w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 pr-12 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm ${isRecording ? 'opacity-50 pointer-events-none' : ''}`} value={input} onChange={(e) => setInput(e.target.value)} />
+            <input ref={inputRef} type="text" placeholder={isRecording ? "Recording voice note..." : "Transmit command data..."} className={`w-full bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl px-5 py-3.5 pr-12 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm ${isRecording ? 'opacity-50 pointer-events-none' : ''}`} value={input} onChange={(e) => setInput(e.target.value)} />
             <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-600 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><Smile size={20} /></button>
-            {showEmojiPicker && <div className="absolute bottom-full right-0 mb-4 z-[100] shadow-2xl"><EmojiPicker theme={isDark ? Theme.DARK : Theme.LIGHT} onEmojiClick={(emojiData) => { setInput(prev => prev + emojiData.emoji); inputRef.current?.focus(); }} /></div>}
+            {showEmojiPicker && <div className="absolute bottom-full right-0 mb-4 z-[100] shadow-2xl"><EmojiPicker theme={Theme.DARK} onEmojiClick={(emojiData) => { setInput(prev => prev + emojiData.emoji); inputRef.current?.focus(); }} /></div>}
           </div>
           {isRecording ? <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-xl"><div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /><span className="text-red-600 dark:text-red-500 font-mono text-sm">{Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}</span><button type="button" onClick={() => stopRecording()} className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={18} /></button><button type="button" onClick={() => stopRecording()} className="text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400"><Square size={18} /></button></div> : <button type="button" onClick={startRecording} className="p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Mic size={20} /></button>}
           <button type="submit" className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50 disabled:grayscale shrink-0" disabled={sending || isRecording}><Send size={18} /></button>

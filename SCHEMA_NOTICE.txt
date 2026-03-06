@@ -1,0 +1,13 @@
+[2024-03-XX] - INITIAL INDUSTRY OVERHAUL
+-----------------------------------------
+1. Migrated all tables (Core, Messaging, CRM) to TEXT PRIMARY KEY (UUID).
+2. Introduced 'chat_rooms' to unify Task and Global chat logic.
+3. Implemented SQLite FTS5 Full-Text Search for messages.
+4. Added support for message threading (parent_message_id).
+5. Standardized 'task_number' (e.g., TASK-101) for human-readable IDs.
+6. Unified CRM with the industry-level schema.
+7. Seeded SID and Eric with superuser roles.
+
+[2024-03-XX] - ADDED CHAT ROOM MEMBERSHIP
+1. Added 'chat_room_members' table to track user membership in rooms.
+2. Initialized SID and Eric as members of 'global-room'.
