@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   X,
   Trash2,
@@ -62,6 +62,41 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const [editBuffer, setEditBuffer] = useState({...task});
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+  const [leftWidth, setLeftWidth] = useState(50); // Initial 50/50 split
+  const isDragging = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isDragging.current = true;
+    document.body.style.cursor = "col-resize";
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging.current || !containerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+
+    // Constraints: 20% to 80%
+    if (newLeftWidth >= 20 && newLeftWidth <= 80) {
+      setLeftWidth(newLeftWidth);
+    }
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    isDragging.current = false;
+    document.body.style.cursor = "default";
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
 
   const statusWorkflow = [
     { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
@@ -94,7 +129,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   return (
     <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden bg-white dark:bg-[#0B101A] transition-colors duration-300">
       {/* Left Column: Task Content (Main) */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ width: `${leftWidth}%`, flex: `0 0 ${leftWidth}%` }}>
         <div className="p-6 lg:p-10 max-w-6xl mx-auto">
 
           {/* Top Header Navigation */}
@@ -189,8 +224,20 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
         </div>
       </div>
 
+      {/* Draggable Divider */}
+      <div
+        onMouseDown={handleMouseDown}
+        className="hidden lg:flex w-1.5 h-full cursor-col-resize group items-center justify-center relative z-10 hover:bg-indigo-500/10 transition-colors"
+      >
+        <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
+        <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-500 transition-all flex flex-col items-center justify-center gap-1">
+           <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
+           <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
+           <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
+        </div>
+      </div>
       {/* Right Column: Metadata & Comms (Aside) */}
-      <div className="w-full lg:w-[420px] border-l border-zinc-100 dark:border-zinc-800/50 flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm">
+      <div className="w-full lg:w-auto border-l border-zinc-100 dark:border-zinc-800/50 flex flex-col bg-zinc-50/20 dark:bg-[#06080D]/40 backdrop-blur-sm" style={{ width: `${100 - leftWidth}%`, flex: `0 0 ${100 - leftWidth}%` }}>
 
         {/* Status Dropdown (Jira Style) */}
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50">
