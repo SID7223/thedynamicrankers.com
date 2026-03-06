@@ -193,7 +193,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
           return (
             <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group`}>
               <div className={`flex max-w-[85%] gap-3 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-                <Avatar name={msg.sender_name} size="sm" />
+                <Avatar name={msg.sender_name || "?"} size="sm" />
                 <div className="flex flex-col">
                   <div className={`px-4 py-2.5 rounded-2xl text-sm ${isOwn ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 rounded-tl-none shadow-sm'}`}>
                     {msg.attachments && msg.attachments.length > 0 && (
@@ -222,7 +222,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser }) => {
                     {msg.content}
                   </div>
                   <div className={`flex items-center gap-2 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-bold">{msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "..."}</span>
                     {isOwn && <div className="flex"><CheckCheck size={12} className={isRead ? "text-indigo-600 dark:text-indigo-400" : "text-zinc-300 dark:text-zinc-600"} /></div>}
                   </div>
                 </div>
