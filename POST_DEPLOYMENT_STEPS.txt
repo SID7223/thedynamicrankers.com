@@ -1,17 +1,13 @@
-POST-DEPLOYMENT DATABASE INITIALIZATION
-=======================================
+POST-DEPLOYMENT DATABASE INITIALIZATION & POPULATION
+====================================================
 
-After you push this code to GitHub and it deploys to Cloudflare Pages, you MUST initialize your production D1 database to match the new industry-level schema.
+Follow these exact steps to move from the old "immature" database to the new
+"Industry-Level" standard.
 
-⚠️ WARNING: This will flush (delete) all existing testing data in your D1 database.
-
-STEP 1: Locate your Database Binding
-------------------------------------
-Ensure your 'wrangler.toml' or Cloudflare Dashboard has the D1 binding named 'DB'.
-
-STEP 2: Run the Initialization Command
---------------------------------------
-Run the following command from your terminal to wipe the old schema and apply the new industry-level foundation:
+STEP 1: FLUSH PREVIOUS DATA
+---------------------------
+Run this command to wipe the old, inconsistent schema.
+This clears the way for the professional UUID foundation.
 
 npx wrangler d1 execute dr-command-center --remote --command="
 PRAGMA foreign_keys = OFF;
@@ -31,16 +27,34 @@ DROP TABLE IF EXISTS crm_customers;
 DROP TABLE IF EXISTS notifications;
 PRAGMA foreign_keys = ON;"
 
-STEP 3: Apply the New Schema
-----------------------------
-Run this command to create the new tables and seed the initial superusers (SID & Eric):
+
+STEP 2: POPULATE NEW INDUSTRY SCHEMA
+------------------------------------
+Run this command. It uses the 'consolidated_schema.sql' file to create all
+tables and insert the initial superusers and the global command room.
 
 npx wrangler d1 execute dr-command-center --remote --file=consolidated_schema.sql
 
-STEP 4: Verify
---------------
-Log in to your internal dashboard using:
-Email: saadumar7223@gmail.com
-Passkey: 123456
 
-Everything is now synchronized to the new industry standard.
+STEP 3: VERIFY SEED DATA (MANUAL CHECK)
+---------------------------------------
+Run these two commands to ensure the system is ready for login:
+
+1. Check Users:
+npx wrangler d1 execute dr-command-center --remote --command="SELECT name, email FROM users;"
+
+2. Check Global Room:
+npx wrangler d1 execute dr-command-center --remote --command="SELECT id, type FROM chat_rooms WHERE type='global';"
+
+
+STEP 4: LOGIN & INITIALIZE
+--------------------------
+Log in to https://thedynamicrankers.com/internal (or your dev URL) using:
+
+USER: saadumar7223@gmail.com
+PASS: 123456
+
+Once logged in, the "Global Command" chat and "Identity Registry" (CRM)
+will be ready for operation.
+
+====================================================
