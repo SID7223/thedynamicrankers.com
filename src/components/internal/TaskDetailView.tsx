@@ -62,41 +62,49 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const [editBuffer, setEditBuffer] = useState({...task});
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
-  const [leftWidth, setLeftWidth] = useState(50); // Initial 50/50 split
-  const isDragging = useRef(false);
+  const [leftWidth, setLeftWidth] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  const startResizing = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    isDragging.current = true;
-    document.body.style.cursor = "col-resize";
+    setIsResizing(true);
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging.current || !containerRef.current) return;
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback((e: MouseEvent) => {
+    if (!isResizing || !containerRef.current) return;
 
     const containerRect = containerRef.current.getBoundingClientRect();
     const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
 
-    // Constraints: 20% to 80%
     if (newLeftWidth >= 20 && newLeftWidth <= 80) {
       setLeftWidth(newLeftWidth);
     }
-  }, []);
-
-  const handleMouseUp = useCallback(() => {
-    isDragging.current = false;
-    document.body.style.cursor = "default";
-  }, []);
+  }, [isResizing]);
 
   useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    if (isResizing) {
+      window.addEventListener("mousemove", resize);
+      window.addEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    } else {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "default";
+      document.body.style.userSelect = "auto";
+    }
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "default";
+      document.body.style.userSelect = "auto";
     };
-  }, [handleMouseMove, handleMouseUp]);
+  }, [isResizing, resize, stopResizing]);
 
   const statusWorkflow = [
     { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
@@ -226,11 +234,11 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
 
       {/* Draggable Divider */}
       <div
-        onMouseDown={handleMouseDown}
-        className="hidden lg:flex w-1.5 h-full cursor-col-resize group items-center justify-center relative z-10 hover:bg-indigo-500/10 transition-colors"
+        onMouseDown={startResizing}
+        className="hidden lg:flex w-3 h-full -mx-1.5 cursor-col-resize group items-center justify-center relative z-10 hover:bg-indigo-500/10 transition-colors"
       >
         <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
-        <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-500 transition-all flex flex-col items-center justify-center gap-1">
+        <div className="absolute top-1/2 -translate-y-1/2 w-1 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-500 transition-all flex flex-col items-center justify-center gap-1">
            <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
            <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
            <div className="w-0.5 h-0.5 rounded-full bg-zinc-400 dark:bg-zinc-500 group-hover:bg-white/50" />
