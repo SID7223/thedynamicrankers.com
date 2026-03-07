@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   X as XIcon,
-  Send,
-  MoreVertical,
-  Share2,
-  Archive,
   ChevronDown,
-  Circle,
-  Clock,
-  CheckCircle2,
   AlertCircle,
   Plus,
   Check,
-  Paperclip
+  Share2,
+  Archive,
+  Circle,
+  Clock,
+  CheckCircle2,
+  Edit2,
+  Save,
+  Undo2
 } from 'lucide-react';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import SlackStream from './SlackStream';
 import Avatar from './Avatar';
 
@@ -43,6 +43,10 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
   const [leftWidth, setLeftWidth] = useState(60);
   const [isResizing, setIsResizing] = useState(false);
+
+  // Edit state
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editDescriptionValue, setEditDescriptionValue] = useState(task?.description || '');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
@@ -120,6 +124,17 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   );
 
   const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[1];
+  const isCreator = currentUser?.id === task?.created_by;
+
+  const handleSaveDescription = () => {
+    onUpdate(task.id, { description: editDescriptionValue });
+    setIsEditingDescription(false);
+  };
+
+  const handleCancelDescription = () => {
+    setEditDescriptionValue(task?.description || '');
+    setIsEditingDescription(false);
+  };
 
   return (
     <motion.div
@@ -152,8 +167,35 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
 
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 space-y-8">
            <section>
-              <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-4">Briefing</h4>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans text-sm whitespace-pre-wrap">{task.description || 'No detailed briefing provided for this directive.'}</p>
+              <div className="flex items-center justify-between mb-4">
+                 <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em]">Briefing</h4>
+                 {isCreator && !isEditingDescription && (
+                    <button onClick={() => setIsEditingDescription(true)} className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors group">
+                       <Edit2 size={14} className="group-hover:scale-110 transition-transform" />
+                    </button>
+                 )}
+              </div>
+
+              {isEditingDescription ? (
+                <div className="space-y-4">
+                  <textarea
+                    value={editDescriptionValue}
+                    onChange={(e) => setEditDescriptionValue(e.target.value)}
+                    className="w-full min-h-[200px] bg-zinc-50 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 font-sans leading-relaxed transition-all"
+                    placeholder="Wording, instructions, and mission objectives..."
+                  />
+                  <div className="flex items-center gap-2 justify-end">
+                    <button onClick={handleCancelDescription} className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 rounded-xl">
+                       <Undo2 size={14} /> Cancel
+                    </button>
+                    <button onClick={handleSaveDescription} className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition-all uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-600/20">
+                       <Save size={14} /> Commit Changes
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans text-sm whitespace-pre-wrap">{task.description || 'No detailed briefing provided for this directive.'}</p>
+              )}
            </section>
 
            <section>

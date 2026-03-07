@@ -1,11 +1,8 @@
-import { Resend } from "resend";
-
 interface ContactRequestBody {
   name: string;
   email: string;
   message: string;
-  subject?: string;
-  type?: 'support' | 'general' | 'business';
+  type?: string;
 }
 
 function escapeHtml(value: string | number | boolean | null | undefined): string {
@@ -19,10 +16,10 @@ function escapeHtml(value: string | number | boolean | null | undefined): string
 }
 
 function ContactEmailTemplate(data: ContactRequestBody) {
-  const typeLabel = data.type ? data.type.toUpperCase() : 'GENERAL';
+  const typeLabel = data.type ? (data.type.charAt(0).toUpperCase() + data.type.slice(1)) : 'General Inquiry';
 
   return `
-    <div style="font-family: sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
       <div style="background-color: #0a0d36; padding: 20px; text-align: center;">
         <h1 style="color: #fff; margin: 0; font-size: 20px;">New Contact Request</h1>
       </div>
@@ -87,23 +84,30 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       }), { status: 400 });
     }
 
-    const resend = new Resend(resendApiKey);
-
-    const result = await resend.emails.send({
-      from: resendFromEmail,
-      to: [resendTargetEmail],
-      subject: `[${data.type || 'General'}] Website Contact: ${data.name}`,
-      html: ContactEmailTemplate(data),
-      replyTo: data.email
+    const resendResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: resendFromEmail,
+        to: [resendTargetEmail],
+        subject: `[${data.type || 'General'}] Website Contact: ${data.name}`,
+        html: ContactEmailTemplate(data),
+        replyTo: data.email
+      }),
     });
 
-    if (result.error) {
-        return new Response(JSON.stringify({ error: result.error.message }), { status: 500 });
+    const result: any = await resendResponse.json();
+
+    if (!resendResponse.ok) {
+        return new Response(JSON.stringify({ error: result.message || "Failed to send email" }), { status: resendResponse.status });
     }
 
     return new Response(JSON.stringify({
       success: true,
-      id: result.data?.id,
+      id: result.id,
     }), { status: 200 });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

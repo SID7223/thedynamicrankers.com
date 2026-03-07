@@ -3,21 +3,17 @@ import {
   Send,
   Paperclip,
   Smile,
+  MoreVertical,
+  Reply,
   Edit2,
   Trash2,
-  X as XIcon,
   Plus,
-  AtSign,
-  Hash,
-  Reply,
-  ChevronDown,
-  Download,
-  Check
+  X as XIcon,
+  ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmojiPicker from 'emoji-picker-react';
 import Avatar from './Avatar';
-import { Link } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -25,14 +21,14 @@ interface Message {
   sender_name: string;
   content: string;
   timestamp: string;
-  attachments?: any[];
-  reactions?: any[];
   is_edited?: boolean;
   parent_message_id?: string | null;
+  attachments?: any[];
+  reactions?: any[];
 }
 
 interface SlackStreamProps {
-  taskId: string | 'global-room';
+  taskId: string;
   currentUser: any;
   operatives: any[];
 }
@@ -41,20 +37,21 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [attachments, setAttachments] = useState<string[]>([]);
-  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
+  const [replyTo, setReplyTo] = useState<Message | null>(null);
   const [editingMessage, setEditingMessage] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestionType, setSuggestionType] = useState<'user' | 'task' | null>(null);
-  const [suggestionSearch, setSuggestionSearch] = useState('');
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
+  const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [replyTo, setReplyTo] = useState<Message | null>(null);
+  const [favorites, setFavorites] = useState<string[]>(['👍', '❤️', '🔥', '✅', '🚀']);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionType, setSuggestionType] = useState<'user' | 'task'>('user');
+  const [suggestionSearch, setSuggestionSearch] = useState('');
   const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
+  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
   const [showJumpToBottom, setShowJumpToBottom] = useState(false);
   const [newMessagesCount, setNewMessagesCount] = useState(0);
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [hasInitialScrolled, setHasInitialScrolled] = useState(false);
-  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -62,6 +59,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const typingTimeoutRef = useRef<any>(null);
   const unreadRef = useRef<HTMLDivElement>(null);
 
+  const anyOverlayOpen = previewImage || isEmojiPickerOpen || showSuggestions;
   const apiTaskId = taskId === 'global-room' ? '0' : taskId;
 
   const fetchMessages = async () => {
@@ -82,7 +80,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
           await fetch('/api/internal/read_receipts', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: currentUser.id, roomId: taskId })
+              body: JSON.stringify({
+                  userId: currentUser.id,
+                  taskId: apiTaskId
+              })
           });
       } catch {}
   };
@@ -90,7 +91,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const fetchFavorites = async () => {
      try {
        const res = await fetch(`/api/internal/reactions?userId=${currentUser.id}`);
-       if (res.ok) setFavorites(await res.json());
+       if (res.ok) {
+           const data = await res.json();
+           if (Array.isArray(data) && data.length > 0) setFavorites(data);
+       }
      } catch {}
   };
 
@@ -101,14 +105,16 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'CHAT_MSG' && (data.room === taskId || data.room === apiTaskId)) {
+      if ((data.type === 'CHAT_MSG' || data.type === 'REACTION_UPDATE') && (data.room === taskId || data.room === apiTaskId)) {
         fetchMessages();
-        if (scrollRef.current) {
+        if (data.type === 'CHAT_MSG' && scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
             const isAtBottom = scrollHeight - scrollTop - clientHeight < 200;
             if (!isAtBottom) {
                 setNewMessagesCount(prev => prev + 1);
                 setShowJumpToBottom(true);
+            } else {
+                sendReadReceipt();
             }
         }
       }
@@ -139,12 +145,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
         setHasInitialScrolled(true);
-    } else if (scrollRef.current && newMessagesCount === 0) {
-        const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-        const isAtBottom = scrollHeight - scrollTop - clientHeight < 200;
-        if (isAtBottom) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
     }
   }, [messages, hasInitialScrolled, firstUnreadId]);
 
@@ -164,6 +164,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
           scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
           setShowJumpToBottom(false);
           setNewMessagesCount(0);
+          sendReadReceipt();
       }
   };
 
@@ -172,21 +173,36 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
           await fetch('/api/internal/typing', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ roomId: taskId, userId: currentUser.id, username: currentUser.username, isTyping })
+              body: JSON.stringify({
+                  userId: currentUser.id,
+                  roomId: apiTaskId === '0' ? 'global-room' : apiTaskId,
+                  message: isTyping ? currentUser.username : 'STOP'
+              })
           });
       } catch {}
   };
 
+  const threadedMessages = useMemo(() => {
+    const roots = messages.filter(m => !m.parent_message_id);
+    const repliesMap: Record<string, Message[]> = {};
+    messages.filter(m => m.parent_message_id).forEach(m => {
+      const pid = m.parent_message_id!;
+      if (!repliesMap[pid]) repliesMap[pid] = [];
+      repliesMap[pid].push(m);
+    });
+    return { roots, repliesMap };
+  }, [messages]);
+
   const handleSend = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    e?.preventDefault();
     if (!newMessage.trim() && attachments.length === 0) return;
 
     const payload = {
-      taskId: apiTaskId,
       senderId: currentUser.id,
+      taskId: apiTaskId,
       content: newMessage,
       parentMessageId: replyTo?.id || null,
-      attachments: attachments.map(url => ({ name: 'file.jpg', type: 'image/jpeg', url }))
+      attachments: attachments.map(a => ({ name: 'image.png', type: 'image/png', url: a }))
     };
 
     try {
@@ -199,9 +215,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
         setNewMessage('');
         setAttachments([]);
         setReplyTo(null);
-        updateTypingStatus(false);
         fetchMessages();
-        setTimeout(jumpToBottom, 100);
+        jumpToBottom();
+        updateTypingStatus(false);
       }
     } catch (err) {
       console.error('Send Failed:', err);
@@ -225,7 +241,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const handleDelete = async (id: string) => {
       if (!confirm('Are you sure you want to delete this message?')) return;
       try {
-          const res = await fetch(`/api/internal/chat?id=${id}`, { method: 'DELETE' });
+          const res = await fetch(`/api/internal/chat?id=${id}&userId=${currentUser.id}`, { method: 'DELETE' });
           if (res.ok) fetchMessages();
       } catch {}
   };
@@ -244,7 +260,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const handleAddFavorite = async (emoji: string) => {
       try {
           await fetch('/api/internal/reactions', {
-              method: 'PUT',
+              method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ userId: currentUser.id, emoji })
           });
@@ -252,80 +268,55 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       } catch {}
   };
 
-  const formatContent = (content: string) => {
-    if (!content) return '';
-    const parts = content.split(/(@\w+|#TASK-\d+)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith('@')) return <span key={i} className="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-500/10 px-1.5 py-0.5 rounded-md mx-0.5">@{part.slice(1)}</span>;
-      if (part.startsWith('#TASK-')) return <span key={i} className="text-indigo-600 dark:text-indigo-400 font-bold underline decoration-indigo-500/30 hover:decoration-indigo-500 cursor-pointer">#{part.slice(1)}</span>;
-      return part;
-    });
-  };
-
-  const threadedMessages = useMemo(() => {
-      const roots: any[] = [];
-      const map: Record<string, any[]> = {};
-      messages.forEach(m => {
-          if (m.parent_message_id) {
-              if (!map[m.parent_message_id]) map[m.parent_message_id] = [];
-              map[m.parent_message_id].push(m);
-          } else {
-              roots.push(m);
-          }
-      });
-      return { roots, map };
-  }, [messages]);
-
-  const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
-  const anyOverlayOpen = !!previewImage || isEmojiPickerOpen || showSuggestions;
-
-  const MessageBubble = ({ msg, isReply = false }: { msg: Message, isReply?: boolean }) => {
+  const MessageBubble = ({ msg, isReply }: { msg: Message, isReply?: boolean }) => {
       const isOwn = msg.sender_id === currentUser.id;
-      const isUnread = lastReadAt && msg.timestamp > lastReadAt && !isOwn;
       const isEditing = editingMessage === msg.id;
-      const replies = threadedMessages.map[msg.id] || [];
+      const replies = threadedMessages.repliesMap[msg.id] || [];
+      const isUnread = firstUnreadId === msg.id;
 
       return (
-          <div
-            ref={msg.id === firstUnreadId ? unreadRef : null}
-            className={`group relative flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${isReply ? 'ml-10 mt-2 opacity-90' : 'mt-6'} ${isUnread ? 'bg-indigo-500/5 -mx-3 px-3 py-2 rounded-2xl' : ''}`}
-          >
-              <Avatar name={msg.sender_name} size={isReply ? "xs" : "sm"} />
-              <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{msg.sender_name}</span>
-                      <span className="text-[10px] text-zinc-400 dark:text-zinc-600 font-medium">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      {isUnread && <span className="text-[8px] bg-indigo-600 text-white px-1.5 py-0.5 rounded-full uppercase font-bold tracking-tighter">New</span>}
-                      {msg.is_edited && <span className="text-[10px] text-zinc-400 italic">(edited)</span>}
+          <div ref={isUnread ? unreadRef : null} className={`flex flex-col mb-4 group relative items-start ${isReply ? 'ml-12 mt-2' : ''}`}>
+              {isUnread && (
+                  <div className="w-full flex items-center gap-4 mb-4">
+                      <div className="flex-1 h-px bg-indigo-500/20" />
+                      <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">New Directives</span>
+                      <div className="flex-1 h-px bg-indigo-500/20" />
                   </div>
-
-                  <div className="relative">
+              )}
+              <div className="max-w-[85%] lg:max-w-[70%] order-2">
+                  {!isReply && <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mb-1 block ml-4 uppercase tracking-widest">{msg.sender_name}</span>}
+                  <div className={`p-4 rounded-[2rem] shadow-sm transition-all relative ${isOwn ? 'bg-indigo-600/10 dark:bg-indigo-600/10 border border-indigo-600/20' : 'bg-zinc-100 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800'} text-zinc-900 dark:text-white rounded-tl-none`}>
                       {isEditing ? (
-                          <div className="mt-1 space-y-2">
-                              <textarea value={editContent} onChange={e => setEditContent(e.target.value)} className="w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500/20" />
-                              <div className="flex gap-2">
-                                  <button onClick={() => handleUpdate(msg.id)} className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold flex items-center gap-1.5"><Check size={12} /> Save</button>
-                                  <button onClick={() => setEditingMessage(null)} className="px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-lg text-xs font-bold">Cancel</button>
+                          <div className="flex flex-col gap-2 min-w-[200px]">
+                              <textarea value={editContent} onChange={e => setEditContent(e.target.value)} className="bg-white/10 border border-white/20 rounded-xl p-2 text-sm focus:outline-none" rows={3} />
+                              <div className="flex justify-end gap-2">
+                                  <button onClick={() => setEditingMessage(null)} className="text-[10px] font-bold uppercase">Cancel</button>
+                                  <button onClick={() => handleUpdate(msg.id)} className="text-[10px] font-bold uppercase bg-white text-indigo-600 px-3 py-1 rounded-full">Save</button>
                               </div>
                           </div>
                       ) : (
-                          <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed break-words whitespace-pre-wrap font-sans">
-                            {formatContent(msg.content)}
-                          </p>
+                          <>
+                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                            {msg.attachments && msg.attachments.length > 0 && (
+                                <div className="mt-3 grid grid-cols-2 gap-2">
+                                    {msg.attachments.map((at, i) => (
+                                        <img key={i} src={at.url} className="rounded-xl w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setPreviewImage(at.url)} alt="Attachment" />
+                                    ))}
+                                </div>
+                            )}
+                          </>
                       )}
+                      <div className="absolute bottom-1 left-4 flex items-center gap-2">
+                          <span className="text-[9px] font-bold opacity-40 uppercase text-zinc-500">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          {msg.is_edited && <span className="text-[9px] font-bold opacity-40 uppercase italic text-zinc-500">(edited)</span>}
+                      </div>
 
-                      {!isEditing && (
-                          <div className="mt-2 flex flex-wrap gap-1.5 min-h-[20px]">
-                              {(msg.reactions || []).map((r, i) => (
-                                  <button key={i} onClick={() => toggleReaction(msg.id, r.emoji)} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border transition-all ${r.me > 0 ? 'bg-indigo-600/10 border-indigo-500/50 text-indigo-600 dark:text-indigo-400' : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:border-indigo-500/30'}`}>
-                                      <span className="text-xs">{r.emoji}</span>
-                                      <span className="text-[10px] font-bold">{r.count}</span>
-                                  </button>
-                              ))}
-                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {['👍', '😲', '😊'].map(e => (
-                                      <button key={e} onClick={() => toggleReaction(msg.id, e)} className="p-1 hover:scale-110 transition-transform">
-                                          <span className="text-xs">{e}</span>
+                      {msg.reactions && msg.reactions.length > 0 && (
+                          <div className="absolute -bottom-3 left-4 flex flex-wrap gap-1">
+                              <div className="flex items-center gap-1 bg-white dark:bg-[#1A212B] border border-zinc-200 dark:border-zinc-800 rounded-full px-2 py-0.5 shadow-sm">
+                                  {msg.reactions.map((r, i) => (
+                                      <button key={i} onClick={() => toggleReaction(msg.id, r.emoji)} className={`text-[10px] hover:scale-110 transition-transform ${r.me ? 'opacity-100' : 'opacity-60'}`}>
+                                          {r.emoji} <span className="font-bold">{r.count}</span>
                                       </button>
                                   ))}
                                   <button onClick={() => { setIsEmojiPickerOpen(true); setActiveMessageId(msg.id); }} className="p-1 hover:scale-110 transition-transform text-zinc-400 hover:text-indigo-500"><Plus size={12} /></button>
@@ -339,9 +330,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
 
               {!isEditing && (
                   <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg overflow-hidden z-10">
-                     <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Reply size={14} /></button>
-                     {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Edit2 size={14} /></button>}
-                     {(isOwn || currentUser.role.includes('Admin')) && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Trash2 size={14} /></button>}
+                     <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="Reply"><Reply size={14} /></button>
+                     <button onClick={() => { setActiveMessageId(msg.id); setIsEmojiPickerOpen(true); }} className="p-2 text-zinc-400 hover:text-amber-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="React"><Smile size={14} /></button>
+                     {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="Edit"><Edit2 size={14} /></button>}
+                     {isOwn && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="Delete"><Trash2 size={14} /></button>}
                   </div>
               )}
           </div>

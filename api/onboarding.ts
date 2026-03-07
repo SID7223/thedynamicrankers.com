@@ -1,5 +1,3 @@
-import { Resend } from "resend";
-
 interface OnboardingData {
   orgName: string;
   industry: string;
@@ -130,22 +128,29 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const resend = new Resend(resendApiKey);
-
-    const result = await resend.emails.send({
-      from: resendFromEmail,
-      to: [resendTargetEmail],
-      subject: `Onboarding & Strategy Call: ${data.orgName}`,
-      html: OnboardingEmailTemplate(data),
+    const resendResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: resendFromEmail,
+        to: [resendTargetEmail],
+        subject: `Onboarding & Strategy Call: ${data.orgName}`,
+        html: OnboardingEmailTemplate(data),
+      }),
     });
 
-    if (result.error) {
-        return res.status(500).json({ error: result.error.message });
+    const result: any = await resendResponse.json();
+
+    if (!resendResponse.ok) {
+        return res.status(resendResponse.status).json({ error: result.message || "Failed to send email" });
     }
 
     return res.status(200).json({
       success: true,
-      id: result.data?.id,
+      id: result.id,
     });
   } catch (error) {
     console.error("Onboarding API error:", error);

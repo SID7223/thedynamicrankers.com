@@ -12,7 +12,10 @@ import {
   Sun,
   Moon,
   Menu,
-  X as XIcon
+  X as XIcon,
+  Mail,
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
@@ -39,8 +42,22 @@ const InternalDashboard: React.FC = () => {
   const [unreads, setUnreads] = useState<Record<string, boolean>>({});
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Login form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
   const activeView = (searchParams.get('view') as any) || 'dashboard';
   const activeTaskId = searchParams.get('task');
+
+  useEffect(() => {
+    if (activeTaskId) {
+        setTasks(prev => prev.map(t => t.id === activeTaskId ? { ...t, hasUnread: false } : t));
+        setUnreads(prev => ({ ...prev, [activeTaskId]: false }));
+    }
+  }, [activeTaskId]);
+
   const selectedCustomerId = searchParams.get('customer');
 
   const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null }) => {
@@ -128,12 +145,37 @@ const InternalDashboard: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const mockSession = { id: 'u1', username: 'Eric', email: 'eric@thedynamicrankers.com', role: 'SuperAdmin' };
-    sessionStorage.setItem('dr_internal_session', JSON.stringify(mockSession));
-    setSession(mockSession);
+    setIsLoggingIn(true);
+    setLoginError('');
+
+    try {
+      const response = await fetch('/api/internal/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Authentication Failed');
+      }
+
+      const userData = await response.json();
+      sessionStorage.setItem('dr_internal_session', JSON.stringify(userData));
+      setSession(userData);
+    } catch (err: any) {
+      setLoginError(err.message);
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/internal/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     sessionStorage.removeItem('dr_internal_session');
     setSession(null);
   };
@@ -175,15 +217,75 @@ const InternalDashboard: React.FC = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-[#0B101A] border border-zinc-800 p-10 rounded-[2.5rem] shadow-2xl">
-          <div className="flex flex-col items-center gap-6 mb-10">
-            <div className="w-16 h-16 bg-indigo-600 rounded-[1.5rem] flex items-center justify-center shadow-2xl shadow-indigo-600/40"><Shield className="w-8 h-8 text-white" /></div>
-            <h1 className="text-2xl font-black text-white tracking-tighter uppercase">Command Center</h1>
+      <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6 font-sans">
+        <div className="w-full max-w-md bg-[#0B101A] border border-zinc-800 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+          <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-600/10 blur-[100px] rounded-full group-hover:bg-indigo-600/20 transition-all duration-1000" />
+
+          <div className="flex flex-col items-center gap-6 mb-12 relative z-10">
+            <div className="w-20 h-20 bg-indigo-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-indigo-600/40 transform -rotate-6 transition-transform hover:rotate-0 duration-500">
+              <Shield className="w-10 h-10 text-white" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-3xl font-black text-white tracking-tight uppercase mb-1">Command Center</h1>
+              <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em]">Identity Verification Required</p>
+            </div>
           </div>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 active:scale-95">Initialize Session</button>
+
+          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+            <div className="space-y-4">
+              <div className="relative group/input">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-zinc-600 group-focus-within/input:text-indigo-500 transition-colors">
+                  <Mail size={18} />
+                </div>
+                <input
+                  type="email"
+                  required
+                  placeholder="Official Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-14 pr-6 py-4 bg-[#11161D] border border-zinc-800 text-white rounded-[1.5rem] placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 focus:border-indigo-600 transition-all text-sm font-medium"
+                />
+              </div>
+              <div className="relative group/input">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-zinc-600 group-focus-within/input:text-indigo-500 transition-colors">
+                  <Lock size={18} />
+                </div>
+                <input
+                  type="password"
+                  required
+                  placeholder="Access Code"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-14 pr-6 py-4 bg-[#11161D] border border-zinc-800 text-white rounded-[1.5rem] placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 focus:border-indigo-600 transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
+
+            {loginError && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest text-center">{loginError}</p>
+              </motion.div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-4 bg-indigo-600 text-white rounded-[1.5rem] font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 group/btn"
+            >
+              {isLoggingIn ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  Initialize Session
+                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
           </form>
+
+          <div className="mt-8 text-center relative z-10">
+            <span className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest">Sovereign Node v4.0 • Authorized Access Only</span>
+          </div>
         </div>
       </div>
     );
@@ -218,38 +320,47 @@ const InternalDashboard: React.FC = () => {
     <div style={{ zoom: 0.9 }} className="fixed inset-0 w-[111.11vw] h-[111.11vh] flex bg-white dark:bg-[#06080D] text-zinc-900 dark:text-zinc-300 font-sans overflow-hidden transition-colors duration-300">
       <AnimatePresence>
         {isSidebarOpen && (
-          <motion.div initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} className={`fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-[#0B101A] border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col lg:relative lg:translate-x-0 transition-[width] duration-300 ease-in-out ${effectiveCollapsed ? 'w-[84px]' : 'w-[280px]'}`}>
-            <div className={`flex flex-col gap-6 h-full overflow-hidden ${effectiveCollapsed ? 'p-4' : 'p-6'}`}>
-              <div className={`flex items-center ${effectiveCollapsed ? 'flex-col gap-4' : 'justify-between'}`}>
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg"><Shield className="w-5 h-5 text-white" /></div>
-                  {!effectiveCollapsed && <span className="font-bold text-zinc-900 dark:text-white uppercase">Operations</span>}
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-40 lg:hidden"
+            />
+            <motion.div initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} className={`fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-[#0B101A] border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col lg:relative lg:translate-x-0 transition-[width] duration-300 ease-in-out ${effectiveCollapsed ? "w-[84px]" : "w-[280px]"}`}>
+              <div className={`flex flex-col gap-6 h-full overflow-hidden ${effectiveCollapsed ? "p-4" : "p-6"}`}>
+                <div className={`flex items-center ${effectiveCollapsed ? "flex-col gap-4" : "justify-between"}`}>
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg"><Shield className="w-5 h-5 text-white" /></div>
+                    {!effectiveCollapsed && <span className="font-bold text-zinc-900 dark:text-white uppercase">Operations</span>}
+                  </div>
+                  <div className={`flex items-center gap-1 ${effectiveCollapsed ? "flex-col" : ""}`}>
+                      <button onClick={(e) => { e.stopPropagation(); toggleSidebarCollapse(); }} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? "rotate-180" : ""} /></button>
+                      <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><XIcon size={20} /></button>
+                  </div>
                 </div>
-                <div className={`flex items-center gap-1 ${effectiveCollapsed ? 'flex-col' : ''}`}>
-                    <button onClick={toggleSidebarCollapse} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? 'rotate-180' : ''} /></button>
-                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><XIcon size={20} /></button>
+                <nav className="flex-1 space-y-2">
+                  <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
+                  <NavItem view="tasks" icon={ClipboardList} label="Tasks" />
+                  <NavItem view="global-chat" icon={MessageSquare} label="Global Command" roomKey="0" />
+                  <NavItem view="customers" icon={Users2} label="Customers" />
+                  <NavItem view="invoices" icon={Receipt} label="Invoices" />
+                  <NavItem view="appointments" icon={CalendarCheck} label="Appointments" />
+                </nav>
+                <div className="mt-auto pb-4">
+                  <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col shadow-2xl ${effectiveCollapsed ? "w-14 py-4 rounded-full items-center gap-4" : "w-full p-4 rounded-[2.5rem] gap-4"}`}>
+                     <div className={`flex items-center gap-4 ${effectiveCollapsed ? "justify-center" : ""}`}><Avatar name={session.username} isOnline={true} />{!effectiveCollapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span><span className="text-[10px] text-zinc-500 uppercase font-bold">{session.role}</span></div>}</div>
+                     <div className={`flex items-center justify-between ${effectiveCollapsed ? "flex-col gap-4" : "w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50"}`}><button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 transition-all">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button><button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 transition-all"><LogOut size={20} /></button></div>
+                  </div>
                 </div>
               </div>
-              <nav className="flex-1 space-y-2">
-                <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
-                <NavItem view="tasks" icon={ClipboardList} label="Tasks" />
-                <NavItem view="global-chat" icon={MessageSquare} label="Global Command" roomKey="0" />
-                <NavItem view="customers" icon={Users2} label="Customers" />
-                <NavItem view="invoices" icon={Receipt} label="Invoices" />
-                <NavItem view="appointments" icon={CalendarCheck} label="Appointments" />
-              </nav>
-              <div className="mt-auto pb-4">
-                <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col shadow-2xl ${effectiveCollapsed ? 'w-14 py-4 rounded-full items-center gap-4' : 'w-full p-4 rounded-[2.5rem] gap-4'}`}>
-                   <div className={`flex items-center gap-4 ${effectiveCollapsed ? 'justify-center' : ''}`}><Avatar name={session.username} isOnline={true} />{!effectiveCollapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span><span className="text-[10px] text-zinc-500 uppercase font-bold">{session.role}</span></div>}</div>
-                   <div className={`flex items-center justify-between ${effectiveCollapsed ? 'flex-col gap-4' : 'w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50'}`}><button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 transition-all">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button><button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 transition-all"><LogOut size={20} /></button></div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
-        {!isSidebarOpen && <button onClick={() => setIsSidebarOpen(true)} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 lg:hidden shadow-lg"><Menu size={20} /></button>}
+      <div onClick={() => { if (window.innerWidth < 1024) setIsSidebarOpen(false); else setIsSidebarCollapsed(true); }} className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
+        {!isSidebarOpen && <button onClick={(e) => { e.stopPropagation(); setIsSidebarOpen(true); }} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 lg:hidden shadow-lg"><Menu size={20} /></button>}
         <div className="flex-1 h-full overflow-hidden flex flex-col pt-24 lg:pt-0">
           {activeView === 'dashboard' && <DashboardOverview />}
           {activeView === 'global-chat' && <GlobalChatView currentUser={session} operatives={operatives} onClose={() => setActiveView('dashboard')} lastMessageTimestamp={lastMessageTimestamp} />}

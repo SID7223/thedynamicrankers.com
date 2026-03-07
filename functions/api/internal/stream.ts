@@ -26,6 +26,7 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
         let lastMsgTimestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
         let lastSignalTimestamp = lastMsgTimestamp;
         let lastSignalId = '';
+        let lastReactionTimestamp = lastMsgTimestamp;
 
         const pollInterval = setInterval(async () => {
           if (!env.DB) return;
@@ -68,11 +69,21 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
               lastSignalTimestamp = sig.created_at;
             }
 
-            // 3. Optional: Sync Task Counts (less frequent)
-            // sendEvent({ type: 'SYNC_TASKS' });
+            // 3. Fetch New Reactions
+            const { results: newReactions } = await env.DB.prepare(
+              'SELECT mr.*, cr.task_id, m.room_id FROM message_reactions mr JOIN messages m ON mr.message_id = m.id LEFT JOIN chat_rooms cr ON m.room_id = cr.id WHERE mr.created_at > ? ORDER BY mr.created_at ASC'
+            ).bind(lastReactionTimestamp).all();
+
+            for (const reaction of (newReactions || []) as any[]) {
+              sendEvent({
+                type: 'REACTION_UPDATE',
+                room: reaction.task_id || (reaction.room_id === 'global-room' ? '0' : reaction.room_id),
+                messageId: reaction.message_id
+              });
+              lastReactionTimestamp = reaction.created_at;
+            }
 
           } catch (err) {
-            // Log error but keep the stream alive
             console.error('SSE Poll Error:', err);
           }
         }, 3000);

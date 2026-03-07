@@ -117,7 +117,14 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
     if (request.method === 'DELETE') {
       const id = url.searchParams.get('id');
+      const userId = url.searchParams.get('userId');
       if (!id) return jsonResponse({ error: 'Missing message ID' }, 400);
+      if (!userId) return jsonResponse({ error: 'Missing userId for authorization' }, 400);
+
+      const message = await env.DB.prepare('SELECT sender_id FROM messages WHERE id = ?').bind(id).first() as { sender_id: string } | null;
+      if (!message) return jsonResponse({ error: 'Message not found' }, 404);
+      if (message.sender_id !== userId) return jsonResponse({ error: 'Unauthorized delete' }, 403);
+
       await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(id).run();
       return jsonResponse({ success: true });
     }
