@@ -272,7 +272,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       const isUnread = firstUnreadId === msg.id;
 
       return (
-          <div ref={isUnread ? unreadRef : null} className={`flex flex-col mb-4 group relative ${isOwn ? 'items-end' : 'items-start'} ${isReply ? 'ml-12 mt-2' : ''}`}>
+          <div ref={isUnread ? unreadRef : null} className={`flex flex-col mb-4 group relative items-start ${isReply ? 'ml-12 mt-2' : ''}`}>
               {isUnread && (
                   <div className="w-full flex items-center gap-4 mb-4">
                       <div className="flex-1 h-px bg-indigo-500/20" />
@@ -280,9 +280,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                       <div className="flex-1 h-px bg-indigo-500/20" />
                   </div>
               )}
-              <div className={`max-w-[85%] lg:max-w-[70%] ${isOwn ? 'order-1' : 'order-2'}`}>
-                  {!isReply && !isOwn && <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mb-1 block ml-4 uppercase tracking-widest">{msg.sender_name}</span>}
-                  <div className={`p-4 rounded-[2rem] shadow-sm transition-all relative ${isOwn ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-100 dark:bg-[#11161D] text-zinc-900 dark:text-white rounded-tl-none border border-zinc-200 dark:border-zinc-800'}`}>
+              <div className="max-w-[85%] lg:max-w-[70%] order-2">
+                  {!isReply && <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mb-1 block ml-4 uppercase tracking-widest">{msg.sender_name}</span>}
+                  <div className={`p-4 rounded-[2rem] shadow-sm transition-all relative ${isOwn ? 'bg-indigo-600/10 dark:bg-indigo-600/10 border border-indigo-600/20' : 'bg-zinc-100 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800'} text-zinc-900 dark:text-white rounded-tl-none`}>
                       {isEditing ? (
                           <div className="flex flex-col gap-2 min-w-[200px]">
                               <textarea value={editContent} onChange={e => setEditContent(e.target.value)} className="bg-white/10 border border-white/20 rounded-xl p-2 text-sm focus:outline-none" rows={3} />
@@ -303,9 +303,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                             )}
                           </>
                       )}
-                      <div className={`absolute bottom-1 ${isOwn ? 'right-4' : 'left-4'} flex items-center gap-2`}>
-                          <span className={`text-[9px] font-bold opacity-40 uppercase ${isOwn ? 'text-white' : 'text-zinc-500'}`}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          {msg.is_edited && <span className={`text-[9px] font-bold opacity-40 uppercase italic ${isOwn ? 'text-white' : 'text-zinc-500'}`}>(edited)</span>}
+                      <div className="absolute bottom-1 left-4 flex items-center gap-2">
+                          <span className="text-[9px] font-bold opacity-40 uppercase text-zinc-500">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          {msg.is_edited && <span className="text-[9px] font-bold opacity-40 uppercase italic text-zinc-500">(edited)</span>}
                       </div>
 
                       {msg.reactions && msg.reactions.length > 0 && (
