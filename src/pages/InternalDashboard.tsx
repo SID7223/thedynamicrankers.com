@@ -336,7 +336,7 @@ const InternalDashboard: React.FC = () => {
                     {!effectiveCollapsed && <span className="font-bold text-zinc-900 dark:text-white uppercase">Operations</span>}
                   </div>
                   <div className={`flex items-center gap-1 ${effectiveCollapsed ? "flex-col" : ""}`}>
-                      <button onClick={toggleSidebarCollapse} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? "rotate-180" : ""} /></button>
+                      <button onClick={(e) => { e.stopPropagation(); toggleSidebarCollapse(); }} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? "rotate-180" : ""} /></button>
                       <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><XIcon size={20} /></button>
                   </div>
                 </div>
@@ -360,7 +360,7 @@ const InternalDashboard: React.FC = () => {
         )}
       </AnimatePresence>
       <div onClick={() => { if (window.innerWidth < 1024) setIsSidebarOpen(false); else setIsSidebarCollapsed(true); }} className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
-        {!isSidebarOpen && <button onClick={() => setIsSidebarOpen(true)} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 lg:hidden shadow-lg"><Menu size={20} /></button>}
+        {!isSidebarOpen && <button onClick={(e) => { e.stopPropagation(); setIsSidebarOpen(true); }} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 lg:hidden shadow-lg"><Menu size={20} /></button>}
         <div className="flex-1 h-full overflow-hidden flex flex-col pt-24 lg:pt-0">
           {activeView === 'dashboard' && <DashboardOverview />}
           {activeView === 'global-chat' && <GlobalChatView currentUser={session} operatives={operatives} onClose={() => setActiveView('dashboard')} lastMessageTimestamp={lastMessageTimestamp} />}
