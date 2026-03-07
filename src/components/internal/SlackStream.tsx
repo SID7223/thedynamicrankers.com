@@ -91,7 +91,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const fetchFavorites = async () => {
      try {
        const res = await fetch(`/api/internal/reactions?userId=${currentUser.id}`);
-       if (res.ok) setFavorites(await res.json());
+       if (res.ok) {
+           const data = await res.json();
+           if (Array.isArray(data) && data.length > 0) setFavorites(data);
+       }
      } catch {}
   };
 
@@ -102,9 +105,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'CHAT_MSG' && (data.room === taskId || data.room === apiTaskId)) {
+      if ((data.type === 'CHAT_MSG' || data.type === 'REACTION_UPDATE') && (data.room === taskId || data.room === apiTaskId)) {
         fetchMessages();
-        if (scrollRef.current) {
+        if (data.type === 'CHAT_MSG' && scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
             const isAtBottom = scrollHeight - scrollTop - clientHeight < 200;
             if (!isAtBottom) {
@@ -327,9 +330,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
 
               {!isEditing && (
                   <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg overflow-hidden z-10">
-                     <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Reply size={14} /></button>
-                     {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Edit2 size={14} /></button>}
-                     {isOwn && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Trash2 size={14} /></button>}
+                     <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="Reply"><Reply size={14} /></button>
+                     <button onClick={() => { setActiveMessageId(msg.id); setIsEmojiPickerOpen(true); }} className="p-2 text-zinc-400 hover:text-amber-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="React"><Smile size={14} /></button>
+                     {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="Edit"><Edit2 size={14} /></button>}
+                     {isOwn && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" title="Delete"><Trash2 size={14} /></button>}
                   </div>
               )}
           </div>

@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-74ZbKp/checked-fetch.js
+// ../.wrangler/tmp/bundle-kmCIkI/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -157,6 +157,7 @@ var onRequestGet2 = /* @__PURE__ */ __name(async (context) => {
         let lastMsgTimestamp = (/* @__PURE__ */ new Date()).toISOString().replace("T", " ").split(".")[0];
         let lastSignalTimestamp = lastMsgTimestamp;
         let lastSignalId = "";
+        let lastReactionTimestamp = lastMsgTimestamp;
         const pollInterval = setInterval(async () => {
           if (!env.DB) return;
           try {
@@ -190,6 +191,17 @@ var onRequestGet2 = /* @__PURE__ */ __name(async (context) => {
               });
               lastSignalId = sig.id;
               lastSignalTimestamp = sig.created_at;
+            }
+            const { results: newReactions } = await env.DB.prepare(
+              "SELECT mr.*, cr.task_id, m.room_id FROM message_reactions mr JOIN messages m ON mr.message_id = m.id LEFT JOIN chat_rooms cr ON m.room_id = cr.id WHERE mr.created_at > ? ORDER BY mr.created_at ASC"
+            ).bind(lastReactionTimestamp).all();
+            for (const reaction of newReactions || []) {
+              sendEvent({
+                type: "REACTION_UPDATE",
+                room: reaction.task_id || (reaction.room_id === "global-room" ? "0" : reaction.room_id),
+                messageId: reaction.message_id
+              });
+              lastReactionTimestamp = reaction.created_at;
             }
           } catch (err) {
             console.error("SSE Poll Error:", err);
@@ -743,20 +755,25 @@ var onRequest8 = /* @__PURE__ */ __name(async (context) => {
       const { messageId, userId, emoji } = await request.json();
       if (!messageId || !userId || !emoji) return jsonResponse4({ error: "Missing required fields" }, 400);
       const existing = await env.DB.prepare(
-        "SELECT id FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?"
-      ).bind(messageId, userId, emoji).first();
+        "SELECT id, emoji FROM message_reactions WHERE message_id = ? AND user_id = ?"
+      ).bind(messageId, userId).first();
       try {
         if (existing) {
           await env.DB.prepare(
-            "DELETE FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?"
-          ).bind(messageId, userId, emoji).run();
+            "DELETE FROM message_reactions WHERE message_id = ? AND user_id = ?"
+          ).bind(messageId, userId).run();
+          if (existing.emoji !== emoji) {
+            await env.DB.prepare(
+              "INSERT INTO message_reactions (id, message_id, user_id, emoji) VALUES (?, ?, ?, ?)"
+            ).bind(crypto.randomUUID(), messageId, userId, emoji).run();
+          }
         } else {
           await env.DB.prepare(
             "INSERT INTO message_reactions (id, message_id, user_id, emoji) VALUES (?, ?, ?, ?)"
           ).bind(crypto.randomUUID(), messageId, userId, emoji).run();
         }
       } catch (sqlErr) {
-        return jsonResponse4({ error: "SQL_REACTION_FAILED", message: sqlErr.message, suggestion: "Check if message_reactions table exists and message_id is valid." }, 500);
+        return jsonResponse4({ error: "SQL_REACTION_FAILED", message: sqlErr.message }, 500);
       }
       return jsonResponse4({ success: true });
     }
@@ -766,11 +783,14 @@ var onRequest8 = /* @__PURE__ */ __name(async (context) => {
       const { results } = await env.DB.prepare("SELECT emoji FROM user_favorite_emojis WHERE user_id = ?").bind(userId).all();
       return jsonResponse4(results.map((r) => r.emoji));
     }
-    if (request.method === "PUT") {
+    if (request.method === "PUT" || request.method === "PATCH") {
       const { userId, emoji } = await request.json();
       if (!userId || !emoji) return jsonResponse4({ error: "Missing required fields" }, 400);
       try {
-        await env.DB.prepare("INSERT OR IGNORE INTO user_favorite_emojis (id, user_id, emoji) VALUES (?, ?, ?)").bind(crypto.randomUUID(), userId, emoji).run();
+        const exists = await env.DB.prepare("SELECT id FROM user_favorite_emojis WHERE user_id = ? AND emoji = ?").bind(userId, emoji).first();
+        if (!exists) {
+          await env.DB.prepare("INSERT INTO user_favorite_emojis (id, user_id, emoji) VALUES (?, ?, ?)").bind(crypto.randomUUID(), userId, emoji).run();
+        }
       } catch (sqlErr) {
         return jsonResponse4({ error: "SQL_FAVORITE_FAILED", message: sqlErr.message }, 500);
       }
@@ -1838,7 +1858,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-74ZbKp/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-kmCIkI/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -1870,7 +1890,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-74ZbKp/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-kmCIkI/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

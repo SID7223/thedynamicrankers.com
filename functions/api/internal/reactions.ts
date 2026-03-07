@@ -19,21 +19,29 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (!messageId || !userId || !emoji) return jsonResponse({ error: 'Missing required fields' }, 400);
 
       const existing = await env.DB.prepare(
-        'SELECT id FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
-      ).bind(messageId, userId, emoji).first();
+        'SELECT id, emoji FROM message_reactions WHERE message_id = ? AND user_id = ?'
+      ).bind(messageId, userId).first() as { id: string, emoji: string } | null;
 
       try {
           if (existing) {
+            // Delete the old reaction
             await env.DB.prepare(
-              'DELETE FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
-            ).bind(messageId, userId, emoji).run();
+              'DELETE FROM message_reactions WHERE message_id = ? AND user_id = ?'
+            ).bind(messageId, userId).run();
+
+            // If the new emoji is different, insert it
+            if (existing.emoji !== emoji) {
+                await env.DB.prepare(
+                  'INSERT INTO message_reactions (id, message_id, user_id, emoji) VALUES (?, ?, ?, ?)'
+                ).bind(crypto.randomUUID(), messageId, userId, emoji).run();
+            }
           } else {
             await env.DB.prepare(
               'INSERT INTO message_reactions (id, message_id, user_id, emoji) VALUES (?, ?, ?, ?)'
             ).bind(crypto.randomUUID(), messageId, userId, emoji).run();
           }
       } catch (sqlErr: any) {
-          return jsonResponse({ error: 'SQL_REACTION_FAILED', message: sqlErr.message, suggestion: 'Check if message_reactions table exists and message_id is valid.' }, 500);
+          return jsonResponse({ error: 'SQL_REACTION_FAILED', message: sqlErr.message }, 500);
       }
 
       return jsonResponse({ success: true });
@@ -46,11 +54,15 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       return jsonResponse(results.map((r: any) => r.emoji));
     }
 
-    if (request.method === 'PUT') {
+    if (request.method === 'PUT' || request.method === 'PATCH') {
       const { userId, emoji } = await request.json() as any;
       if (!userId || !emoji) return jsonResponse({ error: 'Missing required fields' }, 400);
       try {
-          await env.DB.prepare('INSERT OR IGNORE INTO user_favorite_emojis (id, user_id, emoji) VALUES (?, ?, ?)').bind(crypto.randomUUID(), userId, emoji).run();
+          // Check if already in favorites to avoid duplicates if unique constraint is missing
+          const exists = await env.DB.prepare('SELECT id FROM user_favorite_emojis WHERE user_id = ? AND emoji = ?').bind(userId, emoji).first();
+          if (!exists) {
+            await env.DB.prepare('INSERT INTO user_favorite_emojis (id, user_id, emoji) VALUES (?, ?, ?)').bind(crypto.randomUUID(), userId, emoji).run();
+          }
       } catch (sqlErr: any) {
           return jsonResponse({ error: 'SQL_FAVORITE_FAILED', message: sqlErr.message }, 500);
       }
