@@ -13,7 +13,8 @@ import {
   Sun,
   Moon,
   MessageSquare,
-  ClipboardList
+  ClipboardList,
+  ChevronLeft
 } from 'lucide-react';
 import TaskListView from '../components/internal/TaskListView';
 import TaskDetailView from '../components/internal/TaskDetailView';
@@ -34,7 +35,6 @@ const InternalDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Safe extraction of parameters
   const activeView = (searchParams.get('view') as any) || 'dashboard';
   const activeTaskId = searchParams.get('task');
   const selectedCustomerId = searchParams.get('customer');
@@ -67,10 +67,30 @@ const InternalDashboard: React.FC = () => {
 
   const [tasks, setTasks] = useState<any[]>([]);
   const [operatives, setOperatives] = useState<any[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // For mobile drawer
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('dr_sidebar_collapsed') === 'true';
+  });
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState(Date.now());
   const [isDark, setIsDark] = useState(true);
+
+  // Responsive check for effective collapse state
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const effectiveCollapsed = isSidebarCollapsed && isLargeScreen;
+
+  const toggleSidebarCollapse = () => {
+    const newState = !isSidebarCollapsed;
+    setIsSidebarCollapsed(newState);
+    localStorage.setItem('dr_sidebar_collapsed', String(newState));
+  };
 
   const fetchInitialData = useCallback(async () => {
     try {
@@ -220,56 +240,122 @@ const InternalDashboard: React.FC = () => {
     );
   }
 
+  const NavItem = ({ view, icon: Icon, label }: { view: string, icon: any, label: string }) => {
+    const isActive = activeView === view;
+    return (
+      <button
+        onClick={() => setActiveView(view)}
+        title={effectiveCollapsed ? label : ''}
+        aria-label={label}
+        className={`w-full flex items-center ${effectiveCollapsed ? 'justify-center px-0' : 'px-5'} py-4 rounded-2xl transition-all ${
+          isActive
+            ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20'
+            : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'
+        }`}
+      >
+        <div className="flex-shrink-0"><Icon size={20} /></div>
+        <AnimatePresence mode="wait">
+            {!effectiveCollapsed && (
+                <motion.span
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-sm whitespace-nowrap ml-4"
+                >
+                    {label}
+                </motion.span>
+            )}
+        </AnimatePresence>
+      </button>
+    );
+  };
+
   return (
     <div className="flex h-screen bg-white dark:bg-[#06080D] text-zinc-900 dark:text-zinc-300 font-sans overflow-hidden no-zoom transition-colors duration-300">
       {/* Sidebar */}
       <AnimatePresence>
         {isSidebarOpen && (
-          <motion.div initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} className="fixed inset-y-0 left-0 z-50 w-[280px] bg-zinc-50 dark:bg-[#0B101A] border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col lg:relative lg:translate-x-0 transition-colors duration-300">
-            <div className="p-8 flex flex-col gap-10 h-full">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-600/20"><Shield className="w-5 h-5 text-white" /></div>
-                  <span className="font-bold text-zinc-900 dark:text-white tracking-tight">OPERATIONS</span>
+          <motion.div
+            initial={{ x: -280 }}
+            animate={{ x: 0 }}
+            exit={{ x: -280 }}
+            className={`fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-[#0B101A] border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col lg:relative lg:translate-x-0 transition-[width] duration-300 ease-in-out ${
+              effectiveCollapsed ? 'w-[84px]' : 'w-[280px]'
+            }`}
+          >
+            <div className="p-6 flex flex-col gap-10 h-full overflow-hidden">
+              <div className={`flex items-center ${effectiveCollapsed ? 'flex-col gap-6' : 'justify-between'}`}>
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-indigo-600/20"><Shield className="w-5 h-5 text-white" /></div>
+                  <AnimatePresence>
+                    {!effectiveCollapsed && (
+                        <motion.span
+                            initial={{ opacity: 0, width: 0 }}
+                            animate={{ opacity: 1, width: 'auto' }}
+                            exit={{ opacity: 0, width: 0 }}
+                            className="font-bold text-zinc-900 dark:text-white tracking-tight whitespace-nowrap uppercase"
+                        >
+                            Operations
+                        </motion.span>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={20} /></button>
+
+                <div className={`flex items-center gap-1 ${effectiveCollapsed ? 'flex-col' : ''}`}>
+                    {/* Collapse Toggle Arrow (Desktop Only) */}
+                    <button
+                        onClick={toggleSidebarCollapse}
+                        className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                        title={effectiveCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+                    >
+                        <motion.div
+                            animate={{ rotate: effectiveCollapsed ? 180 : 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <ChevronLeft size={20} />
+                        </motion.div>
+                    </button>
+
+                    {/* Mobile Close */}
+                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={20} /></button>
+                </div>
               </div>
 
               <nav className="flex-1 space-y-2">
-                <button onClick={() => setActiveView('dashboard')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'dashboard' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
-                  <LayoutDashboard size={20} /><span className="text-sm">Dashboard</span>
-                </button>
-                <button onClick={() => setActiveView('tasks')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'tasks' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
-                  <ClipboardList size={20} /><span className="text-sm">Tasks</span>
-                </button>
-                <button onClick={() => setActiveView('global-chat')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'global-chat' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
-                  <MessageSquare size={20} /><span className="text-sm">Global Command</span>
-                </button>
-                <button onClick={() => setActiveView('customers')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'customers' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
-                  <Users2 size={20} /><span className="text-sm">Customers</span>
-                </button>
-                <button onClick={() => setActiveView('invoices')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'invoices' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
-                  <Receipt size={20} /><span className="text-sm">Invoices</span>
-                </button>
-                <button onClick={() => setActiveView('appointments')} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${activeView === 'appointments' ? 'bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 font-bold border border-indigo-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/5'}`}>
-                  <CalendarCheck size={20} /><span className="text-sm">Appointments</span>
-                </button>
+                <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
+                <NavItem view="tasks" icon={ClipboardList} label="Tasks" />
+                <NavItem view="global-chat" icon={MessageSquare} label="Global Command" />
+                <NavItem view="customers" icon={Users2} label="Customers" />
+                <NavItem view="invoices" icon={Receipt} label="Invoices" />
+                <NavItem view="appointments" icon={CalendarCheck} label="Appointments" />
               </nav>
 
               <div className="mt-auto space-y-6">
-                <div className="p-5 bg-zinc-200/50 dark:bg-[#11161D] rounded-3xl border border-zinc-300/50 dark:border-zinc-800/50 flex flex-col gap-5 transition-colors duration-300">
-                   <div className="flex items-center gap-4">
+                <div className={`bg-zinc-200/50 dark:bg-[#11161D] rounded-3xl border border-zinc-300/50 dark:border-zinc-800/50 flex flex-col gap-5 transition-all duration-300 overflow-hidden ${
+                    effectiveCollapsed ? 'p-2 items-center' : 'p-5'
+                }`}>
+                   <div className={`flex items-center gap-4 ${effectiveCollapsed ? 'justify-center' : ''}`}>
                      <Avatar name={session.username} isOnline={true} />
-                     <div className="flex flex-col min-w-0">
-                       <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span>
-                       <span className="text-[10px] text-zinc-500 dark:text-zinc-600 uppercase tracking-widest font-bold">{session.role}</span>
-                     </div>
+                     <AnimatePresence>
+                        {!effectiveCollapsed && (
+                            <motion.div
+                                initial={{ opacity: 0, width: 0 }}
+                                animate={{ opacity: 1, width: 'auto' }}
+                                exit={{ opacity: 0, width: 0 }}
+                                className="flex flex-col min-w-0"
+                            >
+                                <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span>
+                                <span className="text-[10px] text-zinc-500 dark:text-zinc-600 uppercase tracking-widest font-bold">{session.role}</span>
+                            </motion.div>
+                        )}
+                     </AnimatePresence>
                    </div>
-                   <div className="flex items-center justify-between pt-2 border-t border-zinc-300/30 dark:border-zinc-800/30">
-                     <button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                   <div className={`flex items-center justify-between pt-2 border-t border-zinc-300/30 dark:border-zinc-800/30 ${effectiveCollapsed ? 'flex-col gap-2 w-full items-center' : 'w-full'}`}>
+                     <button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" title="Toggle Theme">
                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
                      </button>
-                     <button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors">
+                     <button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="Initialize Logout">
                        <LogOut size={20} />
                      </button>
                    </div>
