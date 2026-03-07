@@ -1,11 +1,26 @@
-DATABASE SCHEMA UPDATE - 2024-05-25
+DATABASE SCHEMA UPDATE - 2024-05-25 (FIXED)
 
-New Tables for Enhanced Messaging:
-1. message_reactions: Stores emoji reactions for chat messages.
-2. user_favorite_emojis: Stores personalized emoji shortcuts per user.
-3. message_read_receipts: Tracks the last time a user viewed a specific chat room to manage unread states.
+Critical migration to support advanced messaging features (threading, edits, typing signals):
+
+1. messages: Added 'parent_message_id' (TEXT), 'message_type' (TEXT), and 'edited' (BOOLEAN).
+2. message_edits: Created audit trail for message updates.
+3. message_reactions: Stores emoji reactions.
+4. user_favorite_emojis: Stores personalized user emojis.
+5. message_read_receipts: Manages unread state.
 
 SQL Statements:
+ALTER TABLE messages ADD COLUMN parent_message_id TEXT;
+ALTER TABLE messages ADD COLUMN message_type TEXT DEFAULT 'text';
+ALTER TABLE messages ADD COLUMN edited BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE IF NOT EXISTS message_edits (
+    id TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL,
+    old_content TEXT NOT NULL,
+    edited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS message_reactions (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,

@@ -83,8 +83,16 @@ CREATE TABLE IF NOT EXISTS message_attachments (
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
 );
 
--- 7. Message Mentions Table
--- 7. Chat Room Members
+-- 7. Message Edits Table (Audit Trail)
+CREATE TABLE IF NOT EXISTS message_edits (
+    id TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL,
+    old_content TEXT NOT NULL,
+    edited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+);
+
+-- 8. Chat Room Members
 CREATE TABLE IF NOT EXISTS chat_room_members (
     id TEXT PRIMARY KEY,
     room_id TEXT NOT NULL,
@@ -95,6 +103,7 @@ CREATE TABLE IF NOT EXISTS chat_room_members (
     UNIQUE(room_id, user_id)
 );
 
+-- 9. Message Mentions Table
 CREATE TABLE IF NOT EXISTS message_mentions (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
@@ -104,11 +113,11 @@ CREATE TABLE IF NOT EXISTS message_mentions (
     FOREIGN KEY (mentioned_user_id) REFERENCES users(id)
 );
 
--- 8. Notifications Table
+-- 10. Notifications Table
 CREATE TABLE IF NOT EXISTS notifications (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
-    type TEXT NOT NULL, -- task_access, mention, reply, status_change
+    type TEXT NOT NULL, -- task_access, mention, reply, status_change, typing
     reference_id TEXT, -- ID of the related task or message
     message TEXT NOT NULL,
     read_status BOOLEAN DEFAULT FALSE,
@@ -116,7 +125,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 9. Task Access Requests Table
+-- 11. Task Access Requests Table
 CREATE TABLE IF NOT EXISTS task_access_requests (
     id TEXT PRIMARY KEY,
     task_id TEXT NOT NULL,
@@ -130,7 +139,7 @@ CREATE TABLE IF NOT EXISTS task_access_requests (
     FOREIGN KEY (approved_by) REFERENCES users(id)
 );
 
--- 10. CRM Customers Table
+-- 12. CRM Customers Table
 CREATE TABLE IF NOT EXISTS crm_customers (
     id TEXT PRIMARY KEY, -- UUID
     name TEXT NOT NULL,
@@ -143,7 +152,7 @@ CREATE TABLE IF NOT EXISTS crm_customers (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- 11. CRM Invoices Table
+-- 13. CRM Invoices Table
 CREATE TABLE IF NOT EXISTS crm_invoices (
     id TEXT PRIMARY KEY, -- UUID
     customer_id TEXT NOT NULL,
@@ -156,7 +165,7 @@ CREATE TABLE IF NOT EXISTS crm_invoices (
     FOREIGN KEY (customer_id) REFERENCES crm_customers(id) ON DELETE CASCADE
 );
 
--- 12. CRM Appointments Table
+-- 14. CRM Appointments Table
 CREATE TABLE IF NOT EXISTS crm_appointments (
     id TEXT PRIMARY KEY, -- UUID
     customer_id TEXT NOT NULL,
@@ -171,14 +180,14 @@ CREATE TABLE IF NOT EXISTS crm_appointments (
     FOREIGN KEY (customer_id) REFERENCES crm_customers(id) ON DELETE CASCADE
 );
 
--- 13. Message Search Index (FTS5)
+-- 15. Message Search Index (FTS5)
 CREATE VIRTUAL TABLE IF NOT EXISTS message_search_index USING fts5(
     message_id UNINDEXED,
     room_id UNINDEXED,
     content
 );
 
--- 14. Triggers for FTS5
+-- 16. Triggers for FTS5
 CREATE TRIGGER IF NOT EXISTS after_message_insert AFTER INSERT ON messages BEGIN
     INSERT INTO message_search_index(message_id, room_id, content)
     VALUES (new.id, new.room_id, new.message_content);
@@ -193,7 +202,7 @@ CREATE TRIGGER IF NOT EXISTS after_message_delete AFTER DELETE ON messages BEGIN
     DELETE FROM message_search_index WHERE message_id = old.id;
 END;
 
--- 15. Task Assignees Table
+-- 17. Task Assignees Table
 CREATE TABLE IF NOT EXISTS task_assignees (
     id TEXT PRIMARY KEY,
     task_id TEXT NOT NULL,
@@ -204,7 +213,7 @@ CREATE TABLE IF NOT EXISTS task_assignees (
     UNIQUE(task_id, user_id)
 );
 
--- 16. Task Attachments Table
+-- 18. Task Attachments Table
 CREATE TABLE IF NOT EXISTS task_attachments (
     id TEXT PRIMARY KEY,
     task_id TEXT NOT NULL,
@@ -216,20 +225,20 @@ CREATE TABLE IF NOT EXISTS task_attachments (
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
--- 17. Seed Initial Superusers
+-- 19. Seed Initial Superusers
 -- Note: UUIDs generated for the seed users
 INSERT OR IGNORE INTO users (id, name, email, password_hash, role) VALUES
 ('u_001', 'SID', 'saadumar7223@gmail.com', '123456', 'superuser'),
 ('u_002', 'Eric', 'eric@thedynamicrankers.com', '123456', 'superuser');
 
--- 18. Initialize Global Chat Room
+-- 20. Initialize Global Chat Room
 INSERT OR IGNORE INTO chat_rooms (id, type, task_id) VALUES ('global-room', 'global', NULL);
 
--- 19. Seed Initial Members for Global Room
+-- 21. Seed Initial Members for Global Room
 INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_001', 'global-room', 'u_001');
 INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_002', 'global-room', 'u_002');
 
--- 20. Message Reactions Table
+-- 22. Message Reactions Table
 CREATE TABLE IF NOT EXISTS message_reactions (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
@@ -241,7 +250,7 @@ CREATE TABLE IF NOT EXISTS message_reactions (
     UNIQUE(message_id, user_id, emoji)
 );
 
--- 21. User Favorite Emojis Table
+-- 23. User Favorite Emojis Table
 CREATE TABLE IF NOT EXISTS user_favorite_emojis (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -251,7 +260,7 @@ CREATE TABLE IF NOT EXISTS user_favorite_emojis (
     UNIQUE(user_id, emoji)
 );
 
--- 22. Message Read Receipts Table
+-- 24. Message Read Receipts Table
 CREATE TABLE IF NOT EXISTS message_read_receipts (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,

@@ -51,7 +51,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
           lastReadAt: lastRead?.last_read_at || null
       }), { headers: { 'Content-Type': 'application/json' } });
     } catch (err: any) {
-      return new Response(err.message, { status: 500 });
+      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
@@ -91,9 +91,9 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         }
       }
 
-      return new Response(JSON.stringify({ id: messageId, success: true }), { status: 201 });
+      return new Response(JSON.stringify({ id: messageId, success: true }), { status: 201, headers: { 'Content-Type': 'application/json' } });
     } catch (err: any) {
-      return new Response(err.message, { status: 500 });
+      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
@@ -111,9 +111,9 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       await env.DB.prepare('INSERT INTO message_edits (id, message_id, old_content) VALUES (?, ?, ?)').bind(crypto.randomUUID(), id, message.message_content).run();
       await env.DB.prepare('UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(body.content, id).run();
 
-      return new Response(JSON.stringify({ success: true }));
+      return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
     } catch (err: any) {
-      return new Response(err.message, { status: 500 });
+      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
@@ -122,9 +122,9 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const id = url.searchParams.get('id');
       if (!id) return new Response('Missing message ID', { status: 400 });
       await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(id).run();
-      return new Response(JSON.stringify({ success: true }));
+      return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
     } catch (err: any) {
-      return new Response(err.message, { status: 500 });
+      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
   }
 
