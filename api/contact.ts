@@ -1,5 +1,3 @@
-import { Resend } from "resend";
-
 interface EmailTemplateProps {
   name: string;
   email: string;
@@ -48,9 +46,7 @@ const resendFromEmail =
 const resendTargetEmail =
   process.env.RESEND_TARGET_EMAIL || process.env.CONTACT_TO_EMAIL;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function handler(req: any, res: any) {
-  // Allow only POST
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -66,31 +62,41 @@ export default async function handler(req: any, res: any) {
 
     const { name, email, phone, message } = req.body;
 
-    // Basic validation
     if (!name || !email || !message) {
       return res.status(400).json({
         error: "Name, email, and message are required",
       });
     }
 
-    const resend = new Resend(resendApiKey);
-
-    // Send email via Resend
-    const result = await resend.emails.send({
-      from: resendFromEmail,
-      to: [resendTargetEmail],
-      subject: `New Contact Form Submission – ${name}`,
-      html: ContactEmailTemplate({
-        name,
-        email,
-        phone,
-        message,
+    const resendResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: resendFromEmail,
+        to: [resendTargetEmail],
+        subject: `New Contact Form Submission – ${name}`,
+        html: ContactEmailTemplate({
+          name,
+          email,
+          phone,
+          message,
+        }),
+        replyTo: email
       }),
     });
 
+    const result: any = await resendResponse.json();
+
+    if (!resendResponse.ok) {
+        return res.status(resendResponse.status).json({ error: result.message || "Failed to send email" });
+    }
+
     return res.status(200).json({
       success: true,
-      id: result.data?.id,
+      id: result.id,
     });
   } catch (error: any) {
     console.error("Contact API error:", error);

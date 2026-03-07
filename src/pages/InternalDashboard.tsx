@@ -50,12 +50,14 @@ const InternalDashboard: React.FC = () => {
 
   const activeView = (searchParams.get('view') as any) || 'dashboard';
   const activeTaskId = searchParams.get('task');
+
   useEffect(() => {
     if (activeTaskId) {
         setTasks(prev => prev.map(t => t.id === activeTaskId ? { ...t, hasUnread: false } : t));
         setUnreads(prev => ({ ...prev, [activeTaskId]: false }));
     }
   }, [activeTaskId]);
+
   const selectedCustomerId = searchParams.get('customer');
 
   const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null }) => {
@@ -217,7 +219,6 @@ const InternalDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6 font-sans">
         <div className="w-full max-w-md bg-[#0B101A] border border-zinc-800 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
-          {/* Subtle Ambient Glow */}
           <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-600/10 blur-[100px] rounded-full group-hover:bg-indigo-600/20 transition-all duration-1000" />
 
           <div className="flex flex-col items-center gap-6 mb-12 relative z-10">
@@ -369,3 +370,9 @@ const InternalDashboard: React.FC = () => {
           {activeView === 'appointments' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMAppointments /></div>}
         </div>
       </div>
+      <AnimatePresence>{isNewTaskModalOpen && <NewTaskModal onClose={() => setIsNewTaskModalOpen(false)} operatives={operatives} onSubmit={handleCreateTask} />}</AnimatePresence>
+    </div>
+  );
+};
+
+export default InternalDashboard;
