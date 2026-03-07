@@ -271,7 +271,7 @@ const InternalDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-white dark:bg-[#06080D] text-zinc-900 dark:text-zinc-300 font-sans overflow-hidden no-zoom transition-colors duration-300">
+    <div style={{ zoom: 0.9 }} className="fixed inset-0 w-[111.11vw] h-[111.11vh] flex bg-white dark:bg-[#06080D] text-zinc-900 dark:text-zinc-300 font-sans overflow-hidden no-zoom transition-colors duration-300">
       {/* Sidebar */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -331,8 +331,8 @@ const InternalDashboard: React.FC = () => {
               <div className={`flex flex-col items-center mt-auto pb-4 ${effectiveCollapsed ? 'gap-0' : 'gap-4'}`}>
                 <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out shadow-2xl ${
                     effectiveCollapsed
-                      ? 'w-14 py-6 rounded-full items-center gap-6'
-                      : 'w-full p-5 rounded-[2.5rem] gap-6'
+                      ? 'w-14 py-4 rounded-full items-center gap-4'
+                      : 'w-full p-4 rounded-[2.5rem] gap-4'
                 }`}>
                    <div className={`flex items-center gap-4 ${effectiveCollapsed ? 'justify-center' : ''}`}>
                      <Avatar name={session.username} isOnline={true} />
