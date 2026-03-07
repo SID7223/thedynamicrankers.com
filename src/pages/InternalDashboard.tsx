@@ -12,7 +12,10 @@ import {
   Sun,
   Moon,
   Menu,
-  X as XIcon
+  X as XIcon,
+  Mail,
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
@@ -38,6 +41,12 @@ const InternalDashboard: React.FC = () => {
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState<number>(0);
   const [unreads, setUnreads] = useState<Record<string, boolean>>({});
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Login form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const activeView = (searchParams.get('view') as any) || 'dashboard';
   const activeTaskId = searchParams.get('task');
@@ -128,12 +137,37 @@ const InternalDashboard: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const mockSession = { id: 'u1', username: 'Eric', email: 'eric@thedynamicrankers.com', role: 'SuperAdmin' };
-    sessionStorage.setItem('dr_internal_session', JSON.stringify(mockSession));
-    setSession(mockSession);
+    setIsLoggingIn(true);
+    setLoginError('');
+
+    try {
+      const response = await fetch('/api/internal/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Authentication Failed');
+      }
+
+      const userData = await response.json();
+      sessionStorage.setItem('dr_internal_session', JSON.stringify(userData));
+      setSession(userData);
+    } catch (err: any) {
+      setLoginError(err.message);
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/internal/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     sessionStorage.removeItem('dr_internal_session');
     setSession(null);
   };
@@ -175,15 +209,76 @@ const InternalDashboard: React.FC = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-[#0B101A] border border-zinc-800 p-10 rounded-[2.5rem] shadow-2xl">
-          <div className="flex flex-col items-center gap-6 mb-10">
-            <div className="w-16 h-16 bg-indigo-600 rounded-[1.5rem] flex items-center justify-center shadow-2xl shadow-indigo-600/40"><Shield className="w-8 h-8 text-white" /></div>
-            <h1 className="text-2xl font-black text-white tracking-tighter uppercase">Command Center</h1>
+      <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6 font-sans">
+        <div className="w-full max-w-md bg-[#0B101A] border border-zinc-800 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+          {/* Subtle Ambient Glow */}
+          <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-600/10 blur-[100px] rounded-full group-hover:bg-indigo-600/20 transition-all duration-1000" />
+
+          <div className="flex flex-col items-center gap-6 mb-12 relative z-10">
+            <div className="w-20 h-20 bg-indigo-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-indigo-600/40 transform -rotate-6 transition-transform hover:rotate-0 duration-500">
+              <Shield className="w-10 h-10 text-white" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-3xl font-black text-white tracking-tight uppercase mb-1">Command Center</h1>
+              <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em]">Identity Verification Required</p>
+            </div>
           </div>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 active:scale-95">Initialize Session</button>
+
+          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+            <div className="space-y-4">
+              <div className="relative group/input">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-zinc-600 group-focus-within/input:text-indigo-500 transition-colors">
+                  <Mail size={18} />
+                </div>
+                <input
+                  type="email"
+                  required
+                  placeholder="Official Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-14 pr-6 py-4 bg-[#11161D] border border-zinc-800 text-white rounded-[1.5rem] placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 focus:border-indigo-600 transition-all text-sm font-medium"
+                />
+              </div>
+              <div className="relative group/input">
+                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-zinc-600 group-focus-within/input:text-indigo-500 transition-colors">
+                  <Lock size={18} />
+                </div>
+                <input
+                  type="password"
+                  required
+                  placeholder="Access Code"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-14 pr-6 py-4 bg-[#11161D] border border-zinc-800 text-white rounded-[1.5rem] placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 focus:border-indigo-600 transition-all text-sm font-medium"
+                />
+              </div>
+            </div>
+
+            {loginError && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest text-center">{loginError}</p>
+              </motion.div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-4 bg-indigo-600 text-white rounded-[1.5rem] font-black uppercase tracking-widest text-xs hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 group/btn"
+            >
+              {isLoggingIn ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  Initialize Session
+                  <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
           </form>
+
+          <div className="mt-8 text-center relative z-10">
+            <span className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest">Sovereign Node v4.0 • Authorized Access Only</span>
+          </div>
         </div>
       </div>
     );

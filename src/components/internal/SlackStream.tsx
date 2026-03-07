@@ -225,7 +225,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const handleDelete = async (id: string) => {
       if (!confirm('Are you sure you want to delete this message?')) return;
       try {
-          const res = await fetch(`/api/internal/chat?id=${id}`, { method: 'DELETE' });
+          const res = await fetch(`/api/internal/chat?id=${id}&userId=${currentUser.id}`, { method: 'DELETE' });
           if (res.ok) fetchMessages();
       } catch {}
   };
@@ -341,7 +341,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                   <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg overflow-hidden z-10">
                      <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Reply size={14} /></button>
                      {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Edit2 size={14} /></button>}
-                     {(isOwn || currentUser.role.includes('Admin')) && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Trash2 size={14} /></button>}
+                     {isOwn && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Trash2 size={14} /></button>}
                   </div>
               )}
           </div>
