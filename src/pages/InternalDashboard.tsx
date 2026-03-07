@@ -50,6 +50,12 @@ const InternalDashboard: React.FC = () => {
 
   const activeView = (searchParams.get('view') as any) || 'dashboard';
   const activeTaskId = searchParams.get('task');
+  useEffect(() => {
+    if (activeTaskId) {
+        setTasks(prev => prev.map(t => t.id === activeTaskId ? { ...t, hasUnread: false } : t));
+        setUnreads(prev => ({ ...prev, [activeTaskId]: false }));
+    }
+  }, [activeTaskId]);
   const selectedCustomerId = searchParams.get('customer');
 
   const updateNavigation = useCallback((params: { view?: string; task?: string | null; customer?: string | null }) => {
