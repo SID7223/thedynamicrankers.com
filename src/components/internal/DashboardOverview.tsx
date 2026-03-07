@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   TrendingUp,
-  TrendingDown,
   MoreVertical,
   Download,
   Plus,
   ArrowUpRight,
   ArrowDownRight,
-  Users2,
   DollarSign,
   Briefcase,
   Activity
@@ -36,6 +34,7 @@ const DashboardOverview: React.FC = () => {
     const fetchAnalytics = async () => {
       try {
         const res = await fetch('/api/internal/analytics');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         if (json.error) throw new Error(json.error);
         setData(json);
@@ -49,10 +48,37 @@ const DashboardOverview: React.FC = () => {
     fetchAnalytics();
   }, []);
 
-  if (loading) return <div className="p-10 text-zinc-500 font-bold uppercase tracking-widest text-xs animate-pulse">Synchronizing Data Streams...</div>;
-  if (error) return <div className="p-10 text-red-500 font-bold uppercase tracking-widest text-xs">Error: {error}</div>;
-  if (!data) return null;
+  if (loading) return (
+    <div className="flex-1 flex items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] animate-pulse">Synchronizing Data Streams...</p>
+      </div>
+    </div>
+  );
 
+  if (error || !data || !data.kpis) return (
+    <div className="flex-1 p-10 flex flex-col items-center justify-center text-center space-y-4">
+      <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-4">
+        <Activity size={32} />
+      </div>
+      <h3 className="text-xl font-bold text-zinc-900 dark:text-white uppercase tracking-tighter">Analytics Stream Offline</h3>
+      <p className="text-zinc-500 text-sm max-w-md font-medium">The global analytics protocol could not be established. Please ensure the database is synchronized.</p>
+      {error && (
+        <div className="px-4 py-2 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-lg font-mono text-[10px] text-red-400 uppercase tracking-widest">
+           {error}
+        </div>
+      )}
+      <button
+        onClick={() => window.location.reload()}
+        className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-500 transition-all active:scale-95"
+      >
+        Retry Protocol
+      </button>
+    </div>
+  );
+
+  const kpis = data.kpis;
   const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
 
   const KPICard = ({ title, value, trend, icon: Icon, trendUp }: any) => (
@@ -64,11 +90,11 @@ const DashboardOverview: React.FC = () => {
       <div className="flex items-end justify-between">
         <div>
           <h3 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter">
-            {typeof value === 'number' ? `$${value.toLocaleString()}` : value}
+            {typeof value === 'number' ? `$${value.toLocaleString()}` : (value || '0')}
           </h3>
           <div className={`flex items-center gap-1 mt-2 text-[10px] font-bold uppercase tracking-wider ${trendUp ? 'text-emerald-500 bg-emerald-500/10' : 'text-red-500 bg-red-500/10'} px-2 py-1 rounded-lg w-fit`}>
              {trendUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-             {trend}%
+             {trend || '0'}%
           </div>
         </div>
         <div className="w-12 h-12 bg-zinc-50 dark:bg-[#0B101A] border border-zinc-100 dark:border-zinc-800 rounded-2xl flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform">
@@ -96,10 +122,10 @@ const DashboardOverview: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="Net Income" value={data.kpis.netIncome.value} trend={data.kpis.netIncome.trend} trendUp={parseFloat(data.kpis.netIncome.trend) >= 0} icon={DollarSign} />
-        <KPICard title="Orders per month" value={data.kpis.orders.value} trend={data.kpis.orders.trend} trendUp={parseFloat(data.kpis.orders.trend) >= 0} icon={Briefcase} />
-        <KPICard title="Average contract" value={data.kpis.avgContract.value} trend={data.kpis.avgContract.trend} trendUp={parseFloat(data.kpis.avgContract.trend) >= 0} icon={Activity} />
-        <KPICard title="Growth rate" value={data.kpis.growthRate.value} trend={data.kpis.growthRate.trend} trendUp={parseFloat(data.kpis.growthRate.trend) >= 0} icon={TrendingUp} />
+        <KPICard title="Net Income" value={kpis.netIncome?.value} trend={kpis.netIncome?.trend} trendUp={parseFloat(kpis.netIncome?.trend || '0') >= 0} icon={DollarSign} />
+        <KPICard title="Orders per month" value={kpis.orders?.value} trend={kpis.orders?.trend} trendUp={parseFloat(kpis.orders?.trend || '0') >= 0} icon={Briefcase} />
+        <KPICard title="Average contract" value={kpis.avgContract?.value} trend={kpis.avgContract?.trend} trendUp={parseFloat(kpis.avgContract?.trend || '0') >= 0} icon={Activity} />
+        <KPICard title="Growth rate" value={kpis.growthRate?.value} trend={kpis.growthRate?.trend} trendUp={parseFloat(kpis.growthRate?.trend || '0') >= 0} icon={TrendingUp} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -115,7 +141,7 @@ const DashboardOverview: React.FC = () => {
            </div>
            <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                 <LineChart data={data.balanceData}>
+                 <LineChart data={data.balanceData || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} opacity={0.1} />
                     <XAxis dataKey="name" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
                     <YAxis hide />
@@ -138,7 +164,7 @@ const DashboardOverview: React.FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                  <PieChart>
                     <Pie
-                        data={data.regions}
+                        data={data.regions || []}
                         cx="50%"
                         cy="50%"
                         innerRadius={60}
@@ -146,7 +172,7 @@ const DashboardOverview: React.FC = () => {
                         paddingAngle={5}
                         dataKey="value"
                     >
-                        {data.regions.map((_: any, index: number) => (
+                        {(data.regions || []).map((_: any, index: number) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                     </Pie>
@@ -159,7 +185,7 @@ const DashboardOverview: React.FC = () => {
               </div>
            </div>
            <div className="w-full mt-6 space-y-3">
-              {data.regions.map((r: any, i: number) => (
+              {(data.regions || []).map((r: any, i: number) => (
                  <div key={i} className="flex items-center justify-between">
                     <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} /><span className="text-xs font-bold text-zinc-500 dark:text-zinc-400">{r.name}</span></div>
                     <span className="text-xs font-black text-zinc-900 dark:text-zinc-100">{r.value}%</span>
@@ -174,7 +200,7 @@ const DashboardOverview: React.FC = () => {
            <h3 className="text-lg font-bold text-zinc-900 dark:text-white uppercase tracking-tight mb-10">Total sales</h3>
            <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                 <BarChart data={data.totalSales}>
+                 <BarChart data={data.totalSales || []}>
                     <XAxis dataKey="name" stroke="#71717a" fontSize={10} tickLine={false} axisLine={false} />
                     <YAxis hide />
                     <Tooltip
@@ -193,13 +219,13 @@ const DashboardOverview: React.FC = () => {
               <MoreVertical size={16} className="text-zinc-400" />
            </div>
            <div className="space-y-6 flex-1">
-              {data.topProducts.map((p: any, i: number) => (
+              {(data.topProducts || []).map((p: any, i: number) => (
                  <div key={i} className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-black/20 rounded-2xl border border-zinc-100 dark:border-white/5 group hover:border-indigo-500/30 transition-all">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform"><Briefcase size={18} /></div>
                        <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[120px]">{p.name}</span>
                     </div>
-                    <span className="text-sm font-black text-emerald-500">+${p.value.toLocaleString()}</span>
+                    <span className="text-sm font-black text-emerald-500">+${(p.value || 0).toLocaleString()}</span>
                  </div>
               ))}
            </div>
