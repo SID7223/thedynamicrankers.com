@@ -283,8 +283,8 @@ const InternalDashboard: React.FC = () => {
               effectiveCollapsed ? 'w-[84px]' : 'w-[280px]'
             }`}
           >
-            <div className={`flex flex-col gap-10 h-full overflow-hidden ${effectiveCollapsed ? 'p-4' : 'p-6'}`}>
-              <div className={`flex items-center ${effectiveCollapsed ? 'flex-col gap-6' : 'justify-between'}`}>
+            <div className={`flex flex-col gap-6 h-full overflow-hidden ${effectiveCollapsed ? 'p-4' : 'p-6'}`}>
+              <div className={`flex items-center ${effectiveCollapsed ? 'flex-col gap-4' : 'justify-between'}`}>
                 <div className="flex items-center gap-3 overflow-hidden">
                   <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-indigo-600/20"><Shield className="w-5 h-5 text-white" /></div>
                   <AnimatePresence>
@@ -328,7 +328,7 @@ const InternalDashboard: React.FC = () => {
               </nav>
 
               {/* Profile / Bottom Section - PILL DESIGN MATCHING image.png */}
-              <div className={`flex flex-col items-center mt-auto pb-4 ${effectiveCollapsed ? 'gap-0' : 'gap-6'}`}>
+              <div className={`flex flex-col items-center mt-auto pb-4 ${effectiveCollapsed ? 'gap-0' : 'gap-4'}`}>
                 <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out shadow-2xl ${
                     effectiveCollapsed
                       ? 'w-14 py-6 rounded-full items-center gap-6'
@@ -346,7 +346,7 @@ const InternalDashboard: React.FC = () => {
 
                    {effectiveCollapsed && <div className="w-8 h-[1px] bg-zinc-300/10 dark:bg-white/5 opacity-50" />}
 
-                   <div className={`flex items-center justify-between ${effectiveCollapsed ? 'flex-col gap-6' : 'w-full pt-4 border-t border-zinc-200 dark:border-zinc-800/50'}`}>
+                   <div className={`flex items-center justify-between ${effectiveCollapsed ? 'flex-col gap-4' : 'w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50'}`}>
                      <button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-90" title="Toggle Theme">
                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
                      </button>
