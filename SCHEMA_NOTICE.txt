@@ -2,28 +2,32 @@ DATABASE SCHEMA UPDATE - 2024-05-24
 
 New Tables:
 1. message_edits: Tracks history of edited chat messages.
-   - id: TEXT (UUID)
-   - message_id: TEXT (FK to chat_messages)
-   - old_content: TEXT
-   - created_at: DATETIME
-
 2. message_task_mentions: Tracks relationships between chat messages and mentioned tasks.
-   - message_id: TEXT (FK to chat_messages)
-   - task_id: TEXT (FK to tasks)
+3. chat_room_members: Tracks user membership in chat rooms.
 
 SQL Statements:
+CREATE TABLE IF NOT EXISTS chat_room_members (
+    id TEXT PRIMARY KEY,
+    room_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(room_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS message_edits (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
     old_content TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS message_task_mentions (
     message_id TEXT NOT NULL,
     task_id TEXT NOT NULL,
     PRIMARY KEY (message_id, task_id),
-    FOREIGN KEY (message_id) REFERENCES chat_messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
