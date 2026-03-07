@@ -5,7 +5,7 @@ import {
   UserPlus,
   UserMinus,
   ShieldAlert,
-  X,
+  X as XIcon,
   Plus
 } from 'lucide-react';
 import SlackStream from './SlackStream';
@@ -156,7 +156,7 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
             >
               <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-zinc-900 dark:text-white uppercase tracking-tight">Comm Registry</h3>
-                <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><X size={24} /></button>
+                <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"><XIcon size={24} /></button>
               </div>
 
               <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-10">

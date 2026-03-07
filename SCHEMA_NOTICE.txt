@@ -1,22 +1,16 @@
-DATABASE SCHEMA UPDATE - 2024-05-25 (CRITICAL FIX)
+DATABASE SCHEMA VERIFICATION & MIGRATION (CRITICAL)
 
-To resolve the 500 errors when replying to messages or adding emoji reactions, run the following SQL commands in your Cloudflare D1 dashboard:
+The errors you are seeing (500 Internal Server Error) are most likely due to missing columns in your 'messages' table or missing tables for reactions and read receipts.
 
-1. Update the existing 'messages' table:
+1. RUN THIS SCRIPT FIRST TO CHECK YOUR SCHEMA:
+SELECT name, sql FROM sqlite_master WHERE type='table' AND name IN ('messages', 'message_reactions', 'message_read_receipts');
+
+2. IF COLUMNS ARE MISSING FROM 'messages', RUN THESE:
 ALTER TABLE messages ADD COLUMN parent_message_id TEXT;
 ALTER TABLE messages ADD COLUMN message_type TEXT DEFAULT 'text';
 ALTER TABLE messages ADD COLUMN edited BOOLEAN DEFAULT FALSE;
 
-2. Create the 'message_edits' table:
-CREATE TABLE IF NOT EXISTS message_edits (
-    id TEXT PRIMARY KEY,
-    message_id TEXT NOT NULL,
-    old_content TEXT NOT NULL,
-    edited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
-);
-
-3. Create the 'message_reactions' table:
+3. ENSURE AUXILIARY TABLES EXIST:
 CREATE TABLE IF NOT EXISTS message_reactions (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
@@ -26,16 +20,6 @@ CREATE TABLE IF NOT EXISTS message_reactions (
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(message_id, user_id, emoji)
-);
-
-4. Create 'user_favorite_emojis' and 'message_read_receipts' tables:
-CREATE TABLE IF NOT EXISTS user_favorite_emojis (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    emoji TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE(user_id, emoji)
 );
 
 CREATE TABLE IF NOT EXISTS message_read_receipts (
@@ -48,14 +32,16 @@ CREATE TABLE IF NOT EXISTS message_read_receipts (
     UNIQUE(user_id, room_id)
 );
 
-5. Create 'message_task_mentions' if it's missing (needed for #TASK- linkage):
-CREATE TABLE IF NOT EXISTS message_task_mentions (
+4. CREATE MESSAGE EDITS AUDIT TABLE:
+CREATE TABLE IF NOT EXISTS message_edits (
     id TEXT PRIMARY KEY,
     message_id TEXT NOT NULL,
-    task_id TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+    old_content TEXT NOT NULL,
+    edited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
 );
 
-If you encounter an error saying a column or table already exists, you can safely skip that command.
+5. VERIFY ID COLUMN TYPES:
+Your screenshot shows several tables. Ensure all 'id' columns are 'TEXT' (to support UUIDs) and not 'INTEGER' as Cloudflare D1 defaults sometimes differ.
+
+By running these commands, the '500' errors will be resolved.

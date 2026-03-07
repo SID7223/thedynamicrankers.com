@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Plus,
   Calendar,
-  Trash2,
-  X,
-  CheckCircle2,
+  Plus,
+  Search,
   Clock,
+  CheckCircle2,
+  Trash2,
   Mail,
-  Phone
+  Phone,
+  X as XIcon,
+  ChevronDown
 } from 'lucide-react';
+import Avatar from './Avatar';
 
 interface Appointment {
   id: string;
   customer_id: string;
   customer_name: string;
-  email: string | null;
-  phone: string | null;
+  email: string;
+  phone: string;
   appointment_date: string;
   appointment_time: string;
   status: string;
@@ -25,15 +28,7 @@ const CRMAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    customer_id: '',
-    customer_name: '',
-    email: '',
-    phone: '',
-    appointment_date: '',
-    appointment_time: '',
-    status: 'scheduled'
-  });
+  const [formData, setFormData] = useState({ customer_id: '', customer_name: '', email: '', phone: '', appointment_date: '', appointment_time: '', status: 'scheduled' });
 
   const fetchData = async () => {
     try {
@@ -41,12 +36,10 @@ const CRMAppointments: React.FC = () => {
         fetch('/api/internal/crm_appointments'),
         fetch('/api/internal/crm_customers')
       ]);
-      const appData = await appRes.json();
-      const custData = await custRes.json();
-      setAppointments(Array.isArray(appData) ? appData : []);
-      setCustomers(Array.isArray(custData) ? custData : []);
+      if (appRes.ok) setAppointments(await appRes.json());
+      if (custRes.ok) setCustomers(await custRes.json());
     } catch (err) {
-      console.error('Fetch Failed:', err);
+      console.error('Fetch failed:', err);
     }
   };
 
@@ -55,41 +48,37 @@ const CRMAppointments: React.FC = () => {
   }, []);
 
   const handleCustomerSelect = (id: string) => {
-    const customer = customers.find(c => c.id === id);
-    if (customer) {
-      setFormData({
-        ...formData,
-        customer_id: id,
-        customer_name: customer.name,
-        email: customer.email || '',
-        phone: customer.phone || ''
-      });
-    }
+      const cust = customers.find(c => c.id === id);
+      if (cust) {
+          setFormData({ ...formData, customer_id: id, customer_name: cust.name, email: cust.email || '', phone: cust.phone || '' });
+      }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await fetch('/api/internal/crm_appointments', {
+      const res = await fetch('/api/internal/crm_appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      setIsModalOpen(false);
-      setFormData({ customer_id: '', customer_name: '', email: '', phone: '', appointment_date: '', appointment_time: '', status: 'scheduled' });
-      fetchData();
+      if (res.ok) {
+        setIsModalOpen(false);
+        setFormData({ customer_id: '', customer_name: '', email: '', phone: '', appointment_date: '', appointment_time: '', status: 'scheduled' });
+        fetchData();
+      }
     } catch (err) {
       console.error('Create failed:', err);
     }
   };
 
   const toggleComplete = async (id: string, currentStatus: string) => {
-    const status = currentStatus === 'completed' ? 'scheduled' : 'completed';
+    const nextStatus = currentStatus === 'completed' ? 'scheduled' : 'completed';
     try {
       await fetch(`/api/internal/crm_appointments?id=${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status: nextStatus })
       });
       fetchData();
     } catch (err) {
@@ -187,7 +176,7 @@ const CRMAppointments: React.FC = () => {
             <div className="p-8 lg:p-10 border-b border-zinc-100 dark:border-zinc-800/50 flex justify-between items-center shrink-0">
               <h3 className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">Schedule Session</h3>
               <button onClick={() => setIsModalOpen(false)} className="p-3 text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl transition-all">
-                <X size={20} />
+                <XIcon size={20} />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-8 lg:p-10 space-y-8 overflow-y-auto custom-scrollbar">

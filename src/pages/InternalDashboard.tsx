@@ -12,7 +12,7 @@ import {
   Sun,
   Moon,
   Menu,
-  X
+  X as XIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
@@ -227,7 +227,7 @@ const InternalDashboard: React.FC = () => {
                 </div>
                 <div className={`flex items-center gap-1 ${effectiveCollapsed ? 'flex-col' : ''}`}>
                     <button onClick={toggleSidebarCollapse} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? 'rotate-180' : ''} /></button>
-                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={20} /></button>
+                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><XIcon size={20} /></button>
                 </div>
               </div>
               <nav className="flex-1 space-y-2">

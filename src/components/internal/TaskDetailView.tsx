@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
-  X,
+  X as XIcon,
   Send,
   MoreVertical,
   Share2,
@@ -28,14 +28,6 @@ interface TaskDetailViewProps {
   lastMessageTimestamp: number;
 }
 
-const statusWorkflow = [
-  { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-400' },
-  { value: 'todo', label: 'To Do', icon: Clock, color: 'text-blue-500' },
-  { value: 'in_progress', label: 'In Progress', icon: Circle, color: 'text-amber-500' },
-  { value: 'review', label: 'Review', icon: AlertCircle, color: 'text-purple-500' },
-  { value: 'done', label: 'Completed', icon: CheckCircle2, color: 'text-emerald-500' }
-];
-
 const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   task,
   operatives,
@@ -45,18 +37,17 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   onClose,
   lastMessageTimestamp
 }) => {
-  const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
-
-  const [leftWidth, setLeftWidth] = useState(50);
+  const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+  const [leftWidth, setLeftWidth] = useState(60);
   const [isResizing, setIsResizing] = useState(false);
-  const resizerRef = useRef<HTMLDivElement>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
+
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
 
   // Swipe gesture for mobile
@@ -69,188 +60,112 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (!isResizing) return;
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
+  const startResizing = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.body.style.userSelect = "none";
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+    document.body.style.userSelect = "auto";
+  }, []);
+
+  const resize = useCallback((e: MouseEvent) => {
+    if (isResizing && containerRef.current) {
       const containerRect = containerRef.current.getBoundingClientRect();
       const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-      if (newWidth > 15 && newWidth < 85) setLeftWidth(newWidth);
-    };
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.body.style.userSelect = '';
-    };
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.body.style.userSelect = 'none';
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
+      if (newWidth > 20 && newWidth < 80) {
+        setLeftWidth(newWidth);
+      }
+    }
   }, [isResizing]);
 
-  const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[0];
+  useEffect(() => {
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
 
-  const handleShare = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    alert('Directive Link Copied to Clipboard');
-  };
-
-  const toggleAssignee = (opId: string) => {
-    const currentAssignees = task.assignees || [];
-    const isAssigned = currentAssignees.some((a: any) => a.id === opId);
-    let newAssignees;
-    if (isAssigned) {
-      newAssignees = currentAssignees.filter((a: any) => a.id !== opId).map((a: any) => a.id);
+  const toggleAssignee = (userId: string) => {
+    const current = task.assignees || [];
+    const exists = current.find((a: any) => a.id === userId);
+    let next;
+    if (exists) {
+      next = current.filter((a: any) => a.id !== userId).map((a: any) => a.id);
     } else {
-      newAssignees = [...currentAssignees.map((a: any) => a.id), opId];
+      next = [...current.map((a: any) => a.id), userId];
     }
-    onUpdate(task.id, { assignees: newAssignees });
+    onUpdate(task.id, { assignees: next });
   };
 
-  const closeAllPopovers = () => {
-    setIsStatusOpen(false);
-    setIsAssigneeOpen(false);
-    setIsPriorityOpen(false);
-    setIsMoreOpen(false);
-  };
+  const statusWorkflow = [
+    { label: 'Backlog', value: 'backlog', color: 'text-zinc-500', icon: Circle },
+    { label: 'To Do', value: 'todo', color: 'text-blue-500', icon: Circle },
+    { label: 'In Progress', value: 'in_progress', color: 'text-indigo-500', icon: Clock },
+    { label: 'In Review', value: 'review', color: 'text-purple-500', icon: AlertCircle },
+    { label: 'Done', value: 'done', color: 'text-emerald-500', icon: CheckCircle2 },
+  ];
 
-  const anyPopoverOpen = isStatusOpen || isAssigneeOpen || isPriorityOpen || isMoreOpen;
+  const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[1];
 
   return (
     <motion.div
       ref={containerRef}
-      style={{ x, opacity }}
+      style={{ x: isDesktop ? 0 : x, opacity: isDesktop ? 1 : opacity }}
       drag={isDesktop ? false : "x"}
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={(_, info) => {
         if (info.offset.x < -100) onClose();
       }}
-      className="flex-1 flex flex-col lg:flex-row h-full min-h-0 overflow-hidden bg-white dark:bg-[#06080D] transition-colors duration-300 relative"
+      className="flex-1 flex flex-col lg:flex-row h-full bg-white dark:bg-[#06080D] overflow-hidden relative transition-colors duration-300"
     >
-      {/* Popover Backdrop */}
-      {anyPopoverOpen && (
-        <div
-          onClick={closeAllPopovers}
-          className="fixed inset-0 z-40 bg-transparent"
-        />
-      )}
+      {isResizing && <div className="fixed inset-0 z-[100] cursor-col-resize" />}
 
-      {/* Left Column - Metadata & Assets */}
-      <div ref={leftColRef} className="flex-none flex flex-col border-b lg:border-b-0 lg:border-r border-zinc-100 dark:border-zinc-800/50 lg:h-full lg:overflow-hidden" style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}>
-        {/* Header */}
-        <div className="px-6 lg:px-8 py-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-[#0B101A]/30">
-          <div className="flex items-center gap-4">
-             <button onClick={onClose} className="p-2 -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden"><X size={20} /></button>
+      <div ref={leftColRef} className="flex-1 flex flex-col min-h-0 border-r border-zinc-100 dark:border-zinc-800/50" style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}>
+        <header className="px-6 lg:px-10 py-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between shrink-0 bg-white/80 dark:bg-[#06080D]/80 backdrop-blur-xl z-20">
+           <div className="flex items-center gap-4">
+             <button onClick={onClose} className="p-2 -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden"><XIcon size={20} /></button>
              <div className="flex flex-col">
-                <div className="flex items-center gap-2 mb-1">
-                   <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em]">{task.task_number}</span>
-                   <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                   <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Priority: {task.priority}</span>
-                </div>
-                <h3 className="text-lg lg:text-xl font-bold text-zinc-900 dark:text-white tracking-tight">{task.title}</h3>
+                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em] mb-1">{task.task_number}</span>
+                <h2 className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">{task.title}</h2>
              </div>
-          </div>
-          <div className="flex items-center gap-2">
-             <button onClick={handleShare} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Share Link"><Share2 size={18} /></button>
-             <div className="relative">
-                <button onClick={() => setIsMoreOpen(!isMoreOpen)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><MoreVertical size={18} /></button>
-                {isMoreOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                     <button onClick={() => { onDelete(task.id); setIsMoreOpen(false); }} className="w-full px-4 py-2.5 text-left text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2">
-                        <Archive size={14} />
-                        Terminate Directive
-                     </button>
-                  </div>
-                )}
-             </div>
-             <button onClick={onClose} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><X size={20} /></button>
-          </div>
-        </div>
+           </div>
+           <div className="flex items-center gap-2">
+             <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert('Link Copied'); }} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Share Directive"><Share2 size={18} /></button>
+             <button onClick={() => { if(confirm('Archive directive?')) onDelete(task.id); }} className="p-2 text-zinc-400 hover:text-red-500 transition-colors" title="Archive Strategy"><Archive size={18} /></button>
+             <button onClick={onClose} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><XIcon size={20} /></button>
+           </div>
+        </header>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 space-y-8">
-           <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                 <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Target Status</h4>
-                 <div className="relative">
-                    <button onClick={() => setIsStatusOpen(!isStatusOpen)} className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all ${currentStatus.color}`}>
-                      <span className="uppercase tracking-widest">{currentStatus.label}</span>
-                      <ChevronDown size={14} className={`transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                    {isStatusOpen && (
-                      <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                         {statusWorkflow.map((status) => (
-                           <button key={status.value} onClick={() => { onUpdate(task.id, { status: status.value }); setIsStatusOpen(false); }} className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}>
-                              <status.icon size={14} className={status.color} />
-                              <span className={`text-xs font-bold uppercase tracking-widest ${status.value === task.status ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}`}>{status.label}</span>
-                           </button>
-                         ))}
-                      </div>
-                    )}
-                 </div>
-              </div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 space-y-8">
+           <section>
+              <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-4">Briefing</h4>
+              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed font-sans text-sm whitespace-pre-wrap">{task.description || 'No detailed briefing provided for this directive.'}</p>
+           </section>
 
-              <div className="bg-zinc-50/50 dark:bg-white/5 border border-zinc-100 dark:border-zinc-800 rounded-3xl p-6 lg:p-8">
-                 <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-4">Strategic Mission</h4>
-                 <p className="text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed font-sans">{task.description || 'No specific parameters defined for this mission.'}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 lg:gap-6">
-                 <div className="bg-white dark:bg-[#11161D] border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4 lg:p-5">
-                    <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3 block">Tactical Lead</span>
-                    <div className="flex items-center gap-3">
-                       <Avatar name={task.creator_name} size="sm" />
-                       <span className="text-sm font-bold text-zinc-900 dark:text-white">{task.creator_name}</span>
-                    </div>
-                 </div>
-                 <div className="bg-white dark:bg-[#11161D] border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4 lg:p-5 relative">
-                    <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3 block">Deploy To</span>
-                    <div onClick={() => setIsAssigneeOpen(!isAssigneeOpen)} className="flex flex-wrap items-center gap-2 cursor-pointer group">
-                       {(task.assignees || []).length > 0 ? (
-                          task.assignees?.map((a: any) => <Avatar key={a.id} name={a.name} size="xs" />)
-                       ) : (
-                          <div className="w-8 h-8 rounded-full border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-400"><Plus size={14} /></div>
-                       )}
-                       {isAssigneeOpen && (
-                          <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                             {operatives.map(op => {
-                                const isSelected = (task.assignees || []).some((a: any) => a.id === op.id);
-                                return (
-                                   <button key={op.id} onClick={() => toggleAssignee(op.id)} className="w-full px-4 py-2.5 text-left text-xs font-bold flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                      <span className={isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}>{op.username}</span>
-                                      {isSelected && <Check size={14} className="text-indigo-600" />}
-                                   </button>
-                                );
-                             })}
-                          </div>
-                       )}
+           <section>
+              <h4 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-4">Uplink Activity</h4>
+              <div className="space-y-4">
+                 <div className="flex gap-4 p-4 bg-zinc-50 dark:bg-white/5 rounded-2xl border border-zinc-100 dark:border-white/5">
+                    <Avatar name={task.creator_name || 'S'} size="sm" />
+                    <div>
+                       <p className="text-xs text-zinc-600 dark:text-zinc-300"><span className="font-bold text-zinc-900 dark:text-white">{task.creator_name}</span> initialized this directive.</p>
+                       <span className="text-[10px] text-zinc-400 mt-1 block">{new Date(task.created_at).toLocaleString()}</span>
                     </div>
                  </div>
               </div>
-           </div>
-
-           <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                 <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] flex items-center gap-2">Mission Assets <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[8px]">0</span></h4>
-                 <button className="text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center gap-2 hover:opacity-80 transition-opacity"><Plus size={14} /> Attach</button>
-              </div>
-              <div className="p-8 border-2 border-dashed border-zinc-100 dark:border-zinc-800/50 rounded-3xl flex flex-col items-center justify-center text-center">
-                 <Paperclip size={24} className="text-zinc-300 dark:text-zinc-700 mb-3" />
-                 <p className="text-xs font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">No assets deployed.</p>
-              </div>
-           </div>
+           </section>
         </div>
       </div>
 
-      {/* Resizer */}
       <div
-        ref={resizerRef}
-        onMouseDown={() => setIsResizing(true)}
-        className="hidden lg:flex w-[10px] h-full cursor-col-resize items-center justify-center z-20 hover:scale-x-150 transition-transform group -mx-[5px]"
+        onMouseDown={startResizing}
+        className={`hidden lg:flex w-1 hover:w-1.5 bg-zinc-100 dark:bg-zinc-800/50 cursor-col-resize items-center justify-center transition-all group active:bg-indigo-500 ${isResizing ? 'bg-indigo-500' : ''}`}
       >
-        <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
         <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-600 transition-all flex flex-col items-center justify-center gap-1">
            <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
            <div className="w-0.5 h-0.5 rounded-full bg-white/40" />

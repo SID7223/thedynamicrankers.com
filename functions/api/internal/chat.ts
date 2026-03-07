@@ -78,12 +78,8 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
             body.parentMessageId || null,
             body.messageType || 'text'
         ).run();
-      } catch (err: any) {
-          return jsonResponse({
-              error: 'INSERT_MESSAGE_FAILED',
-              message: err.message,
-              detail: 'Check if parent_message_id exists and sender_id is a valid user ID.'
-          }, 500);
+      } catch (sqlErr: any) {
+        return jsonResponse({ error: 'SQL_INSERT_FAILED', message: sqlErr.message, detail: 'Check if parent_message_id, message_type, and edited columns exist.' }, 500);
       }
 
       if (body.attachments && Array.isArray(body.attachments)) {
@@ -109,8 +105,12 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (!message) return jsonResponse({ error: 'Message not found' }, 404);
       if (message.sender_id !== userId) return jsonResponse({ error: 'Unauthorized edit' }, 403);
 
-      await env.DB.prepare('INSERT INTO message_edits (id, message_id, old_content) VALUES (?, ?, ?)').bind(crypto.randomUUID(), id, message.message_content).run();
-      await env.DB.prepare('UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(body.content, id).run();
+      try {
+          await env.DB.prepare('INSERT INTO message_edits (id, message_id, old_content) VALUES (?, ?, ?)').bind(crypto.randomUUID(), id, message.message_content).run();
+          await env.DB.prepare('UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(body.content, id).run();
+      } catch (sqlErr: any) {
+          return jsonResponse({ error: 'SQL_UPDATE_FAILED', message: sqlErr.message }, 500);
+      }
 
       return jsonResponse({ success: true });
     }
@@ -124,6 +124,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
 
     return jsonResponse({ error: 'Method Not Allowed' }, 405);
   } catch (err: any) {
-    return jsonResponse({ error: err.message, detail: 'Internal API Error' }, 500);
+    return jsonResponse({ error: err.message, stack: err.stack }, 500);
   }
 };

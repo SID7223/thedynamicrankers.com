@@ -22,18 +22,18 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         'SELECT id FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
       ).bind(messageId, userId, emoji).first();
 
-      if (existing) {
-        await env.DB.prepare(
-          'DELETE FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
-        ).bind(messageId, userId, emoji).run();
-      } else {
-        try {
+      try {
+          if (existing) {
+            await env.DB.prepare(
+              'DELETE FROM message_reactions WHERE message_id = ? AND user_id = ? AND emoji = ?'
+            ).bind(messageId, userId, emoji).run();
+          } else {
             await env.DB.prepare(
               'INSERT INTO message_reactions (id, message_id, user_id, emoji) VALUES (?, ?, ?, ?)'
             ).bind(crypto.randomUUID(), messageId, userId, emoji).run();
-        } catch (err: any) {
-            return jsonResponse({ error: 'REACTION_INSERT_FAILED', message: err.message, detail: 'Ensure messageId and userId exist in their respective tables.' }, 500);
-        }
+          }
+      } catch (sqlErr: any) {
+          return jsonResponse({ error: 'SQL_REACTION_FAILED', message: sqlErr.message, suggestion: 'Check if message_reactions table exists and message_id is valid.' }, 500);
       }
 
       return jsonResponse({ success: true });
@@ -51,8 +51,8 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (!userId || !emoji) return jsonResponse({ error: 'Missing required fields' }, 400);
       try {
           await env.DB.prepare('INSERT OR IGNORE INTO user_favorite_emojis (id, user_id, emoji) VALUES (?, ?, ?)').bind(crypto.randomUUID(), userId, emoji).run();
-      } catch (err: any) {
-          return jsonResponse({ error: 'FAVORITE_INSERT_FAILED', message: err.message }, 500);
+      } catch (sqlErr: any) {
+          return jsonResponse({ error: 'SQL_FAVORITE_FAILED', message: sqlErr.message }, 500);
       }
       return jsonResponse({ success: true });
     }

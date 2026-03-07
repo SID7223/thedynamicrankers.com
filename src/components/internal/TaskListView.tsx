@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Clock, Info } from 'lucide-react';
+import { Plus, Search, Filter, Clock, Info, X as XIcon } from 'lucide-react';
 import Avatar from './Avatar';
 
 interface Task {
@@ -81,7 +81,7 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
                   <Info className="text-indigo-500" size={18} />
                   <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Tip: Swipe left on details to close.</p>
               </div>
-              <button onClick={() => setShowTips(false)}><X size={14} className="text-zinc-400" /></button>
+              <button onClick={() => setShowTips(false)}><XIcon size={14} className="text-zinc-400" /></button>
           </div>
       )}
 
