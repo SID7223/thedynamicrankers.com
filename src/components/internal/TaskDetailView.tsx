@@ -1,58 +1,40 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
-  Trash2,
-  Edit2,
-  Check,
-  Users,
-  Calendar,
-  AlertCircle,
-  Clock,
-  ChevronLeft,
-  Circle,
-  PlayCircle,
-  Eye,
-  CheckCircle2,
-  ChevronDown,
-  MoreHorizontal,
-  ChevronRight,
-  Paperclip,
+  Send,
+  MoreVertical,
   Share2,
-  Plus,
-  FileText,
-  Download,
   Archive,
-  Copy,
-  User
+  ChevronDown,
+  Circle,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Plus,
+  Check,
+  Paperclip
 } from 'lucide-react';
-import Avatar from './Avatar';
 import SlackStream from './SlackStream';
-
-interface Task {
-  id: string;
-  task_number: string;
-  title: string;
-  description: string | null;
-  status: string;
-  priority: string;
-  assigned_to: string | null;
-  assigned_name?: string;
-  creator_name?: string;
-  due_date: string | null;
-  created_at: string;
-  assignees?: { id: string; name: string }[];
-}
+import Avatar from './Avatar';
 
 interface TaskDetailViewProps {
-  task: Task;
+  task: any;
   operatives: any[];
   currentUser: any;
   onUpdate: (id: string, updates: any) => void;
   onDelete: (id: string) => void;
   onClose: () => void;
   lastMessageTimestamp: number;
-  isGlobal?: boolean;
 }
+
+const statusWorkflow = [
+  { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-400' },
+  { value: 'todo', label: 'To Do', icon: Clock, color: 'text-blue-500' },
+  { value: 'in_progress', label: 'In Progress', icon: Circle, color: 'text-amber-500' },
+  { value: 'review', label: 'Review', icon: AlertCircle, color: 'text-purple-500' },
+  { value: 'done', label: 'Completed', icon: CheckCircle2, color: 'text-emerald-500' }
+];
 
 const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   task,
@@ -61,25 +43,21 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   onUpdate,
   onDelete,
   onClose,
-  lastMessageTimestamp,
-  isGlobal = false
+  lastMessageTimestamp
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editBuffer, setEditBuffer] = useState({...task});
-  const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(true);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isAssigneeOpen, setIsAssigneeOpen] = useState(false);
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
-  const [showCopyFeedback, setShowCopyFeedback] = useState(false);
 
   const [leftWidth, setLeftWidth] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
-
+  const resizerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
@@ -87,172 +65,178 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDesktop || !containerRef.current || !leftColRef.current || !rightColRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-    if (newLeftWidth >= 15 && newLeftWidth <= 85) {
-      const roundedWidth = Math.round(newLeftWidth * 100) / 100;
-      leftColRef.current.style.width = `${roundedWidth}%`;
-      leftColRef.current.style.flexBasis = `${roundedWidth}%`;
-      rightColRef.current.style.width = `${100 - roundedWidth}%`;
-      rightColRef.current.style.flexBasis = `${100 - roundedWidth}%`;
-      setLeftWidth(roundedWidth);
-    }
-  }, [isDesktop]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsResizing(false);
-    document.body.style.cursor = 'default';
-    document.body.style.userSelect = 'auto';
-    window.removeEventListener('mousemove', handleMouseMove);
-    window.removeEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove]);
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (!isDesktop) return;
-    e.preventDefault();
-    setIsResizing(true);
-    document.body.style.cursor = 'col-resize';
+  useEffect(() => {
+    if (!isResizing) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+      if (newWidth > 15 && newWidth < 85) setLeftWidth(newWidth);
+    };
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      document.body.style.userSelect = '';
+    };
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
     document.body.style.userSelect = 'none';
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove, handleMouseUp, isDesktop]);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
-  const toggleAssignee = (userId: string) => {
-    const currentAssigneeIds = (task.assignees || []).map(a => a.id);
+  const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[0];
+
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    alert('Directive Link Copied to Clipboard');
+  };
+
+  const toggleAssignee = (opId: string) => {
+    const currentAssignees = task.assignees || [];
+    const isAssigned = currentAssignees.some((a: any) => a.id === opId);
     let newAssignees;
-    if (currentAssigneeIds.includes(userId)) {
-      newAssignees = currentAssigneeIds.filter(id => id !== userId);
+    if (isAssigned) {
+      newAssignees = currentAssignees.filter((a: any) => a.id !== opId).map((a: any) => a.id);
     } else {
-      newAssignees = [...currentAssigneeIds, userId];
+      newAssignees = [...currentAssignees.map((a: any) => a.id), opId];
     }
     onUpdate(task.id, { assignees: newAssignees });
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setShowCopyFeedback(true);
-    setTimeout(() => setShowCopyFeedback(false), 2000);
+  const closeAllPopovers = () => {
+    setIsStatusOpen(false);
+    setIsAssigneeOpen(false);
+    setIsPriorityOpen(false);
+    setIsMoreOpen(false);
   };
 
-  const statusWorkflow = [
-    { value: 'backlog', label: 'Backlog', icon: Circle, color: 'text-zinc-500' },
-    { value: 'todo', label: 'To Do', icon: Circle, color: 'text-zinc-500' },
-    { value: 'in_progress', label: 'In Progress', icon: PlayCircle, color: 'text-blue-600 dark:text-blue-400' },
-    { value: 'review', label: 'In Review', icon: Eye, color: 'text-amber-600 dark:text-amber-400' },
-    { value: 'done', label: 'Done', icon: CheckCircle2, color: 'text-emerald-600 dark:text-emerald-400' }
-  ];
-
-  const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[0];
-
-  const handleSave = () => {
-    onUpdate(task.id, editBuffer);
-    setIsEditing(false);
-  };
-
-  if (isGlobal) {
-    return (
-      <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#06080D]">
-        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white uppercase tracking-tight">Global Command Center</h2>
-        </div>
-        <div className="flex-1 overflow-hidden">
-           <SlackStream taskId="0" currentUser={currentUser} operatives={operatives} key="global-stream" />
-        </div>
-      </div>
-    );
-  }
+  const anyPopoverOpen = isStatusOpen || isAssigneeOpen || isPriorityOpen || isMoreOpen;
 
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full overflow-y-auto lg:overflow-hidden bg-white dark:bg-[#0B101A] relative">
-      {isResizing && <div className="fixed inset-0 z-[100] cursor-col-resize bg-transparent" />}
+    <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full min-h-0 overflow-hidden bg-white dark:bg-[#06080D] transition-colors duration-300 relative">
+      {/* Popover Backdrop */}
+      {anyPopoverOpen && (
+        <div
+          onClick={closeAllPopovers}
+          className="fixed inset-0 z-40 bg-transparent"
+        />
+      )}
 
-      <div ref={leftColRef} className="flex-none overflow-y-auto custom-scrollbar border-b lg:border-b-0 border-zinc-100 dark:border-zinc-800/50" style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}>
-        <div className="p-6 lg:p-10 max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8 lg:mb-10">
-            <nav className="flex items-center gap-3 text-sm">
-              <div className="flex items-center gap-2 text-zinc-500 hover:text-indigo-600 cursor-pointer transition-colors" onClick={onClose}>
-                <span className="font-medium">Directives</span>
-              </div>
-              <ChevronRight size={14} className="text-zinc-300" />
-              <div className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[11px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">
-                {task.task_number || 'DIR-TASK'}
-              </div>
-            </nav>
-
-            <div className="flex items-center gap-2 relative">
-              <button onClick={handleShare} className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors relative">
-                <Share2 size={18} />
-                {showCopyFeedback && <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-zinc-900 text-white text-[10px] rounded whitespace-nowrap">Link Copied!</span>}
-              </button>
-
-              <div className="relative">
-                <button onClick={() => setIsMoreOpen(!isMoreOpen)} className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors">
-                  <MoreHorizontal size={18} />
-                </button>
+      {/* Left Column - Metadata & Assets */}
+      <div ref={leftColRef} className="flex-none flex flex-col border-b lg:border-b-0 lg:border-r border-zinc-100 dark:border-zinc-800/50 lg:h-full lg:overflow-hidden" style={isDesktop ? { width: `${leftWidth}%`, flexBasis: `${leftWidth}%` } : { width: '100%' }}>
+        {/* Header */}
+        <div className="px-6 lg:px-8 py-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-zinc-50/50 dark:bg-[#0B101A]/30">
+          <div className="flex items-center gap-4">
+             <button onClick={onClose} className="p-2 -ml-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors lg:hidden"><X size={20} /></button>
+             <div className="flex flex-col">
+                <div className="flex items-center gap-2 mb-1">
+                   <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em]">{task.task_number}</span>
+                   <span className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                   <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Priority: {task.priority}</span>
+                </div>
+                <h3 className="text-lg lg:text-xl font-bold text-zinc-900 dark:text-white tracking-tight">{task.title}</h3>
+             </div>
+          </div>
+          <div className="flex items-center gap-2">
+             <button onClick={handleShare} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Share Link"><Share2 size={18} /></button>
+             <div className="relative">
+                <button onClick={() => setIsMoreOpen(!isMoreOpen)} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><MoreVertical size={18} /></button>
                 {isMoreOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                    <button className="w-full px-4 py-2.5 text-left text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center gap-2"><Download size={14}/> Export PDF</button>
-                    <button onClick={() => { if(confirm('Archive?')) onDelete(task.id); }} className="w-full px-4 py-2.5 text-left text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2"><Archive size={14}/> Terminate Directive</button>
+                     <button onClick={() => { onDelete(task.id); setIsMoreOpen(false); }} className="w-full px-4 py-2.5 text-left text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2">
+                        <Archive size={14} />
+                        Terminate Directive
+                     </button>
                   </div>
                 )}
+             </div>
+             <button onClick={onClose} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><X size={20} /></button>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 space-y-8">
+           <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                 <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Target Status</h4>
+                 <div className="relative">
+                    <button onClick={() => setIsStatusOpen(!isStatusOpen)} className={`flex items-center justify-between gap-3 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800/80 transition-all ${currentStatus.color}`}>
+                      <span className="uppercase tracking-widest">{currentStatus.label}</span>
+                      <ChevronDown size={14} className={`transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isStatusOpen && (
+                      <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                         {statusWorkflow.map((status) => (
+                           <button key={status.value} onClick={() => { onUpdate(task.id, { status: status.value }); setIsStatusOpen(false); }} className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}>
+                              <status.icon size={14} className={status.color} />
+                              <span className={`text-xs font-bold uppercase tracking-widest ${status.value === task.status ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}`}>{status.label}</span>
+                           </button>
+                         ))}
+                      </div>
+                    )}
+                 </div>
               </div>
 
-              <button onClick={onClose} className="p-2 text-zinc-400 hover:text-red-500 transition-colors ml-2"><X size={20} /></button>
-            </div>
-          </div>
-
-          <div className="mb-8 lg:mb-10">
-            {isEditing ? (
-              <input
-                autoFocus
-                type="text"
-                value={editBuffer.title}
-                onChange={(e) => setEditBuffer({ ...editBuffer, title: e.target.value })}
-                className="text-3xl lg:text-5xl font-black text-zinc-900 dark:text-white bg-transparent border-b-2 border-indigo-500 focus:outline-none w-full pb-2 uppercase tracking-tighter"
-              />
-            ) : (
-              <h1 className="text-3xl lg:text-5xl font-black text-zinc-900 dark:text-white uppercase tracking-tighter mb-4 leading-none">{task.title}</h1>
-            )}
-          </div>
-
-          <div className="space-y-6 mb-12">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-widest">Description</h3>
-              {!isEditing && <button onClick={() => setIsEditing(true)} className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase hover:underline">Edit</button>}
-            </div>
-            {isEditing ? (
-              <div className="space-y-4">
-                <textarea
-                  value={editBuffer.description || ''}
-                  onChange={(e) => setEditBuffer({ ...editBuffer, description: e.target.value })}
-                  className="w-full min-h-[150px] lg:min-h-[200px] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-lg leading-relaxed"
-                />
-                <div className="flex justify-end gap-3">
-                   <button onClick={() => setIsEditing(false)} className="px-5 py-2 text-xs font-bold text-zinc-500 uppercase">Cancel</button>
-                   <button onClick={handleSave} className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase flex items-center gap-2"><Check size={14} /> Save</button>
-                </div>
+              <div className="bg-zinc-50/50 dark:bg-white/5 border border-zinc-100 dark:border-zinc-800 rounded-3xl p-6 lg:p-8">
+                 <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-4">Strategic Mission</h4>
+                 <p className="text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed font-sans">{task.description || 'No specific parameters defined for this mission.'}</p>
               </div>
-            ) : (
-              <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">{task.description}</p>
-            )}
-          </div>
 
-          <div className="space-y-6 border-t border-zinc-100 dark:border-zinc-800/50 pt-10">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">Attachments <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[10px] text-zinc-500">0</span></h3>
-              <button onClick={() => alert("Upload functionality integration pending R2 setup")} className="p-1.5 text-zinc-400 hover:text-indigo-600 transition-colors"><Plus size={18} /></button>
-            </div>
-            <div onClick={() => alert("Upload functionality integration pending R2 setup")} className="border-2 border-dashed border-zinc-100 dark:border-zinc-800 rounded-2xl p-8 lg:p-10 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-indigo-500/30 transition-all">
-                <div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-900 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><Paperclip className="w-6 h-6 text-zinc-400" /></div>
-                <p className="text-sm font-medium text-zinc-500">Drop files here to attach, or <span className="text-indigo-600 dark:text-indigo-400">browse</span></p>
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4 lg:gap-6">
+                 <div className="bg-white dark:bg-[#11161D] border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4 lg:p-5">
+                    <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3 block">Tactical Lead</span>
+                    <div className="flex items-center gap-3">
+                       <Avatar name={task.creator_name} size="sm" />
+                       <span className="text-sm font-bold text-zinc-900 dark:text-white">{task.creator_name}</span>
+                    </div>
+                 </div>
+                 <div className="bg-white dark:bg-[#11161D] border border-zinc-100 dark:border-zinc-800 rounded-2xl p-4 lg:p-5 relative">
+                    <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3 block">Deploy To</span>
+                    <div onClick={() => setIsAssigneeOpen(!isAssigneeOpen)} className="flex flex-wrap items-center gap-2 cursor-pointer group">
+                       {(task.assignees || []).length > 0 ? (
+                          task.assignees?.map((a: any) => <Avatar key={a.id} name={a.name} size="xs" />)
+                       ) : (
+                          <div className="w-8 h-8 rounded-full border-2 border-dashed border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-400"><Plus size={14} /></div>
+                       )}
+                       {isAssigneeOpen && (
+                          <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                             {operatives.map(op => {
+                                const isSelected = (task.assignees || []).some((a: any) => a.id === op.id);
+                                return (
+                                   <button key={op.id} onClick={() => toggleAssignee(op.id)} className="w-full px-4 py-2.5 text-left text-xs font-bold flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                      <span className={isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}>{op.username}</span>
+                                      {isSelected && <Check size={14} className="text-indigo-600" />}
+                                   </button>
+                                );
+                             })}
+                          </div>
+                       )}
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                 <h4 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] flex items-center gap-2">Mission Assets <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-[8px]">0</span></h4>
+                 <button className="text-indigo-600 dark:text-indigo-400 text-xs font-bold flex items-center gap-2 hover:opacity-80 transition-opacity"><Plus size={14} /> Attach</button>
+              </div>
+              <div className="p-8 border-2 border-dashed border-zinc-100 dark:border-zinc-800/50 rounded-3xl flex flex-col items-center justify-center text-center">
+                 <Paperclip size={24} className="text-zinc-300 dark:text-zinc-700 mb-3" />
+                 <p className="text-xs font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">No assets deployed.</p>
+              </div>
+           </div>
         </div>
       </div>
 
-      <div onMouseDown={handleMouseDown} className="hidden lg:flex w-4 h-full -mx-2 cursor-col-resize group items-center justify-center relative z-50">
+      {/* Resizer */}
+      <div
+        ref={resizerRef}
+        onMouseDown={() => setIsResizing(true)}
+        className="hidden lg:flex w-[10px] h-full cursor-col-resize items-center justify-center z-20 hover:scale-x-150 transition-transform group -mx-[5px]"
+      >
         <div className="w-[1px] h-full bg-zinc-100 dark:bg-zinc-800/50 group-hover:bg-indigo-500/50 transition-colors" />
         <div className="absolute top-1/2 -translate-y-1/2 w-1.5 h-16 bg-indigo-500/50 dark:bg-indigo-500/30 rounded-full group-hover:bg-indigo-600 transition-all flex flex-col items-center justify-center gap-1">
            <div className="w-0.5 h-0.5 rounded-full bg-white/40" />
@@ -306,22 +290,22 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                       <div className="col-span-8 relative">
                          <div onClick={() => setIsAssigneeOpen(!isAssigneeOpen)} className="flex flex-wrap items-center gap-2 group/field cursor-pointer p-1 -m-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
                             {(task.assignees || []).length > 0 ? (
-                               task.assignees?.map(a => <Avatar key={a.id} name={a.name} size="xs" />)
+                               task.assignees?.map((a: any) => <Avatar key={a.id} name={a.name} size="xs" />)
                             ) : (
                                <Avatar name="?" size="xs" />
                             )}
                             <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                               {(task.assignees || []).length > 0 ? task.assignees?.map(a => a.name).join(', ') : 'Unassigned'}
+                               {(task.assignees || []).length > 0 ? task.assignees?.map((a: any) => a.name).join(', ') : 'Unassigned'}
                             </span>
                             <Plus size={12} className="text-zinc-400" />
                          </div>
                          {isAssigneeOpen && (
                             <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
                                {operatives.map(op => {
-                                  const isSelected = (task.assignees || []).some(a => a.id === op.id);
+                                  const isSelected = (task.assignees || []).some((a: any) => a.id === op.id);
                                   return (
                                      <button key={op.id} onClick={() => toggleAssignee(op.id)} className="w-full px-4 py-2.5 text-left text-xs font-bold flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                        <span className={isSelected ? 'text-indigo-600' : 'text-zinc-600'}>{op.username}</span>
+                                        <span className={isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}>{op.username}</span>
                                         {isSelected && <Check size={14} className="text-indigo-600" />}
                                      </button>
                                   );
