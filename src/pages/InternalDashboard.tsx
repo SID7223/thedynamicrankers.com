@@ -67,7 +67,7 @@ const InternalDashboard: React.FC = () => {
 
   const [tasks, setTasks] = useState<any[]>([]);
   const [operatives, setOperatives] = useState<any[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // For mobile drawer
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     return localStorage.getItem('dr_sidebar_collapsed') === 'true';
   });
@@ -75,7 +75,6 @@ const InternalDashboard: React.FC = () => {
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState(Date.now());
   const [isDark, setIsDark] = useState(true);
 
-  // Responsive check for effective collapse state
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
@@ -284,7 +283,7 @@ const InternalDashboard: React.FC = () => {
               effectiveCollapsed ? 'w-[84px]' : 'w-[280px]'
             }`}
           >
-            <div className="p-6 flex flex-col gap-10 h-full overflow-hidden">
+            <div className={`flex flex-col gap-10 h-full overflow-hidden ${effectiveCollapsed ? 'p-4' : 'p-6'}`}>
               <div className={`flex items-center ${effectiveCollapsed ? 'flex-col gap-6' : 'justify-between'}`}>
                 <div className="flex items-center gap-3 overflow-hidden">
                   <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-indigo-600/20"><Shield className="w-5 h-5 text-white" /></div>
@@ -303,7 +302,6 @@ const InternalDashboard: React.FC = () => {
                 </div>
 
                 <div className={`flex items-center gap-1 ${effectiveCollapsed ? 'flex-col' : ''}`}>
-                    {/* Collapse Toggle Arrow (Desktop Only) */}
                     <button
                         onClick={toggleSidebarCollapse}
                         className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
@@ -316,8 +314,6 @@ const InternalDashboard: React.FC = () => {
                             <ChevronLeft size={20} />
                         </motion.div>
                     </button>
-
-                    {/* Mobile Close */}
                     <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={20} /></button>
                 </div>
               </div>
@@ -331,31 +327,30 @@ const InternalDashboard: React.FC = () => {
                 <NavItem view="appointments" icon={CalendarCheck} label="Appointments" />
               </nav>
 
-              <div className="mt-auto space-y-6">
-                <div className={`bg-zinc-200/50 dark:bg-[#11161D] rounded-3xl border border-zinc-300/50 dark:border-zinc-800/50 flex flex-col gap-5 transition-all duration-300 overflow-hidden ${
-                    effectiveCollapsed ? 'p-2 items-center' : 'p-5'
+              {/* Profile / Bottom Section - PILL DESIGN MATCHING image.png */}
+              <div className={`flex flex-col items-center mt-auto pb-4 ${effectiveCollapsed ? 'gap-0' : 'gap-6'}`}>
+                <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col transition-all duration-300 ease-in-out shadow-2xl ${
+                    effectiveCollapsed
+                      ? 'w-14 py-6 rounded-full items-center gap-6'
+                      : 'w-full p-5 rounded-[2.5rem] gap-6'
                 }`}>
                    <div className={`flex items-center gap-4 ${effectiveCollapsed ? 'justify-center' : ''}`}>
                      <Avatar name={session.username} isOnline={true} />
-                     <AnimatePresence>
-                        {!effectiveCollapsed && (
-                            <motion.div
-                                initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: 'auto' }}
-                                exit={{ opacity: 0, width: 0 }}
-                                className="flex flex-col min-w-0"
-                            >
-                                <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span>
-                                <span className="text-[10px] text-zinc-500 dark:text-zinc-600 uppercase tracking-widest font-bold">{session.role}</span>
-                            </motion.div>
-                        )}
-                     </AnimatePresence>
+                     {!effectiveCollapsed && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-w-0">
+                            <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span>
+                            <span className="text-[10px] text-zinc-500 dark:text-zinc-600 uppercase tracking-widest font-bold">{session.role}</span>
+                        </motion.div>
+                     )}
                    </div>
-                   <div className={`flex items-center justify-between pt-2 border-t border-zinc-300/30 dark:border-zinc-800/30 ${effectiveCollapsed ? 'flex-col gap-2 w-full items-center' : 'w-full'}`}>
-                     <button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" title="Toggle Theme">
+
+                   {effectiveCollapsed && <div className="w-8 h-[1px] bg-zinc-300/10 dark:bg-white/5 opacity-50" />}
+
+                   <div className={`flex items-center justify-between ${effectiveCollapsed ? 'flex-col gap-6' : 'w-full pt-4 border-t border-zinc-200 dark:border-zinc-800/50'}`}>
+                     <button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-90" title="Toggle Theme">
                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
                      </button>
-                     <button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="Initialize Logout">
+                     <button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 dark:hover:text-red-400 transition-all active:scale-90" title="Initialize Logout">
                        <LogOut size={20} />
                      </button>
                    </div>
@@ -366,7 +361,6 @@ const InternalDashboard: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
         {!isSidebarOpen && (
           <button onClick={() => setIsSidebarOpen(true)} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 hover:text-zinc-900 dark:hover:text-white lg:hidden shadow-lg transition-colors">
