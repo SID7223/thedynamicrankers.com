@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
   X as XIcon,
@@ -91,7 +91,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   }, [resize, stopResizing]);
 
   const toggleAssignee = (userId: string) => {
-    const current = task.assignees || [];
+    const current = task?.assignees || [];
     const exists = current.find((a: any) => a.id === userId);
     let next;
     if (exists) {
@@ -109,6 +109,15 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
     { label: 'In Review', value: 'review', color: 'text-purple-500', icon: AlertCircle },
     { label: 'Done', value: 'done', color: 'text-emerald-500', icon: CheckCircle2 },
   ];
+
+  if (!task) return (
+      <div className="flex-1 flex items-center justify-center bg-zinc-50 dark:bg-[#06080D]">
+          <div className="text-center">
+              <AlertCircle size={48} className="mx-auto text-zinc-300 mb-4" />
+              <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Directive Context Lost</p>
+          </div>
+      </div>
+  );
 
   const currentStatus = statusWorkflow.find(s => s.value === task.status) || statusWorkflow[1];
 
@@ -154,7 +163,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                     <Avatar name={task.creator_name || 'S'} size="sm" />
                     <div>
                        <p className="text-xs text-zinc-600 dark:text-zinc-300"><span className="font-bold text-zinc-900 dark:text-white">{task.creator_name}</span> initialized this directive.</p>
-                       <span className="text-[10px] text-zinc-400 mt-1 block">{new Date(task.created_at).toLocaleString()}</span>
+                       <span className="text-[10px] text-zinc-400 mt-1 block">{task.created_at ? new Date(task.created_at).toLocaleString() : 'Date Unknown'}</span>
                     </div>
                  </div>
               </div>

@@ -5,7 +5,7 @@ import {
   Smile,
   Edit2,
   Trash2,
-  X,
+  X as XIcon,
   Plus,
   AtSign,
   Hash,
@@ -69,7 +69,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       const res = await fetch(`/api/internal/chat?taskId=${apiTaskId}&userId=${currentUser.id}`);
       if (res.ok) {
         const data = await res.json();
-        setMessages(data.messages);
+        setMessages(data.messages || []);
         setLastReadAt(data.lastReadAt);
       }
     } catch (err) {
@@ -213,7 +213,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
           const res = await fetch(`/api/internal/chat?id=${id}`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ content: editContent })
+              body: JSON.stringify({ content: editContent, userId: currentUser.id })
           });
           if (res.ok) {
               setEditingMessage(null);
@@ -445,7 +445,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                     <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest block mb-1">Replying to {replyTo.sender_name}</span>
                     <p className="text-xs text-zinc-500 truncate">{replyTo.content}</p>
                 </div>
-                <button onClick={() => setReplyTo(null)} className="p-1 text-zinc-400 hover:text-zinc-900 transition-colors"><X size={16} /></button>
+                <button onClick={() => setReplyTo(null)} className="p-1 text-zinc-400 hover:text-zinc-900 transition-colors"><XIcon size={16} /></button>
             </div>
         )}
 
@@ -455,7 +455,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
               {attachments.map((at, i) => (
                 <div key={i} className="relative group">
                   <img src={at} className="w-16 h-16 rounded-xl object-cover border border-zinc-200 dark:border-zinc-800" alt="Preview" />
-                  <button type="button" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><X size={10} /></button>
+                  <button type="button" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="absolute -top-1.5 -right-1.5 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><XIcon size={10} /></button>
                 </div>
               ))}
             </div>
