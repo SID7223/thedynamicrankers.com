@@ -4,7 +4,7 @@ interface Env {
 
 export const onRequestGet = async (context: { env: Env }) => {
   const { env } = context;
-  if (!env.DB) return new Response('DB binding missing', { status: 503 });
+  if (!env.DB) return new Response(JSON.stringify({ error: 'DB binding missing' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
 
   try {
     const { results: tables } = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
@@ -19,6 +19,9 @@ export const onRequestGet = async (context: { env: Env }) => {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err: any) {
-    return new Response(err.message, { status: 500 });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 };

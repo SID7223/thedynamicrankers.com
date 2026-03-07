@@ -2,30 +2,33 @@ interface Env {
   DB?: D1Database;
 }
 
+const jsonResponse = (data: any, status = 200) => new Response(JSON.stringify(data), {
+  status,
+  headers: { 'Content-Type': 'application/json' }
+});
+
 export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  if (!env.DB) return new Response('DB binding missing', { status: 503 });
+  if (!env.DB) return jsonResponse({ error: 'DB binding missing' }, 503);
 
-  if (request.method === 'GET') {
-    const taskId = url.searchParams.get('taskId');
-    const roomId = url.searchParams.get('roomId');
-    const userId = url.searchParams.get('userId');
+  try {
+    if (request.method === 'GET') {
+      const taskId = url.searchParams.get('taskId');
+      const roomId = url.searchParams.get('roomId');
+      const userId = url.searchParams.get('userId');
 
-    try {
       let finalRoomId = roomId;
-
       if (!finalRoomId && taskId) {
-        if (taskId === '0') {
-          finalRoomId = 'global-room';
-        } else {
+        if (taskId === '0') finalRoomId = 'global-room';
+        else {
           const room = await env.DB.prepare('SELECT id FROM chat_rooms WHERE task_id = ?').bind(taskId).first() as { id: string } | null;
           finalRoomId = room?.id || null;
         }
       }
 
-      if (!finalRoomId) return new Response(JSON.stringify({ messages: [], lastReadAt: null }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      if (!finalRoomId) return jsonResponse({ messages: [], lastReadAt: null });
 
       const { results } = await env.DB.prepare(`
         SELECT m.*, m.message_content as content, m.created_at as timestamp, u.name as sender_name,
@@ -46,42 +49,42 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         is_edited: !!r.edited
       }));
 
-      return new Response(JSON.stringify({
-          messages: processedResults,
-          lastReadAt: lastRead?.last_read_at || null
-      }), { headers: { 'Content-Type': 'application/json' } });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return jsonResponse({ messages: processedResults, lastReadAt: lastRead?.last_read_at || null });
     }
-  }
 
-  if (request.method === 'POST') {
-    try {
+    if (request.method === 'POST') {
       const body = await request.json() as any;
       const messageId = crypto.randomUUID();
-
       let finalRoomId = body.roomId;
+
       if (!finalRoomId && body.taskId !== undefined) {
-        if (body.taskId === 0 || body.taskId === '0') {
-          finalRoomId = 'global-room';
-        } else {
+        if (body.taskId === 0 || body.taskId === '0') finalRoomId = 'global-room';
+        else {
           const room = await env.DB.prepare('SELECT id FROM chat_rooms WHERE task_id = ?').bind(body.taskId).first() as { id: string } | null;
           finalRoomId = room?.id;
         }
       }
 
-      if (!finalRoomId) return new Response('Room not found', { status: 404 });
+      if (!finalRoomId) return jsonResponse({ error: 'Target room not found' }, 404);
 
-      await env.DB.prepare(
-        'INSERT INTO messages (id, room_id, sender_id, message_content, parent_message_id, message_type) VALUES (?, ?, ?, ?, ?, ?)'
-      ).bind(
-        messageId,
-        finalRoomId,
-        body.senderId,
-        body.content || '',
-        body.parentMessageId || null,
-        body.messageType || 'text'
-      ).run();
+      try {
+        await env.DB.prepare(
+          'INSERT INTO messages (id, room_id, sender_id, message_content, parent_message_id, message_type) VALUES (?, ?, ?, ?, ?, ?)'
+        ).bind(
+            messageId,
+            finalRoomId,
+            body.senderId,
+            body.content || '',
+            body.parentMessageId || null,
+            body.messageType || 'text'
+        ).run();
+      } catch (err: any) {
+          return jsonResponse({
+              error: 'INSERT_MESSAGE_FAILED',
+              message: err.message,
+              detail: 'Check if parent_message_id exists and sender_id is a valid user ID.'
+          }, 500);
+      }
 
       if (body.attachments && Array.isArray(body.attachments)) {
         for (const att of body.attachments) {
@@ -91,42 +94,36 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         }
       }
 
-      return new Response(JSON.stringify({ id: messageId, success: true }), { status: 201, headers: { 'Content-Type': 'application/json' } });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return jsonResponse({ id: messageId, success: true }, 201);
     }
-  }
 
-  if (request.method === 'PATCH') {
-    try {
+    if (request.method === 'PATCH') {
       const id = url.searchParams.get('id');
-      if (!id) return new Response('Missing message ID', { status: 400 });
+      if (!id) return jsonResponse({ error: 'Missing message ID' }, 400);
       const body = await request.json() as any;
       const userId = body.userId;
 
+      if (!userId) return jsonResponse({ error: 'Missing userId for authorization' }, 400);
+
       const message = await env.DB.prepare('SELECT sender_id, message_content FROM messages WHERE id = ?').bind(id).first() as { sender_id: string; message_content: string } | null;
-      if (!message) return new Response('Message not found', { status: 404 });
-      if (message.sender_id !== userId) return new Response('Unauthorized edit', { status: 403 });
+      if (!message) return jsonResponse({ error: 'Message not found' }, 404);
+      if (message.sender_id !== userId) return jsonResponse({ error: 'Unauthorized edit' }, 403);
 
       await env.DB.prepare('INSERT INTO message_edits (id, message_id, old_content) VALUES (?, ?, ?)').bind(crypto.randomUUID(), id, message.message_content).run();
       await env.DB.prepare('UPDATE messages SET message_content = ?, edited = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(body.content, id).run();
 
-      return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return jsonResponse({ success: true });
     }
-  }
 
-  if (request.method === 'DELETE') {
-    try {
+    if (request.method === 'DELETE') {
       const id = url.searchParams.get('id');
-      if (!id) return new Response('Missing message ID', { status: 400 });
+      if (!id) return jsonResponse({ error: 'Missing message ID' }, 400);
       await env.DB.prepare('DELETE FROM messages WHERE id = ?').bind(id).run();
-      return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      return jsonResponse({ success: true });
     }
-  }
 
-  return new Response('Method Not Allowed', { status: 405 });
+    return jsonResponse({ error: 'Method Not Allowed' }, 405);
+  } catch (err: any) {
+    return jsonResponse({ error: err.message, detail: 'Internal API Error' }, 500);
+  }
 };
