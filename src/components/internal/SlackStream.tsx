@@ -12,9 +12,14 @@ import {
   Edit2,
   Check,
   Trash2,
-  Plus
+  Plus,
+  History,
+  AtSign,
+  Hash,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import Avatar from './Avatar';
 
@@ -36,16 +41,25 @@ interface SlackStreamProps {
 }
 
 const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operatives }) => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [attachments, setAttachments] = useState<any[]>([]);
+  const [processingFiles, setProcessingFiles] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editBuffer, setEditBuffer] = useState('');
+
+  // Mentions State
+  const [allTasks, setAllTasks] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionType, setSuggestionType] = useState<'user' | 'task' | null>(null);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+  const [cursorPos, setCursorPos] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -63,15 +77,115 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     }
   }, [taskId]);
 
+  const fetchTasks = useCallback(async () => {
+      try {
+          const res = await fetch('/api/internal/tasks');
+          const data = await res.json();
+          setAllTasks(Array.isArray(data) ? data : []);
+      } catch (err) {
+          console.error('Fetch Tasks Failed:', err);
+      }
+  }, []);
+
   useEffect(() => {
     fetchMessages();
+    fetchTasks();
     const interval = setInterval(fetchMessages, 3000);
     return () => clearInterval(interval);
-  }, [fetchMessages]);
+  }, [fetchMessages, fetchTasks]);
+
+  useEffect(() => {
+    const mentionMatch = input.slice(0, cursorPos).match(/[@#](\w*)$/);
+    if (mentionMatch) {
+      const type = mentionMatch[0].startsWith('@') ? 'user' : 'task';
+      const query = mentionMatch[1].toLowerCase();
+      setSuggestionType(type);
+
+      if (type === 'user') {
+        setFilteredSuggestions(operatives.filter(op => op.username.toLowerCase().includes(query)));
+      } else {
+        setFilteredSuggestions(allTasks.filter(t => t.task_number.toLowerCase().includes(query) || t.title.toLowerCase().includes(query)));
+      }
+      setShowSuggestions(filteredSuggestions.length > 0);
+    } else {
+      setShowSuggestions(false);
+    }
+  }, [input, cursorPos, operatives, allTasks, filteredSuggestions.length]);
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior });
+    }
+  };
+
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setProcessingFiles(true);
+    try {
+      const newAttachments = await Promise.all(
+        Array.from(files).map(async (file) => {
+          let dataUrl: string;
+          if (file.type.startsWith('image/')) {
+            dataUrl = await compressImage(file);
+          } else {
+            dataUrl = await fileToBase64(file);
+          }
+          return { name: file.name, type: file.type, url: dataUrl, size: file.size };
+        })
+      );
+      setAttachments(prev => [...prev, ...newAttachments]);
+    } catch (err) {
+      console.error('File Processing Failed:', err);
+    } finally {
+      setProcessingFiles(false);
     }
   };
 
@@ -111,7 +225,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       const res = await fetch(`/api/internal/chat?id=${msgId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: editBuffer })
+        body: JSON.stringify({ content: editBuffer, userId: currentUser.id })
       });
       if (res.ok) {
         setEditingMessageId(null);
@@ -132,13 +246,37 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    Array.from(files).forEach(file => {
-      const url = URL.createObjectURL(file);
-      setAttachments(prev => [...prev, { name: file.name, type: file.type, url, size: file.size }]);
-    });
+  const handleSuggestionClick = (suggestion: any) => {
+    const textBefore = input.slice(0, cursorPos).replace(/[@#](\w*)$/, '');
+    const textAfter = input.slice(cursorPos);
+    const tag = suggestionType === 'user' ? `@${suggestion.username}` : `#${suggestion.task_number}`;
+
+    setInput(`${textBefore}${tag} ${textAfter}`);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
+  };
+
+  const renderContent = (content: string) => {
+      const parts = content.split(/(@\w+|#TASK-\d+)/g);
+      return parts.map((part, i) => {
+          if (part.startsWith('@')) {
+              return <span key={i} className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline cursor-pointer">{part}</span>;
+          }
+          if (part.startsWith('#TASK-')) {
+              const taskNum = part.substring(1);
+              const task = allTasks.find(t => t.task_number === taskNum);
+              return (
+                  <span
+                    key={i}
+                    onClick={() => task && navigate(`/internal?view=tasks&task=${task.id}`)}
+                    className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline cursor-pointer inline-flex items-center gap-1 bg-emerald-500/10 px-1.5 py-0.5 rounded-md border border-emerald-500/20"
+                  >
+                      <Hash size={10} />{part}
+                  </span>
+              );
+          }
+          return part;
+      });
   };
 
   const startRecording = async () => {
@@ -171,7 +309,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       >
         {messages.map((msg) => {
           const isOwn = msg.sender_id === currentUser.id;
-          const canEdit = isOwn || currentUser.role === 'admin' || currentUser.role === 'superuser';
           const isEditing = editingMessageId === msg.id;
 
           return (
@@ -182,7 +319,14 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[11px] font-bold text-zinc-900 dark:text-zinc-100 truncate max-w-[100px]">{msg.sender_name}</span>
                     <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase shrink-0">{new Date(msg.timestamp || msg.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {msg.edited && <span className="text-[10px] text-zinc-400 italic shrink-0">(edited)</span>}
+                    {msg.edited && (
+                      <button
+                        onClick={() => navigate(`/internal/message-history/${msg.id}`)}
+                        className="text-[10px] text-indigo-500 dark:text-indigo-400 italic shrink-0 hover:underline flex items-center gap-1 font-bold"
+                      >
+                         <History size={10} /> (edited)
+                      </button>
+                    )}
                   </div>
 
                   <div className="relative group/content">
@@ -232,24 +376,28 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                           </div>
                         </div>
                       ) : (
-                        msg.content
+                        renderContent(msg.content)
                       )}
                     </div>
 
-                    {canEdit && !isEditing && (
+                    {!isEditing && (
                       <div className="absolute left-full top-0 ml-2 opacity-0 group-hover/content:opacity-100 transition-opacity flex items-center gap-0.5 lg:gap-1">
-                        <button
-                          onClick={() => { setEditingMessageId(msg.id); setEditBuffer(msg.content); }}
-                          className="p-1 lg:p-1.5 text-zinc-400 hover:text-indigo-500 transition-colors"
-                        >
-                          <Edit2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(msg.id)}
-                          className="p-1 lg:p-1.5 text-zinc-400 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 size={12} />
-                        </button>
+                        {isOwn && (
+                          <button
+                            onClick={() => { setEditingMessageId(msg.id); setEditBuffer(msg.content); }}
+                            className="p-1 lg:p-1.5 text-zinc-400 hover:text-indigo-500 transition-colors"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                        )}
+                        {(isOwn || currentUser.role === 'admin' || currentUser.role === 'superuser') && (
+                          <button
+                            onClick={() => handleDelete(msg.id)}
+                            className="p-1 lg:p-1.5 text-zinc-400 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -294,7 +442,45 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
         )}
       </AnimatePresence>
 
-      <div className="p-3 lg:p-6 bg-zinc-50 dark:bg-[#0B101A] border-t border-zinc-200 dark:border-zinc-800/50">
+      <div className="p-3 lg:p-6 bg-zinc-50 dark:bg-[#0B101A] border-t border-zinc-200 dark:border-zinc-800/50 relative">
+        {/* Suggestion Popover */}
+        <AnimatePresence>
+          {showSuggestions && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="absolute bottom-full left-6 mb-4 w-[280px] bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-[110]"
+            >
+              <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest">{suggestionType === 'user' ? 'Tag Operative' : 'Link Directive'}</span>
+                {suggestionType === 'user' ? <AtSign size={14} className="text-zinc-400" /> : <Hash size={14} className="text-zinc-400" />}
+              </div>
+              <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                {filteredSuggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSuggestionClick(s)}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors text-left"
+                  >
+                    {suggestionType === 'user' ? (
+                      <>
+                        <Avatar name={s.username} size="xs" />
+                        <span className="text-sm font-bold text-zinc-900 dark:text-white">{s.username}</span>
+                      </>
+                    ) : (
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-zinc-900 dark:text-white">{s.task_number}</span>
+                        <span className="text-[10px] text-zinc-500 truncate">{s.title}</span>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 lg:gap-3 mb-3 lg:mb-4 p-2 lg:p-3 bg-white dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-zinc-800/50 shadow-sm">
             {attachments.map((att, i) => (
@@ -308,14 +494,28 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
         )}
         <form onSubmit={handleSend} className="relative flex items-center gap-2 lg:gap-3">
           <input type="file" ref={fileInputRef} className="hidden" multiple onChange={handleFileSelect} />
-          <button type="button" onClick={() => fileInputRef.current?.click()} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Paperclip size={18} lg:size={20} /></button>
+          <button type="button" onClick={() => fileInputRef.current?.click()} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0" disabled={processingFiles}>
+            {processingFiles ? <Loader2 size={18} className="animate-spin text-indigo-500" /> : <Paperclip size={18} />}
+          </button>
           <div className="relative flex-1">
-            <input ref={inputRef} type="text" placeholder={isRecording ? "Recording..." : "Message..."} className={`w-full bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 lg:px-5 lg:py-3.5 pr-10 lg:pr-12 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm ${isRecording ? 'opacity-50 pointer-events-none' : ''}`} value={input} onChange={(e) => setInput(e.target.value)} />
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder={isRecording ? "Recording..." : "Message (@operative or #TASK-XXX)"}
+              className={`w-full bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 lg:px-5 lg:py-3.5 pr-10 lg:pr-12 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm ${isRecording ? 'opacity-50 pointer-events-none' : ''}`}
+              value={input}
+              onChange={(e) => {
+                  setInput(e.target.value);
+                  setCursorPos(e.target.selectionStart || 0);
+              }}
+              onKeyUp={(e) => setCursorPos((e.target as HTMLInputElement).selectionStart || 0)}
+              onClick={(e) => setCursorPos((e.target as HTMLInputElement).selectionStart || 0)}
+            />
             <button type="button" onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-600 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><Smile size={18} lg:size={20} /></button>
             {showEmojiPicker && <div className="absolute bottom-full right-0 mb-4 z-[100] shadow-2xl"><EmojiPicker theme={Theme.DARK} onEmojiClick={(emojiData) => { setInput(prev => prev + emojiData.emoji); inputRef.current?.focus(); }} /></div>}
           </div>
           {isRecording ? <div className="flex items-center gap-2 lg:gap-3 bg-red-500/10 border border-red-500/20 px-3 py-1.5 lg:px-4 lg:py-2 rounded-xl"><div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /><span className="text-red-600 dark:text-red-500 font-mono text-xs lg:text-sm">{Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}</span><button type="button" onClick={() => stopRecording()} className="text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><X size={16} /></button></div> : <button type="button" onClick={startRecording} className="p-1.5 lg:p-2 text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"><Mic size={18} lg:size={20} /></button>}
-          <button type="submit" className="p-2.5 lg:p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50 disabled:grayscale shrink-0" disabled={sending || isRecording}><Send size={18} /></button>
+          <button type="submit" className="p-2.5 lg:p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95 disabled:opacity-50 disabled:grayscale shrink-0" disabled={sending || isRecording || processingFiles}><Send size={18} /></button>
         </form>
       </div>
     </div>

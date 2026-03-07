@@ -1,33 +1,29 @@
-DATABASE SCHEMA UPDATE NOTICE - Fri Mar  6 15:10:09 UTC 2026
+DATABASE SCHEMA UPDATE - 2024-05-24
 
-TABLE: tasks (ALREADY EXISTS)
-CHANGES: We are moving to a multi-assignee model. While we keep 'assigned_to' for backward compatibility (primary assignee), we are adding a junction table 'task_assignees' for multiple assignees.
+New Tables:
+1. message_edits: Tracks history of edited chat messages.
+   - id: TEXT (UUID)
+   - message_id: TEXT (FK to chat_messages)
+   - old_content: TEXT
+   - created_at: DATETIME
 
-NEW TABLE: task_assignees
-SQL:
-CREATE TABLE IF NOT EXISTS task_assignees (
+2. message_task_mentions: Tracks relationships between chat messages and mentioned tasks.
+   - message_id: TEXT (FK to chat_messages)
+   - task_id: TEXT (FK to tasks)
+
+SQL Statements:
+CREATE TABLE IF NOT EXISTS message_edits (
     id TEXT PRIMARY KEY,
-    task_id TEXT NOT NULL,
-    user_id TEXT NOT NULL,
-    assigned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE(task_id, user_id)
+    message_id TEXT NOT NULL,
+    old_content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (message_id) REFERENCES chat_messages(id) ON DELETE CASCADE
 );
 
-NEW TABLE: task_attachments
-SQL:
-CREATE TABLE IF NOT EXISTS task_attachments (
-    id TEXT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS message_task_mentions (
+    message_id TEXT NOT NULL,
     task_id TEXT NOT NULL,
-    file_name TEXT NOT NULL,
-    file_type TEXT NOT NULL,
-    file_size INTEGER NOT NULL,
-    file_url TEXT NOT NULL,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (message_id, task_id),
+    FOREIGN KEY (message_id) REFERENCES chat_messages(id) ON DELETE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
-
-Migration Strategy:
-1. Execute the above SQL to create junction and attachment tables.
-2. The internal API logic in /api/internal/tasks now supports CRUD for these new tables.
