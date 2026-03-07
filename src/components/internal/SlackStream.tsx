@@ -56,9 +56,12 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Normalizing taskId for API
+  const apiTaskId = taskId === 'global-room' ? '0' : taskId;
+
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`/api/internal/chat?room=${taskId}`);
+      const res = await fetch(`/api/internal/chat?taskId=${apiTaskId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -73,7 +76,8 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     const eventSource = new EventSource('/api/internal/stream');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'CHAT_MSG' && data.room === taskId) {
+      // Backend emits "room" as task_id for backward compat or custom logic
+      if (data.type === 'CHAT_MSG' && (data.room === taskId || data.room === apiTaskId)) {
         fetchMessages();
       }
     };
@@ -91,11 +95,15 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     if (!newMessage.trim() && attachments.length === 0) return;
 
     const payload = {
-      room_id: taskId,
-      sender_id: currentUser.id,
-      sender_name: currentUser.username,
+      taskId: apiTaskId,
+      senderId: currentUser.id,
+      senderName: currentUser.username,
       content: newMessage,
-      attachments
+      attachments: attachments.map(url => ({
+          name: 'attachment.jpg',
+          type: 'image/jpeg',
+          url
+      }))
     };
 
     try {
@@ -119,7 +127,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
       const res = await fetch(`/api/internal/chat?id=${messageId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: editContent })
+        body: JSON.stringify({ content: editContent, userId: currentUser.id })
       });
       if (res.ok) {
         setEditingMessage(null);
@@ -187,7 +195,6 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
     const val = e.target.value;
     setNewMessage(val);
 
-    const lastChar = val[val.length - 1];
     const words = val.split(' ');
     const lastWord = words[words.length - 1];
 
@@ -222,6 +229,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   };
 
   const formatContent = (content: string) => {
+    if (!content) return '';
     const parts = content.split(/(@\w+|#TASK-\d+)/g);
     return parts.map((part, i) => {
       if (part.startsWith('@')) {
@@ -327,9 +335,9 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
 
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {msg.attachments.map((at, i) => (
-                      <div key={i} className="relative group/att cursor-pointer" onClick={() => setPreviewImage(at)}>
-                        <img src={at} className="h-32 lg:h-40 w-auto rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all group-hover/att:brightness-75" alt="Attachment" />
+                    {msg.attachments.map((at: any, i: number) => (
+                      <div key={i} className="relative group/att cursor-pointer" onClick={() => setPreviewImage(at.url)}>
+                        <img src={at.url} className="h-32 lg:h-40 w-auto rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all group-hover/att:brightness-75" alt="Attachment" />
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/att:opacity-100 transition-opacity">
                            <Download className="text-white" size={20} />
                         </div>

@@ -30,12 +30,13 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
 
           try {
             const { results: newMessages } = await env.DB.prepare(
-              'SELECT m.*, u.name as sender_name FROM messages m JOIN users u ON m.sender_id = u.id WHERE m.created_at > ? ORDER BY m.created_at ASC'
+              'SELECT m.*, u.name as sender_name, cr.task_id FROM messages m JOIN users u ON m.sender_id = u.id LEFT JOIN chat_rooms cr ON m.room_id = cr.id WHERE m.created_at > ? ORDER BY m.created_at ASC'
             ).bind(lastTimestamp).all();
 
             for (const msg of (newMessages || []) as any[]) {
               sendEvent({
                 type: 'CHAT_MSG',
+                room: msg.task_id || (msg.room_id === 'global-room' ? '0' : msg.room_id),
                 payload: {
                   id: msg.id,
                   room_id: msg.room_id,
