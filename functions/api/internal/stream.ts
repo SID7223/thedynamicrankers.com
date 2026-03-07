@@ -22,13 +22,14 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
 
         sendEvent({ type: 'HEARTBEAT', timestamp: new Date().toISOString() });
 
-        // Use a format compatible with SQLite CURRENT_TIMESTAMP (YYYY-MM-DD HH:MM:SS)
         let lastTimestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
+        let lastSignalId = '';
 
         const pollInterval = setInterval(async () => {
           if (!env.DB) return;
 
           try {
+            // 1. Fetch New Messages
             const { results: newMessages } = await env.DB.prepare(
               'SELECT m.*, u.name as sender_name, cr.task_id FROM messages m JOIN users u ON m.sender_id = u.id LEFT JOIN chat_rooms cr ON m.room_id = cr.id WHERE m.created_at > ? ORDER BY m.created_at ASC'
             ).bind(lastTimestamp).all();
@@ -48,7 +49,23 @@ export const onRequestGet = async (context: { request: Request; env: Env }) => {
               lastTimestamp = msg.created_at;
             }
 
-            // Also broadcast task sync for real-time dashboard updates
+            // 2. Fetch Signals (Typing Status) from notifications table
+            const { results: signals } = await env.DB.prepare(
+              "SELECT * FROM notifications WHERE type = 'typing' AND created_at > ? ORDER BY created_at DESC LIMIT 10"
+            ).bind(lastTimestamp).all();
+
+            for (const sig of (signals || []) as any[]) {
+              if (sig.id === lastSignalId) continue;
+              sendEvent({
+                type: 'TYPING_STATUS',
+                room: sig.reference_id === 'global-room' ? '0' : sig.reference_id,
+                userId: sig.user_id,
+                message: sig.message
+              });
+              lastSignalId = sig.id;
+            }
+
+            // 3. Broadcast Sync
             sendEvent({ type: 'SYNC_TASKS' });
 
           } catch (err) {

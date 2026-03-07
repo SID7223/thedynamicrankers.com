@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Clock } from 'lucide-react';
+import { Plus, Search, Filter, Clock, Info } from 'lucide-react';
 import Avatar from './Avatar';
 
 interface Task {
@@ -29,6 +29,7 @@ interface TaskListViewProps {
 
 const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCreateTask }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showTips, setShowTips] = useState(true);
 
   const filteredTasks = tasks
     .filter(t =>
@@ -73,6 +74,16 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
           Initialize New Directive
         </button>
       </div>
+
+      {showTips && (
+          <div className="mb-8 p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex items-center justify-between lg:hidden">
+              <div className="flex items-center gap-3">
+                  <Info className="text-indigo-500" size={18} />
+                  <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Tip: Swipe left on details to close.</p>
+              </div>
+              <button onClick={() => setShowTips(false)}><X size={14} className="text-zinc-400" /></button>
+          </div>
+      )}
 
       <div className="flex items-center gap-4 mb-8">
         <div className="relative flex-1">
@@ -120,10 +131,10 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
                         <span className="text-[10px] font-bold">{task.task_number.replace('TASK-', '#')}</span>
                       </div>
                       {task.hasUnread && (
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-500 rounded-full border-2 border-white dark:border-[#11161D] shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-500 rounded-full border-2 border-white dark:border-[#11161D] shadow-[0_0_10px_rgba(99,102,241,0.5)] animate-pulse" />
                       )}
                     </div>
-                    <span className={`text-sm font-bold truncate group-hover:text-zinc-900 dark:group-hover:text-white transition-colors ${task.hasUnread ? 'text-zinc-900 dark:text-white' : 'text-zinc-700 dark:text-zinc-300'}`}>
+                    <span className={`text-sm font-bold truncate group-hover:text-zinc-900 dark:group-hover:text-white transition-colors ${task.hasUnread ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                       {task.title}
                     </span>
                   </div>

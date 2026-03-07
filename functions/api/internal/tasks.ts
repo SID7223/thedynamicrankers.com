@@ -5,6 +5,7 @@ interface Env {
 export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
+  const userId = url.searchParams.get('userId');
 
   if (!env.DB) return new Response('DB binding missing', { status: 503 });
 
@@ -15,16 +16,23 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', user_id, 'name', name))
          FROM task_assignees ta
          JOIN users u2 ON ta.user_id = u2.id
-         WHERE ta.task_id = t.id) as assignees
+         WHERE ta.task_id = t.id) as assignees,
+        EXISTS (
+            SELECT 1 FROM messages m
+            JOIN chat_rooms cr ON m.room_id = cr.id
+            LEFT JOIN message_read_receipts rr ON rr.room_id = cr.id AND rr.user_id = ?
+            WHERE cr.task_id = t.id AND (rr.last_read_at IS NULL OR m.created_at > rr.last_read_at)
+        ) as hasUnread
         FROM tasks t
         LEFT JOIN users u ON t.assigned_to = u.id
         LEFT JOIN users creator ON t.created_by = creator.id
         ORDER BY t.created_at DESC
-      `).all();
+      `).bind(userId || '').all();
 
       const processedResults = (results || []).map((r: any) => ({
         ...r,
-        assignees: JSON.parse(r.assignees || '[]')
+        assignees: JSON.parse(r.assignees || '[]'),
+        hasUnread: !!r.hasUnread
       }));
 
       return new Response(JSON.stringify(processedResults), {
@@ -41,7 +49,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const body = await request.json() as any;
       const taskId = crypto.randomUUID();
 
-      // Calculate next task number
       const lastTask = await env.DB.prepare('SELECT task_number FROM tasks ORDER BY created_at DESC LIMIT 1').first() as { task_number: string } | null;
       let nextNum = 101;
       if (lastTask && lastTask.task_number.startsWith('TASK-')) {
@@ -49,7 +56,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       }
       const taskNumber = `TASK-${nextNum}`;
 
-      // 1. Create the task
       await env.DB.prepare(
         'INSERT INTO tasks (id, task_number, title, description, assigned_to, due_date, priority, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
       ).bind(
@@ -64,7 +70,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         body.created_by
       ).run();
 
-      // 2. Handle Multiple Assignees
       if (body.assignees && Array.isArray(body.assignees)) {
         for (const userId of body.assignees) {
           await env.DB.prepare(
@@ -73,7 +78,6 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         }
       }
 
-      // 3. Create the associated chat room
       await env.DB.prepare(
         'INSERT INTO chat_rooms (id, type, task_id) VALUES (?, ?, ?)'
       ).bind(crypto.randomUUID(), 'task', taskId).run();
@@ -105,16 +109,13 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         await env.DB.prepare(query).bind(...values, id).run();
       }
 
-      // Handle Multiple Assignees update
       if (body.assignees !== undefined && Array.isArray(body.assignees)) {
-        // Delete old assignees and insert new ones
         await env.DB.prepare('DELETE FROM task_assignees WHERE task_id = ?').bind(id).run();
         for (const userId of body.assignees) {
           await env.DB.prepare(
             'INSERT INTO task_assignees (id, task_id, user_id) VALUES (?, ?, ?)'
           ).bind(crypto.randomUUID(), id, userId).run();
         }
-        // Update the primary assigned_to field for backward compat
         if (body.assignees.length > 0) {
           await env.DB.prepare('UPDATE tasks SET assigned_to = ? WHERE id = ?').bind(body.assignees[0], id).run();
         } else {

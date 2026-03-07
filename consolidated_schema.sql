@@ -228,3 +228,36 @@ INSERT OR IGNORE INTO chat_rooms (id, type, task_id) VALUES ('global-room', 'glo
 -- 19. Seed Initial Members for Global Room
 INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_001', 'global-room', 'u_001');
 INSERT OR IGNORE INTO chat_room_members (id, room_id, user_id) VALUES ('mem_002', 'global-room', 'u_002');
+
+-- 20. Message Reactions Table
+CREATE TABLE IF NOT EXISTS message_reactions (
+    id TEXT PRIMARY KEY,
+    message_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    emoji TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(message_id, user_id, emoji)
+);
+
+-- 21. User Favorite Emojis Table
+CREATE TABLE IF NOT EXISTS user_favorite_emojis (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    emoji TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, emoji)
+);
+
+-- 22. Message Read Receipts Table
+CREATE TABLE IF NOT EXISTS message_read_receipts (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    room_id TEXT NOT NULL,
+    last_read_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
+    UNIQUE(user_id, room_id)
+);

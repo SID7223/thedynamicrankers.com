@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import {
   X,
   Send,
@@ -59,6 +59,10 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const rightColRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
 
+  // Swipe gesture for mobile
+  const x = useMotionValue(0);
+  const opacity = useTransform(x, [-100, 0], [0, 1]);
+
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     window.addEventListener('resize', handleResize);
@@ -116,7 +120,16 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
   const anyPopoverOpen = isStatusOpen || isAssigneeOpen || isPriorityOpen || isMoreOpen;
 
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col lg:flex-row h-full min-h-0 overflow-hidden bg-white dark:bg-[#06080D] transition-colors duration-300 relative">
+    <motion.div
+      ref={containerRef}
+      style={{ x, opacity }}
+      drag={isDesktop ? false : "x"}
+      dragConstraints={{ left: 0, right: 0 }}
+      onDragEnd={(_, info) => {
+        if (info.offset.x < -100) onClose();
+      }}
+      className="flex-1 flex flex-col lg:flex-row h-full min-h-0 overflow-hidden bg-white dark:bg-[#06080D] transition-colors duration-300 relative"
+    >
       {/* Popover Backdrop */}
       {anyPopoverOpen && (
         <div
@@ -367,7 +380,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
            </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

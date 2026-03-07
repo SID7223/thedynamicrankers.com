@@ -1,33 +1,37 @@
-DATABASE SCHEMA UPDATE - 2024-05-24
+DATABASE SCHEMA UPDATE - 2024-05-25
 
-New Tables:
-1. message_edits: Tracks history of edited chat messages.
-2. message_task_mentions: Tracks relationships between chat messages and mentioned tasks.
-3. chat_room_members: Tracks user membership in chat rooms.
+New Tables for Enhanced Messaging:
+1. message_reactions: Stores emoji reactions for chat messages.
+2. user_favorite_emojis: Stores personalized emoji shortcuts per user.
+3. message_read_receipts: Tracks the last time a user viewed a specific chat room to manage unread states.
 
 SQL Statements:
-CREATE TABLE IF NOT EXISTS chat_room_members (
+CREATE TABLE IF NOT EXISTS message_reactions (
     id TEXT PRIMARY KEY,
-    room_id TEXT NOT NULL,
+    message_id TEXT NOT NULL,
     user_id TEXT NOT NULL,
-    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE(room_id, user_id)
-);
-
-CREATE TABLE IF NOT EXISTS message_edits (
-    id TEXT PRIMARY KEY,
-    message_id TEXT NOT NULL,
-    old_content TEXT NOT NULL,
+    emoji TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(message_id, user_id, emoji)
 );
 
-CREATE TABLE IF NOT EXISTS message_task_mentions (
-    message_id TEXT NOT NULL,
-    task_id TEXT NOT NULL,
-    PRIMARY KEY (message_id, task_id),
-    FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS user_favorite_emojis (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    emoji TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, emoji)
+);
+
+CREATE TABLE IF NOT EXISTS message_read_receipts (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    room_id TEXT NOT NULL,
+    last_read_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
+    UNIQUE(user_id, room_id)
 );

@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import SlackStream from './SlackStream';
 import Avatar from './Avatar';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 
 interface GlobalChatViewProps {
   currentUser: any;
@@ -30,6 +30,17 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
   const [loadingMembers, setLoadingMembers] = useState(true);
 
   const isAdmin = ['admin', 'superuser'].includes(currentUser.role);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+  // Swipe gesture
+  const x = useMotionValue(0);
+  const opacity = useTransform(x, [-100, 0], [0, 1]);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchMembers = async () => {
     try {
@@ -80,7 +91,15 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#06080D] overflow-hidden relative transition-colors duration-300">
+    <motion.div
+      style={{ x, opacity }}
+      drag={isDesktop ? false : "x"}
+      dragConstraints={{ left: 0, right: 0 }}
+      onDragEnd={(_, info) => {
+        if (info.offset.x < -100) onClose();
+      }}
+      className="flex-1 flex flex-col h-full bg-white dark:bg-[#06080D] overflow-hidden relative transition-colors duration-300"
+    >
       {/* Header */}
       <header className="px-6 lg:px-10 py-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-white/80 dark:bg-[#06080D]/80 backdrop-blur-xl shrink-0 z-20">
         <div className="flex items-center gap-6">
@@ -110,7 +129,7 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
       {/* Chat Area */}
       <div className="flex-1 flex flex-col min-h-0">
         <SlackStream
-          taskId="0"
+          taskId="global-room"
           currentUser={currentUser}
           operatives={operatives}
           key={`global-stream-${lastMessageTimestamp}`}
@@ -196,7 +215,7 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
           </>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
