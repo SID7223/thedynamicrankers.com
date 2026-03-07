@@ -1,5 +1,3 @@
-import { Resend } from "resend";
-
 interface OnboardingData {
   orgName: string;
   industry: string;
@@ -133,22 +131,29 @@ export const onRequestPost = async (context: { request: Request; env: Env }) => 
       }), { status: 400 });
     }
 
-    const resend = new Resend(resendApiKey);
-
-    const result = await resend.emails.send({
-      from: resendFromEmail,
-      to: [resendTargetEmail],
-      subject: `Onboarding & Strategy Call: ${data.orgName}`,
-      html: OnboardingEmailTemplate(data),
+    const resendResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: resendFromEmail,
+        to: [resendTargetEmail],
+        subject: `Onboarding & Strategy Call: ${data.orgName}`,
+        html: OnboardingEmailTemplate(data),
+      }),
     });
 
-    if (result.error) {
-        return new Response(JSON.stringify({ error: result.error.message }), { status: 500 });
+    const result: any = await resendResponse.json();
+
+    if (!resendResponse.ok) {
+        return new Response(JSON.stringify({ error: result.message || "Failed to send email" }), { status: resendResponse.status });
     }
 
     return new Response(JSON.stringify({
       success: true,
-      id: result.data?.id,
+      id: result.id,
     }), { status: 200 });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
