@@ -319,37 +319,46 @@ const InternalDashboard: React.FC = () => {
     <div style={{ zoom: 0.9 }} className="fixed inset-0 w-[111.11vw] h-[111.11vh] flex bg-white dark:bg-[#06080D] text-zinc-900 dark:text-zinc-300 font-sans overflow-hidden transition-colors duration-300">
       <AnimatePresence>
         {isSidebarOpen && (
-          <motion.div initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} className={`fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-[#0B101A] border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col lg:relative lg:translate-x-0 transition-[width] duration-300 ease-in-out ${effectiveCollapsed ? 'w-[84px]' : 'w-[280px]'}`}>
-            <div className={`flex flex-col gap-6 h-full overflow-hidden ${effectiveCollapsed ? 'p-4' : 'p-6'}`}>
-              <div className={`flex items-center ${effectiveCollapsed ? 'flex-col gap-4' : 'justify-between'}`}>
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg"><Shield className="w-5 h-5 text-white" /></div>
-                  {!effectiveCollapsed && <span className="font-bold text-zinc-900 dark:text-white uppercase">Operations</span>}
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-40 lg:hidden"
+            />
+            <motion.div initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} className={`fixed inset-y-0 left-0 z-50 bg-zinc-50 dark:bg-[#0B101A] border-r border-zinc-200 dark:border-zinc-800/50 flex flex-col lg:relative lg:translate-x-0 transition-[width] duration-300 ease-in-out ${effectiveCollapsed ? "w-[84px]" : "w-[280px]"}`}>
+              <div className={`flex flex-col gap-6 h-full overflow-hidden ${effectiveCollapsed ? "p-4" : "p-6"}`}>
+                <div className={`flex items-center ${effectiveCollapsed ? "flex-col gap-4" : "justify-between"}`}>
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg"><Shield className="w-5 h-5 text-white" /></div>
+                    {!effectiveCollapsed && <span className="font-bold text-zinc-900 dark:text-white uppercase">Operations</span>}
+                  </div>
+                  <div className={`flex items-center gap-1 ${effectiveCollapsed ? "flex-col" : ""}`}>
+                      <button onClick={toggleSidebarCollapse} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? "rotate-180" : ""} /></button>
+                      <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><XIcon size={20} /></button>
+                  </div>
                 </div>
-                <div className={`flex items-center gap-1 ${effectiveCollapsed ? 'flex-col' : ''}`}>
-                    <button onClick={toggleSidebarCollapse} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><ChevronLeft size={20} className={effectiveCollapsed ? 'rotate-180' : ''} /></button>
-                    <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"><XIcon size={20} /></button>
+                <nav className="flex-1 space-y-2">
+                  <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
+                  <NavItem view="tasks" icon={ClipboardList} label="Tasks" />
+                  <NavItem view="global-chat" icon={MessageSquare} label="Global Command" roomKey="0" />
+                  <NavItem view="customers" icon={Users2} label="Customers" />
+                  <NavItem view="invoices" icon={Receipt} label="Invoices" />
+                  <NavItem view="appointments" icon={CalendarCheck} label="Appointments" />
+                </nav>
+                <div className="mt-auto pb-4">
+                  <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col shadow-2xl ${effectiveCollapsed ? "w-14 py-4 rounded-full items-center gap-4" : "w-full p-4 rounded-[2.5rem] gap-4"}`}>
+                     <div className={`flex items-center gap-4 ${effectiveCollapsed ? "justify-center" : ""}`}><Avatar name={session.username} isOnline={true} />{!effectiveCollapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span><span className="text-[10px] text-zinc-500 uppercase font-bold">{session.role}</span></div>}</div>
+                     <div className={`flex items-center justify-between ${effectiveCollapsed ? "flex-col gap-4" : "w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50"}`}><button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 transition-all">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button><button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 transition-all"><LogOut size={20} /></button></div>
+                  </div>
                 </div>
               </div>
-              <nav className="flex-1 space-y-2">
-                <NavItem view="dashboard" icon={LayoutDashboard} label="Dashboard" />
-                <NavItem view="tasks" icon={ClipboardList} label="Tasks" />
-                <NavItem view="global-chat" icon={MessageSquare} label="Global Command" roomKey="0" />
-                <NavItem view="customers" icon={Users2} label="Customers" />
-                <NavItem view="invoices" icon={Receipt} label="Invoices" />
-                <NavItem view="appointments" icon={CalendarCheck} label="Appointments" />
-              </nav>
-              <div className="mt-auto pb-4">
-                <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col shadow-2xl ${effectiveCollapsed ? 'w-14 py-4 rounded-full items-center gap-4' : 'w-full p-4 rounded-[2.5rem] gap-4'}`}>
-                   <div className={`flex items-center gap-4 ${effectiveCollapsed ? 'justify-center' : ''}`}><Avatar name={session.username} isOnline={true} />{!effectiveCollapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span><span className="text-[10px] text-zinc-500 uppercase font-bold">{session.role}</span></div>}</div>
-                   <div className={`flex items-center justify-between ${effectiveCollapsed ? 'flex-col gap-4' : 'w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50'}`}><button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 transition-all">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button><button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 transition-all"><LogOut size={20} /></button></div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
+      <div onClick={() => { if (window.innerWidth < 1024) setIsSidebarOpen(false); else setIsSidebarCollapsed(true); }} className="flex-1 flex flex-col min-w-0 h-full overflow-hidden relative">
         {!isSidebarOpen && <button onClick={() => setIsSidebarOpen(true)} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 lg:hidden shadow-lg"><Menu size={20} /></button>}
         <div className="flex-1 h-full overflow-hidden flex flex-col pt-24 lg:pt-0">
           {activeView === 'dashboard' && <DashboardOverview />}
@@ -360,9 +369,3 @@ const InternalDashboard: React.FC = () => {
           {activeView === 'appointments' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMAppointments /></div>}
         </div>
       </div>
-      <AnimatePresence>{isNewTaskModalOpen && <NewTaskModal onClose={() => setIsNewTaskModalOpen(false)} operatives={operatives} onSubmit={handleCreateTask} />}</AnimatePresence>
-    </div>
-  );
-};
-
-export default InternalDashboard;
