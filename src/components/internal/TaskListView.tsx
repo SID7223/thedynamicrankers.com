@@ -1,33 +1,15 @@
 import React, { useState } from 'react';
 import { Plus, Search, Filter, Clock, Info, X as XIcon } from 'lucide-react';
 import Avatar from './Avatar';
-
-interface Task {
-  id: string;
-  task_number: string;
-  title: string;
-  status: string;
-  priority: string;
-  assigned_to: string | null;
-  assigned_name?: string;
-  due_date: string | null;
-  created_at: string;
-  hasUnread?: boolean;
-}
-
-interface User {
-  id: string;
-  username: string;
-}
+import { useTaskStore } from '../../store/useTaskStore';
 
 interface TaskListViewProps {
-  tasks: Task[];
-  operatives: User[];
   onSelectTask: (id: string) => void;
   onCreateTask: () => void;
 }
 
-const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCreateTask }) => {
+const TaskListView: React.FC<TaskListViewProps> = ({ onSelectTask, onCreateTask }) => {
+  const { tasks } = useTaskStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [showTips, setShowTips] = useState(true);
 
@@ -103,7 +85,6 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
 
       <div className="flex-1 overflow-y-auto custom-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0">
         <div className="min-w-[800px]">
-          {/* Header */}
           <div className="grid grid-cols-[1fr_180px_140px_160px_140px] gap-6 px-6 py-4 bg-zinc-50 dark:bg-[#161B22] rounded-t-2xl border-x border-t border-zinc-200 dark:border-zinc-800/50 transition-colors duration-300">
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Directive</span>
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Operative</span>
@@ -112,7 +93,6 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Target Date</span>
           </div>
 
-          {/* List */}
           <div className="bg-white dark:bg-[#11161D] border-x border-b border-zinc-200 dark:border-zinc-800/50 rounded-b-2xl divide-y divide-zinc-100 dark:divide-zinc-800/30 transition-colors duration-300">
             {filteredTasks.length === 0 ? (
               <div className="py-20 text-center">

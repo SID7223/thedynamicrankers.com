@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { X as XIcon, Calendar, AlignLeft, Shield, AlertCircle, Users, Check } from 'lucide-react';
+import { X as XIcon, Calendar, Shield, Check, Plus } from 'lucide-react';
 import Avatar from './Avatar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTaskStore } from '../../store/useTaskStore';
 
 interface NewTaskModalProps {
   onClose: () => void;
-  operatives: any[];
   onSubmit: (data: any) => void;
 }
 
-const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubmit }) => {
+const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSubmit }) => {
+  const { operatives } = useTaskStore();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Medium');
@@ -18,7 +19,8 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, operatives, onSubm
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, description, priority, assignees, due_date: dueDate });
+    onSubmit({ title, description, priority, assignee_ids: assignees, due_date: dueDate });
+    onClose();
   };
 
   const toggleAssignee = (id: string) => {

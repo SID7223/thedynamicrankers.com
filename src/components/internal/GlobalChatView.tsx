@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Users,
   ChevronLeft,
-  UserPlus,
   UserMinus,
   ShieldAlert,
   X as XIcon,
@@ -11,26 +10,27 @@ import {
 import SlackStream from './SlackStream';
 import Avatar from './Avatar';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useTaskStore } from '../../store/useTaskStore';
+import { useChatStore } from '../../store/useChatStore';
+import { internalSdk } from '../../services/internalSdk';
 
 interface GlobalChatViewProps {
-  currentUser: any;
-  operatives: any[];
   onClose: () => void;
-  lastMessageTimestamp: number;
 }
 
-const GlobalChatView: React.FC<GlobalChatViewProps> = ({
-  currentUser,
-  operatives,
-  onClose,
-  lastMessageTimestamp
-}) => {
+const GlobalChatView: React.FC<GlobalChatViewProps> = ({ onClose }) => {
+  const { session: currentUser } = useAuthStore();
+  const { operatives } = useTaskStore();
+  const { lastMessageTimestamp, fetchRoomMembers, roomMembers } = useChatStore();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [members, setMembers] = useState<any[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(true);
 
   const isAdmin = ['admin', 'superuser'].includes(currentUser.role);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+  const members = roomMembers['global-room'] || [];
 
   // Swipe gesture
   const x = useMotionValue(0);
@@ -42,32 +42,14 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const fetchMembers = async () => {
-    try {
-      const res = await fetch('/api/internal/room_members?roomId=global-room');
-      if (res.ok) {
-        const data = await res.json();
-        setMembers(data);
-      }
-    } catch (err) {
-      console.error('Fetch Members Failed:', err);
-    } finally {
-      setLoadingMembers(false);
-    }
-  };
-
   useEffect(() => {
-    fetchMembers();
-  }, []);
+    fetchRoomMembers('global-room').finally(() => setLoadingMembers(false));
+  }, [fetchRoomMembers]);
 
   const handleAddMember = async (userId: string) => {
     try {
-      await fetch('/api/internal/room_members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomId: 'global-room', userId })
-      });
-      fetchMembers();
+      await internalSdk.joinRoom('global-room', userId);
+      fetchRoomMembers('global-room');
     } catch (err) {
       console.error('Add Member Failed:', err);
     }
@@ -81,10 +63,8 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
     if (!confirm('Are you sure you want to kick this operative from the global comm?')) return;
 
     try {
-      await fetch(`/api/internal/room_members?roomId=global-room&userId=${userId}`, {
-        method: 'DELETE'
-      });
-      fetchMembers();
+      await internalSdk.leaveRoom('global-room', userId);
+      fetchRoomMembers('global-room');
     } catch (err) {
       console.error('Remove Member Failed:', err);
     }
@@ -129,10 +109,8 @@ const GlobalChatView: React.FC<GlobalChatViewProps> = ({
       {/* Chat Area */}
       <div className="flex-1 flex flex-col min-h-0">
         <SlackStream
-          taskId="global-room"
-          currentUser={currentUser}
-          operatives={operatives}
-          key={`global-stream-${lastMessageTimestamp}`}
+          taskId="0"
+          lastMessageTimestamp={lastMessageTimestamp}
         />
       </div>
 

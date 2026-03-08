@@ -1,40 +1,37 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import {
-  Send,
-  Paperclip,
-  Smile,
-  MoreVertical,
-  Reply,
-  Edit2,
-  Trash2,
-  Plus,
-  X as XIcon,
-  ChevronDown
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { Send, Paperclip, Smile, MoreVertical, Reply, Edit2, Trash2, X as XIcon, ChevronDown, Plus } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Avatar from './Avatar';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useChatStore } from '../../store/useChatStore';
+import { useTaskStore } from '../../store/useTaskStore';
+import { usePresenceStore } from '../../store/usePresenceStore';
 
 interface Message {
   id: string;
+  room_id: string;
   sender_id: string;
   sender_name: string;
   content: string;
   timestamp: string;
-  is_edited?: boolean;
-  parent_message_id?: string | null;
-  attachments?: any[];
-  reactions?: any[];
+  parent_message_id?: string;
+  reactions?: Record<string, string[]>;
+  attachments?: string[];
+  edited?: boolean;
 }
 
 interface SlackStreamProps {
   taskId: string;
-  currentUser: any;
-  operatives: any[];
+  lastMessageTimestamp?: number;
 }
 
-const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operatives }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp: externalTs }) => {
+  const { session: currentUser } = useAuthStore();
+  const { messages, fetchChatHistory, sendMessage, toggleReaction, editMessage, deleteMessage, updateReadReceipt, favorites, fetchFavorites, lastMessageTimestamp: storeTs } = useChatStore();
+  const { operatives, tasks } = useTaskStore();
+  const { typingUsers: allTypingUsers, updateMyTypingStatus } = usePresenceStore();
+
   const [newMessage, setNewMessage] = useState('');
   const [attachments, setAttachments] = useState<string[]>([]);
   const [replyTo, setReplyTo] = useState<Message | null>(null);
@@ -43,295 +40,179 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<string[]>(['👍', '❤️', '🔥', '✅', '🚀']);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionType, setSuggestionType] = useState<'user' | 'task'>('user');
   const [suggestionSearch, setSuggestionSearch] = useState('');
-  const [typingUsers, setTypingUsers] = useState<Record<string, string>>({});
-  const [lastReadAt, setLastReadAt] = useState<string | null>(null);
   const [showJumpToBottom, setShowJumpToBottom] = useState(false);
   const [newMessagesCount, setNewMessagesCount] = useState(0);
-  const [hasInitialScrolled, setHasInitialScrolled] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const typingTimeoutRef = useRef<any>(null);
-  const unreadRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const anyOverlayOpen = previewImage || isEmojiPickerOpen || showSuggestions;
-  const apiTaskId = taskId === 'global-room' ? '0' : taskId;
-
-  const fetchMessages = async () => {
-    try {
-      const res = await fetch(`/api/internal/chat?taskId=${apiTaskId}&userId=${currentUser.id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data.messages || []);
-        setLastReadAt(data.lastReadAt);
-      }
-    } catch (err) {
-      console.error('Fetch Messages Failed:', err);
-    }
-  };
-
-  const sendReadReceipt = async () => {
-      try {
-          await fetch('/api/internal/read_receipts', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  userId: currentUser.id,
-                  taskId: apiTaskId
-              })
-          });
-      } catch {}
-  };
-
-  const fetchFavorites = async () => {
-     try {
-       const res = await fetch(`/api/internal/reactions?userId=${currentUser.id}`);
-       if (res.ok) setFavorites(await res.json());
-     } catch {}
-  };
+  const apiTaskId = taskId === '0' ? '0' : taskId;
+  const currentMessages = useMemo(() => messages[apiTaskId] || [], [messages, apiTaskId]);
+  const typingUsers = useMemo(() => allTypingUsers[apiTaskId] || {}, [allTypingUsers, apiTaskId]);
 
   useEffect(() => {
-    fetchMessages();
-    fetchFavorites();
-    sendReadReceipt();
-    const eventSource = new EventSource('/api/internal/stream');
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'CHAT_MSG' && (data.room === taskId || data.room === apiTaskId)) {
-        fetchMessages();
-        if (scrollRef.current) {
-            const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-            const isAtBottom = scrollHeight - scrollTop - clientHeight < 200;
-            if (!isAtBottom) {
-                setNewMessagesCount(prev => prev + 1);
-                setShowJumpToBottom(true);
-            } else {
-                sendReadReceipt();
-            }
-        }
-      }
-      if (data.type === 'TYPING_STATUS' && (data.room === taskId || data.room === apiTaskId)) {
-          if (data.userId !== currentUser.id) {
-              setTypingUsers(prev => {
-                  const next = { ...prev };
-                  if (data.message === 'STOP') delete next[data.userId];
-                  else next[data.userId] = data.message;
-                  return next;
-              });
-          }
-      }
-    };
-    return () => eventSource.close();
-  }, [taskId]);
-
-  const firstUnreadId = useMemo(() => {
-      if (!lastReadAt) return null;
-      return messages.find(m => m.timestamp > lastReadAt && m.sender_id !== currentUser.id)?.id;
-  }, [messages, lastReadAt, currentUser.id]);
+    if (currentUser) {
+      fetchChatHistory(apiTaskId, currentUser.id);
+      fetchFavorites(currentUser.id);
+    }
+  }, [apiTaskId, currentUser, fetchChatHistory, fetchFavorites]);
 
   useEffect(() => {
-    if (scrollRef.current && messages.length > 0 && !hasInitialScrolled) {
-        if (unreadRef.current) {
-            unreadRef.current.scrollIntoView({ behavior: 'auto', block: 'center' });
-        } else {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-        setHasInitialScrolled(true);
+    if (externalTs || storeTs) {
+      fetchChatHistory(apiTaskId, currentUser?.id || '');
     }
-  }, [messages, hasInitialScrolled, firstUnreadId]);
+  }, [externalTs, storeTs, apiTaskId, currentUser, fetchChatHistory]);
 
-  const handleScroll = () => {
-      if (!scrollRef.current) return;
-      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-      if (isAtBottom) {
-          setShowJumpToBottom(false);
-          setNewMessagesCount(0);
-          sendReadReceipt();
+  useEffect(() => {
+    updateReadReceipt(apiTaskId);
+  }, [apiTaskId, currentMessages.length, updateReadReceipt]);
+
+  const jumpToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      setShowJumpToBottom(false);
+      setNewMessagesCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      const isNearBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop - scrollRef.current.clientHeight < 100;
+      if (isNearBottom) jumpToBottom();
+      else if (currentMessages.length > 0) {
+        setShowJumpToBottom(true);
+        setNewMessagesCount(prev => prev + 1);
       }
-  };
-
-  const jumpToBottom = () => {
-      if (scrollRef.current) {
-          scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-          setShowJumpToBottom(false);
-          setNewMessagesCount(0);
-          sendReadReceipt();
-      }
-  };
-
-  const updateTypingStatus = async (isTyping: boolean) => {
-      try {
-          await fetch('/api/internal/typing', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  userId: currentUser.id,
-                  roomId: apiTaskId === '0' ? 'global-room' : apiTaskId,
-                  message: isTyping ? currentUser.username : 'STOP'
-              })
-          });
-      } catch {}
-  };
-
-  const threadedMessages = useMemo(() => {
-    const roots = messages.filter(m => !m.parent_message_id);
-    const repliesMap: Record<string, Message[]> = {};
-    messages.filter(m => m.parent_message_id).forEach(m => {
-      const pid = m.parent_message_id!;
-      if (!repliesMap[pid]) repliesMap[pid] = [];
-      repliesMap[pid].push(m);
-    });
-    return { roots, repliesMap };
-  }, [messages]);
+    }
+  }, [currentMessages, jumpToBottom]);
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!newMessage.trim() && attachments.length === 0) return;
 
-    const payload = {
-      senderId: currentUser.id,
-      taskId: apiTaskId,
-      content: newMessage,
-      parentMessageId: replyTo?.id || null,
-      attachments: attachments.map(a => ({ name: 'image.png', type: 'image/png', url: a }))
-    };
-
     try {
-      const res = await fetch('/api/internal/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      await sendMessage({
+        roomId: apiTaskId,
+        senderId: currentUser.id,
+        content: newMessage,
+        parentMessageId: replyTo?.id,
+        attachments
       });
-      if (res.ok) {
-        setNewMessage('');
-        setAttachments([]);
-        setReplyTo(null);
-        fetchMessages();
-        jumpToBottom();
-        updateTypingStatus(false);
-      }
+      setNewMessage('');
+      setAttachments([]);
+      setReplyTo(null);
+      updateMyTypingStatus(apiTaskId, false);
+      fetchChatHistory(apiTaskId, currentUser.id);
     } catch (err) {
-      console.error('Send Failed:', err);
+      console.error('Send failed:', err);
     }
   };
 
-  const handleUpdate = async (id: string) => {
-      try {
-          const res = await fetch(`/api/internal/chat?id=${id}`, {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ content: editContent, userId: currentUser.id })
-          });
-          if (res.ok) {
-              setEditingMessage(null);
-              fetchMessages();
-          }
-      } catch {}
+  const handleUpdateMessage = async (id: string) => {
+    try {
+      await editMessage(id, editContent);
+      setEditingMessage(null);
+      fetchChatHistory(apiTaskId, currentUser.id);
+    } catch (err) {
+      console.error('Update failed:', err);
+    }
   };
 
   const handleDelete = async (id: string) => {
-      if (!confirm('Are you sure you want to delete this message?')) return;
-      try {
-          const res = await fetch(`/api/internal/chat?id=${id}&userId=${currentUser.id}`, { method: 'DELETE' });
-          if (res.ok) fetchMessages();
-      } catch {}
+    if (!window.confirm('Erase this directive from history?')) return;
+    try {
+      await deleteMessage(id, currentUser.id);
+      fetchChatHistory(apiTaskId, currentUser.id);
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
   };
 
-  const toggleReaction = async (messageId: string, emoji: string) => {
-      try {
-          await fetch('/api/internal/reactions', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ messageId, userId: currentUser.id, emoji })
-          });
-          fetchMessages();
-      } catch {}
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const isNearBottom = scrollRef.current.scrollHeight - scrollRef.current.scrollTop - scrollRef.current.clientHeight < 100;
+      if (isNearBottom) {
+        setShowJumpToBottom(false);
+        setNewMessagesCount(0);
+      }
+    }
   };
 
-  const handleAddFavorite = async (emoji: string) => {
-      try {
-          await fetch('/api/internal/reactions', {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: currentUser.id, emoji })
-          });
-          fetchFavorites();
-      } catch {}
-  };
+  const anyOverlayOpen = previewImage || isEmojiPickerOpen || showSuggestions;
 
-  const MessageBubble = ({ msg, isReply }: { msg: Message, isReply?: boolean }) => {
+  const threadedMessages = useMemo(() => {
+    const roots = currentMessages.filter(m => !m.parent_message_id);
+    const replies = currentMessages.filter(m => m.parent_message_id);
+    return { roots, replies };
+  }, [currentMessages]);
+
+  const MessageBubble = ({ msg, isReply = false }: { msg: Message, isReply?: boolean }) => {
       const isOwn = msg.sender_id === currentUser.id;
+      const replies = threadedMessages.replies.filter(r => r.parent_message_id === msg.id);
       const isEditing = editingMessage === msg.id;
-      const replies = threadedMessages.repliesMap[msg.id] || [];
-      const isUnread = firstUnreadId === msg.id;
 
       return (
-          <div ref={isUnread ? unreadRef : null} className={`flex flex-col mb-4 group relative items-start ${isReply ? 'ml-12 mt-2' : ''}`}>
-              {isUnread && (
-                  <div className="w-full flex items-center gap-4 mb-4">
-                      <div className="flex-1 h-px bg-indigo-500/20" />
-                      <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">New Directives</span>
-                      <div className="flex-1 h-px bg-indigo-500/20" />
+          <div className={`group relative flex gap-4 ${isReply ? 'ml-12 mt-2' : 'mt-6'} ${isOwn ? 'bg-indigo-500/5 dark:bg-indigo-500/5' : ''} p-4 rounded-2xl transition-all`}>
+              <Avatar name={msg.sender_name} size={isReply ? "xs" : "sm"} />
+              <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tighter">{msg.sender_name}</span>
+                      <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      {msg.edited && <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase italic">(Edited)</span>}
                   </div>
-              )}
-              <div className="max-w-[85%] lg:max-w-[70%] order-2">
-                  {!isReply && <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mb-1 block ml-4 uppercase tracking-widest">{msg.sender_name}</span>}
-                  <div className={`p-4 rounded-[2rem] shadow-sm transition-all relative ${isOwn ? 'bg-indigo-600/10 dark:bg-indigo-600/10 border border-indigo-600/20' : 'bg-zinc-100 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800'} text-zinc-900 dark:text-white rounded-tl-none`}>
+
+                  <div className="relative">
                       {isEditing ? (
-                          <div className="flex flex-col gap-2 min-w-[200px]">
-                              <textarea value={editContent} onChange={e => setEditContent(e.target.value)} className="bg-white/10 border border-white/20 rounded-xl p-2 text-sm focus:outline-none" rows={3} />
-                              <div className="flex justify-end gap-2">
-                                  <button onClick={() => setEditingMessage(null)} className="text-[10px] font-bold uppercase">Cancel</button>
-                                  <button onClick={() => handleUpdate(msg.id)} className="text-[10px] font-bold uppercase bg-white text-indigo-600 px-3 py-1 rounded-full">Save</button>
+                          <div className="space-y-2">
+                              <textarea
+                                value={editContent}
+                                onChange={e => setEditContent(e.target.value)}
+                                className="w-full bg-white dark:bg-[#11161D] border border-indigo-500 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500/20"
+                                autoFocus
+                              />
+                              <div className="flex gap-2">
+                                  <button onClick={() => handleUpdateMessage(msg.id)} className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-lg uppercase tracking-widest">Save</button>
+                                  <button onClick={() => setEditingMessage(null)} className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-[10px] font-bold rounded-lg uppercase tracking-widest">Cancel</button>
                               </div>
                           </div>
                       ) : (
-                          <>
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                            {msg.attachments && msg.attachments.length > 0 && (
-                                <div className="mt-3 grid grid-cols-2 gap-2">
-                                    {msg.attachments.map((at, i) => (
-                                        <img key={i} src={at.url} className="rounded-xl w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setPreviewImage(at.url)} alt="Attachment" />
-                                    ))}
-                                </div>
-                            )}
-                          </>
+                          <div className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words whitespace-pre-wrap font-medium">
+                              {msg.content}
+                          </div>
                       )}
-                      <div className="absolute bottom-1 left-4 flex items-center gap-2">
-                          <span className="text-[9px] font-bold opacity-40 uppercase text-zinc-500">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          {msg.is_edited && <span className="text-[9px] font-bold opacity-40 uppercase italic text-zinc-500">(edited)</span>}
-                      </div>
 
-                      {msg.reactions && msg.reactions.length > 0 && (
-                          <div className="absolute -bottom-3 left-4 flex flex-wrap gap-1">
-                              <div className="flex items-center gap-1 bg-white dark:bg-[#1A212B] border border-zinc-200 dark:border-zinc-800 rounded-full px-2 py-0.5 shadow-sm">
-                                  {msg.reactions.map((r, i) => (
-                                      <button key={i} onClick={() => toggleReaction(msg.id, r.emoji)} className={`text-[10px] hover:scale-110 transition-transform ${r.me ? 'opacity-100' : 'opacity-60'}`}>
-                                          {r.emoji} <span className="font-bold">{r.count}</span>
-                                      </button>
-                                  ))}
-                                  <button onClick={() => { setIsEmojiPickerOpen(true); setActiveMessageId(msg.id); }} className="p-1 hover:scale-110 transition-transform text-zinc-400 hover:text-indigo-500"><Plus size={12} /></button>
-                              </div>
+                      {msg.attachments?.map((at, i) => (
+                          <img key={i} src={at} onClick={() => setPreviewImage(at)} className="mt-3 max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 cursor-zoom-in" alt="Attachment" />
+                      ))}
+
+                      {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                              {Object.entries(msg.reactions).map(([emoji, users]) => (
+                                  <button key={emoji} onClick={() => toggleReaction(msg.id, emoji).then(() => fetchChatHistory(apiTaskId, currentUser.id))} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs transition-all ${users.includes(currentUser.id) ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-600' : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-800 text-zinc-500'}`}>
+                                      <span>{emoji}</span>
+                                      <span className="font-bold">{users.length}</span>
+                                  </button>
+                              ))}
+                          </div>
+                      )}
+
+                      {!isEditing && (
+                          <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg overflow-hidden z-10">
+                             <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Reply size={14} /></button>
+                             {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Edit2 size={14} /></button>}
+                             {isOwn && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Trash2 size={14} /></button>}
+                             <button onClick={() => { setIsEmojiPickerOpen(true); setActiveMessageId(msg.id); }} className="p-2 text-zinc-400 hover:text-amber-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Plus size={14} /></button>
                           </div>
                       )}
                   </div>
 
                   {!isReply && !isEditing && replies.map(reply => <MessageBubble key={reply.id} msg={reply} isReply={true} />)}
               </div>
-
-              {!isEditing && (
-                  <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-lg overflow-hidden z-10">
-                     <button onClick={() => { setReplyTo(msg); inputRef.current?.focus(); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Reply size={14} /></button>
-                     {isOwn && <button onClick={() => { setEditingMessage(msg.id); setEditContent(msg.content); }} className="p-2 text-zinc-400 hover:text-indigo-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Edit2 size={14} /></button>}
-                     {isOwn && <button onClick={() => handleDelete(msg.id)} className="p-2 text-zinc-400 hover:text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"><Trash2 size={14} /></button>}
-                  </div>
-              )}
           </div>
       );
   };
@@ -342,25 +223,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
 
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     if (val.length > 0) {
-        updateTypingStatus(true);
-        typingTimeoutRef.current = setTimeout(() => updateTypingStatus(false), 3000);
+        updateMyTypingStatus(apiTaskId, true);
+        typingTimeoutRef.current = setTimeout(() => updateMyTypingStatus(apiTaskId, false), 3000);
     } else {
-        updateTypingStatus(false);
-    }
-
-    const words = val.split(' ');
-    const lastWord = words[words.length - 1];
-    if (lastWord.startsWith('@')) { setSuggestionType('user'); setSuggestionSearch(lastWord.slice(1).toLowerCase()); setShowSuggestions(true); }
-    else if (lastWord.startsWith('#')) { setSuggestionType('task'); setSuggestionSearch(lastWord.slice(1).toLowerCase()); setShowSuggestions(true); }
-    else { setShowSuggestions(false); }
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => { setAttachments(prev => [...prev, reader.result as string]); };
-      reader.readAsDataURL(file);
+        updateMyTypingStatus(apiTaskId, false);
     }
   };
 
@@ -383,15 +249,15 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, currentUser, operativ
                  <div className="mb-6">
                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] block mb-4">Quick Linkage</span>
                      <div className="flex flex-wrap gap-3">
-                        {favorites.map(f => <button key={f} onClick={() => { if (activeMessageId) toggleReaction(activeMessageId, f); else setNewMessage(prev => prev + f); setIsEmojiPickerOpen(false); }} className="text-2xl hover:scale-125 transition-transform p-2 bg-zinc-50 dark:bg-zinc-800 rounded-2xl">{f}</button>)}
+                        {['👍', '🔥', '🚀', '✅', '👀', '💯'].map(f => <button key={f} onClick={() => { if (activeMessageId) toggleReaction(activeMessageId, f).then(() => fetchChatHistory(apiTaskId, currentUser.id)); else setNewMessage(prev => prev + f); setIsEmojiPickerOpen(false); }} className="text-2xl hover:scale-125 transition-transform p-2 bg-zinc-50 dark:bg-zinc-800 rounded-2xl">{f}</button>)}
                      </div>
                  </div>
                  <div className="h-[350px] overflow-hidden rounded-2xl border border-zinc-100 dark:border-zinc-800">
                     <EmojiPicker
                       width="100%" height="100%"
                       onEmojiClick={(e) => {
-                          if (activeMessageId) { toggleReaction(activeMessageId, e.emoji); handleAddFavorite(e.emoji); }
-                          else { setNewMessage(prev => prev + e.emoji); handleAddFavorite(e.emoji); }
+                          if (activeMessageId) { toggleReaction(activeMessageId, e.emoji).then(() => fetchChatHistory(apiTaskId, currentUser.id)); }
+                          else { setNewMessage(prev => prev + e.emoji); }
                           setIsEmojiPickerOpen(false);
                       }}
                       theme={document.documentElement.classList.contains('dark') ? 'dark' as any : 'light' as any}

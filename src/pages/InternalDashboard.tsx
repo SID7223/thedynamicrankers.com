@@ -30,33 +30,36 @@ import CustomerProfile from '../components/internal/CustomerProfile';
 import NewTaskModal from '../components/internal/NewTaskModal';
 import Avatar from '../components/internal/Avatar';
 
+// Zustand Stores
+import { useAuthStore } from '../store/useAuthStore';
+import { useTaskStore } from '../store/useTaskStore';
+import { useChatStore } from '../store/useChatStore';
+import { usePresenceStore } from '../store/usePresenceStore';
+
 const InternalDashboard: React.FC = () => {
-  const [session, setSession] = useState<any>(null);
+  const { session, isLoggingIn, loginError, login, logout } = useAuthStore();
+  const { tasks, fetchTasksAndOperatives, createTask, setUnread, clearUnreads } = useTaskStore();
+  const { setLastMessageTimestamp, unreads, setUnread: setChatUnread } = useChatStore();
+  const { setTypingStatus } = usePresenceStore();
+
   const [isDark, setIsDark] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [operatives, setOperatives] = useState<any[]>([]);
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-  const [lastMessageTimestamp, setLastMessageTimestamp] = useState<number>(0);
-  const [unreads, setUnreads] = useState<Record<string, boolean>>({});
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Login form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [loginError, setLoginError] = useState('');
 
   const activeView = (searchParams.get('view') as any) || 'dashboard';
   const activeTaskId = searchParams.get('task');
 
   useEffect(() => {
     if (activeTaskId) {
-        setTasks(prev => prev.map(t => t.id === activeTaskId ? { ...t, hasUnread: false } : t));
-        setUnreads(prev => ({ ...prev, [activeTaskId]: false }));
+        clearUnreads(activeTaskId);
     }
-  }, [activeTaskId]);
+  }, [activeTaskId, clearUnreads]);
 
   const selectedCustomerId = searchParams.get('customer');
 
@@ -71,39 +74,20 @@ const InternalDashboard: React.FC = () => {
   }, [searchParams, setSearchParams]);
 
   const setActiveView = (view: string) => {
-      if (view === 'global-chat') setUnreads(prev => ({ ...prev, '0': false }));
+      if (view === 'global-chat') setChatUnread('0', false);
       updateNavigation({ view, task: null, customer: null });
   };
 
   const setActiveTaskId = (id: string | null) => {
       if (id) {
-          setTasks(prev => prev.map(t => t.id === id ? { ...t, hasUnread: false } : t));
-          setUnreads(prev => ({ ...prev, [id]: false }));
+          clearUnreads(id);
       }
       updateNavigation({ task: id });
   };
 
   const setSelectedCustomerId = (id: string | null) => updateNavigation({ customer: id });
 
-  const fetchInitialData = useCallback(async () => {
-    if (!session) return;
-    try {
-      const [tasksRes, usersRes] = await Promise.all([
-        fetch(`/api/internal/tasks?userId=${session.id}`),
-        fetch('/api/internal/users')
-      ]);
-      const tasksData = await tasksRes.json();
-      const usersData = await usersRes.json();
-      setTasks(Array.isArray(tasksData) ? tasksData : []);
-      setOperatives(Array.isArray(usersData) ? usersData : []);
-    } catch (err) {
-      console.error('Data Fetch Failed:', err);
-    }
-  }, [session]);
-
   useEffect(() => {
-    const savedSession = sessionStorage.getItem('dr_internal_session');
-    if (savedSession) setSession(JSON.parse(savedSession));
     const theme = localStorage.getItem('theme') || 'dark';
     setIsDark(theme === 'dark');
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -123,61 +107,36 @@ const InternalDashboard: React.FC = () => {
 
   useEffect(() => {
     if (session) {
-      fetchInitialData();
+      fetchTasksAndOperatives(session.id);
       const eventSource = new EventSource('/api/internal/stream');
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.type === 'SYNC_TASKS') fetchInitialData();
+        if (data.type === 'SYNC_TASKS') fetchTasksAndOperatives(session.id);
         if (data.type === 'CHAT_MSG') {
             setLastMessageTimestamp(Date.now());
             const room = data.room || '0';
             if (room === '0' && activeView !== 'global-chat') {
-                setUnreads(prev => ({ ...prev, '0': true }));
+                setChatUnread('0', true);
             } else if (room !== '0' && room !== activeTaskId) {
-                setTasks(prev => prev.map(t => t.id === room ? { ...t, hasUnread: true } : t));
-                setUnreads(prev => ({ ...prev, tasks: true }));
+                setUnread(room, true);
+                setChatUnread('tasks', true);
             }
+        }
+        if (data.type === 'TYPING_STATUS') {
+          setTypingStatus(data.room, data.userId, data.message ? data.userId : null);
         }
       };
       return () => eventSource.close();
     }
-  }, [session, fetchInitialData, activeTaskId, activeView]);
+  }, [session, fetchTasksAndOperatives, activeTaskId, activeView, setLastMessageTimestamp, setChatUnread, setUnread, setTypingStatus]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLoginFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoggingIn(true);
-    setLoginError('');
-
     try {
-      const response = await fetch('/api/internal/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Authentication Failed');
-      }
-
-      const userData = await response.json();
-      sessionStorage.setItem('dr_internal_session', JSON.stringify(userData));
-      setSession(userData);
-    } catch (err: any) {
-      setLoginError(err.message);
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/internal/logout', { method: 'POST' });
+      await login({ email, password });
     } catch (err) {
-      console.error('Logout error:', err);
+      // Error handled by store
     }
-    sessionStorage.removeItem('dr_internal_session');
-    setSession(null);
   };
 
   const toggleDarkMode = () => {
@@ -192,46 +151,22 @@ const InternalDashboard: React.FC = () => {
   const activeTask = useMemo(() => tasks.find(t => t.id === activeTaskId), [tasks, activeTaskId]);
   const hasUnreadTasks = useMemo(() => tasks.some(t => t.hasUnread), [tasks]);
 
-  const handleCreateTask = async (data: any) => {
-    const res = await fetch('/api/internal/tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, created_by: session.id })
-    });
-    if (res.ok) { setIsNewTaskModalOpen(false); fetchInitialData(); }
-  };
-
-  const handleUpdateTask = async (id: string, updates: any) => {
-    const res = await fetch(`/api/internal/tasks?id=${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
-    });
-    if (res.ok) fetchInitialData();
-  };
-
-  const handleDeleteTask = async (id: string) => {
-    const res = await fetch(`/api/internal/tasks?id=${id}`, { method: 'DELETE' });
-    if (res.ok) { setActiveTaskId(null); fetchInitialData(); }
-  };
-
   if (!session) {
     return (
-      <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6 font-sans">
-        <div className="w-full max-w-md bg-[#0B101A] border border-zinc-800 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group">
-          <div className="absolute -top-24 -left-24 w-48 h-48 bg-indigo-600/10 blur-[100px] rounded-full group-hover:bg-indigo-600/20 transition-all duration-1000" />
+      <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#06080D] transition-colors duration-500 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(79,70,229,0.05),transparent_50%)]" />
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/carbon-fibre.png")' }} />
 
-          <div className="flex flex-col items-center gap-6 mb-12 relative z-10">
-            <div className="w-20 h-20 bg-indigo-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-indigo-600/40 transform -rotate-6 transition-transform hover:rotate-0 duration-500">
-              <Shield className="w-10 h-10 text-white" />
+        <div className="w-full max-w-md p-10 relative">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-indigo-600 shadow-2xl shadow-indigo-600/20 mb-6 group">
+              <Shield className="w-10 h-10 text-white transition-transform group-hover:scale-110" />
             </div>
-            <div className="text-center">
-              <h1 className="text-3xl font-black text-white tracking-tight uppercase mb-1">Command Center</h1>
-              <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.3em]">Identity Verification Required</p>
-            </div>
-          </div>
+            <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tighter uppercase mb-2">Command Center</h1>
+            <p className="text-zinc-500 dark:text-zinc-400 text-xs font-bold uppercase tracking-[0.3em]">Operational Protocol v4.0</p>
+          </motion.div>
 
-          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+          <form onSubmit={handleLoginFormSubmit} className="space-y-6 relative z-10">
             <div className="space-y-4">
               <div className="relative group/input">
                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-zinc-600 group-focus-within/input:text-indigo-500 transition-colors">
@@ -240,7 +175,7 @@ const InternalDashboard: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="Official Email"
+                  placeholder="Operative Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-14 pr-6 py-4 bg-[#11161D] border border-zinc-800 text-white rounded-[1.5rem] placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-600/50 focus:border-indigo-600 transition-all text-sm font-medium"
@@ -351,7 +286,7 @@ const InternalDashboard: React.FC = () => {
                 <div className="mt-auto pb-4">
                   <div className={`bg-zinc-200/50 dark:bg-[#11161D] border border-zinc-300/50 dark:border-zinc-800 flex flex-col shadow-2xl ${effectiveCollapsed ? "w-14 py-4 rounded-full items-center gap-4" : "w-full p-4 rounded-[2.5rem] gap-4"}`}>
                      <div className={`flex items-center gap-4 ${effectiveCollapsed ? "justify-center" : ""}`}><Avatar name={session.username} isOnline={true} />{!effectiveCollapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{session.username}</span><span className="text-[10px] text-zinc-500 uppercase font-bold">{session.role}</span></div>}</div>
-                     <div className={`flex items-center justify-between ${effectiveCollapsed ? "flex-col gap-4" : "w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50"}`}><button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 transition-all">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button><button onClick={handleLogout} className="p-2 text-zinc-500 hover:text-red-600 transition-all"><LogOut size={20} /></button></div>
+                     <div className={`flex items-center justify-between ${effectiveCollapsed ? "flex-col gap-4" : "w-full pt-3 border-t border-zinc-200 dark:border-zinc-800/50"}`}><button onClick={toggleDarkMode} className="p-2 text-zinc-500 hover:text-indigo-600 transition-all">{isDark ? <Sun size={20} /> : <Moon size={20} />}</button><button onClick={logout} className="p-2 text-zinc-500 hover:text-red-600 transition-all"><LogOut size={20} /></button></div>
                   </div>
                 </div>
               </div>
@@ -363,14 +298,14 @@ const InternalDashboard: React.FC = () => {
         {!isSidebarOpen && <button onClick={(e) => { e.stopPropagation(); setIsSidebarOpen(true); }} className="absolute top-8 left-8 z-40 p-3 bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-500 lg:hidden shadow-lg"><Menu size={20} /></button>}
         <div className="flex-1 h-full overflow-hidden flex flex-col pt-24 lg:pt-0">
           {activeView === 'dashboard' && <DashboardOverview />}
-          {activeView === 'global-chat' && <GlobalChatView currentUser={session} operatives={operatives} onClose={() => setActiveView('dashboard')} lastMessageTimestamp={lastMessageTimestamp} />}
-          {activeView === 'tasks' && (activeTask ? <TaskDetailView task={activeTask} operatives={operatives} currentUser={session} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onClose={() => setActiveTaskId(null)} lastMessageTimestamp={lastMessageTimestamp} /> : <TaskListView tasks={tasks} operatives={operatives} onSelectTask={setActiveTaskId} onCreateTask={() => setIsNewTaskModalOpen(true)} />)}
-          {activeView === 'customers' && (selectedCustomerId ? <CustomerProfile customerId={selectedCustomerId} onBack={() => setSelectedCustomerId(null)} onUpdate={fetchInitialData} /> : <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMCustomers onSelectCustomer={(c) => setSelectedCustomerId(c.id.toString())} /></div>)}
+          {activeView === 'global-chat' && <GlobalChatView onClose={() => setActiveView('dashboard')} />}
+          {activeView === 'tasks' && (activeTask ? <TaskDetailView task={activeTask} onClose={() => setActiveTaskId(null)} /> : <TaskListView onSelectTask={setActiveTaskId} onCreateTask={() => setIsNewTaskModalOpen(true)} />)}
+          {activeView === 'customers' && (selectedCustomerId ? <CustomerProfile customerId={selectedCustomerId} onBack={() => setSelectedCustomerId(null)} /> : <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMCustomers onSelectCustomer={(c) => setSelectedCustomerId(c.id.toString())} /></div>)}
           {activeView === 'invoices' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMInvoices /></div>}
           {activeView === 'appointments' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMAppointments /></div>}
         </div>
       </div>
-      <AnimatePresence>{isNewTaskModalOpen && <NewTaskModal onClose={() => setIsNewTaskModalOpen(false)} operatives={operatives} onSubmit={handleCreateTask} />}</AnimatePresence>
+      <AnimatePresence>{isNewTaskModalOpen && <NewTaskModal onClose={() => setIsNewTaskModalOpen(false)} onSubmit={createTask} />}</AnimatePresence>
     </div>
   );
 };

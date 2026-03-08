@@ -1,71 +1,82 @@
 import React from 'react';
-import { Virtuoso } from 'react-virtuoso';
 import Avatar from './Avatar';
+import { useTaskStore } from '../../store/useTaskStore';
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
-  status: 'pending' | 'completed';
-  assigned_to: string | number;
+  status: string;
+  created_at: string;
+  assigned_to: string | null;
   hasUnread?: boolean;
 }
 
 interface TaskListProps {
-  tasks: Task[];
-  onSelectTask: (task: Task) => void;
-  activeTaskId?: number;
+  activeTaskId: string | null;
+  onSelectTask: (id: string) => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onSelectTask, activeTaskId }) => {
-  const safeTasks = Array.isArray(tasks) ? tasks : [];
+const TaskList: React.FC<TaskListProps> = ({
+  activeTaskId,
+  onSelectTask
+}) => {
+  const { tasks, operatives, updateTask } = useTaskStore();
 
-  const TaskRow = ({ index }: { index: number }) => {
-    const task = safeTasks[index];
-    if (!task) return null;
+  const TaskRow = ({ task }: { task: Task }) => {
+    const assignedUser = operatives.find(op => op.id === task.assigned_to);
 
     return (
-      <button
-        key={task.id}
-        onClick={() => onSelectTask(task)}
-        className={`w-full text-left p-4 border-b border-zinc-800 transition-all hover:bg-[#353739]/50 flex items-center gap-4 ${activeTaskId === task.id ? 'bg-[#353739] border-l-2 border-l-indigo-500' : ''}`}
-      >
-        <Avatar name={task.assigned_to.toString()} size="sm" />
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start mb-1">
-            <span className={`text-[13px] truncate pr-2 font-sans ${task.hasUnread ? 'font-bold text-white' : 'text-zinc-200'}`}>
-              {task.title}
-            </span>
-            <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-widest ${task.status === 'completed' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-500'}`}>
-              {task.status}
-            </span>
+      <div className="px-0 py-0.5">
+        <div
+          onClick={() => onSelectTask(task.id)}
+          className={`w-full text-left px-4 py-4 rounded-xl transition-all cursor-pointer border shadow-sm ${activeTaskId === task.id ? 'bg-[#353739] border-zinc-700/50' : 'bg-[#2d2e30]/50 border-transparent hover:bg-[#353739]/50'}`}
+        >
+          <div className="flex items-center gap-4 mb-3">
+             <Avatar name={assignedUser?.username || '?'} size="sm" isOnline={assignedUser?.is_online} />
+             <div className="flex-1 min-w-0">
+               <span className={`text-[13px] tracking-tight block truncate font-sans ${task.hasUnread ? 'font-bold text-white' : 'font-medium text-zinc-300'}`}>
+                 {task.title}
+               </span>
+               <div className="flex items-center gap-2 mt-0.5">
+                  <div className={`w-1.5 h-1.5 rounded-full ${task.status === 'done' ? 'bg-emerald-500/60' : 'bg-indigo-500/60 shadow-[0_0_8px_rgba(99,102,241,0.3)]'}`} />
+                  <span className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold font-sans">
+                    {task.status}
+                  </span>
+               </div>
+             </div>
           </div>
-          <div className="text-[10px] text-zinc-600 flex justify-between font-bold tracking-widest uppercase font-sans">
-            <span>ID: {task.id.toString().padStart(3, '0')}</span>
+
+          <div className="flex items-center justify-between pl-1">
+            <select
+              value={task.assigned_to || ''}
+              onChange={(e) => {
+                e.stopPropagation();
+                updateTask(task.id, { assignee_ids: e.target.value ? [e.target.value] : [] });
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-transparent text-[10px] text-zinc-500 uppercase tracking-[0.1em] outline-none cursor-pointer hover:text-indigo-400 transition-colors font-sans font-bold"
+            >
+              <option value="" className="bg-zinc-900">Unassigned</option>
+              {operatives.map((op) => (
+                <option key={op.id} value={op.id} className="bg-zinc-900">{op.username}</option>
+              ))}
+            </select>
+            <span className="text-[9px] text-zinc-600 font-sans font-medium uppercase">{new Date(task.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
           </div>
         </div>
-      </button>
+      </div>
     );
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#2d2e30] border-r border-zinc-800 w-80 text-zinc-400 font-sans shadow-xl">
-      <div className="p-6 border-b border-zinc-800 bg-[#2d2e30] flex items-center justify-between shadow-sm">
-        <h2 className="text-white font-bold tracking-[0.2em] uppercase text-xs">The Ledger</h2>
-        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-      </div>
-      <div className="flex-1">
-        <Virtuoso
-          style={{ height: '100%' }}
-          data={safeTasks}
-          itemContent={(index) => <TaskRow index={index} />}
-          className="custom-scrollbar"
-        />
-      </div>
-      <div className="p-6 border-t border-zinc-800 bg-[#262728] shadow-inner">
-        <button className="w-full py-3 bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-500 transition-all uppercase tracking-[0.2em] rounded-xl shadow-lg shadow-indigo-600/20">
-          + New Command
-        </button>
-      </div>
+    <div className="space-y-1">
+      {tasks.length === 0 ? (
+        <div className="py-8 bg-zinc-800/20 rounded-2xl border border-dashed border-zinc-800/50 text-center">
+          <p className="text-[10px] text-zinc-700 uppercase tracking-[0.2em] font-bold font-sans">No Orders Logged</p>
+        </div>
+      ) : (
+        tasks.map((task) => <TaskRow key={task.id} task={task} />)
+      )}
     </div>
   );
 };

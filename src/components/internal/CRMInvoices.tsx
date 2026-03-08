@@ -1,74 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Receipt,
-  Plus,
-  Search,
-  DollarSign,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  MoreVertical,
-  X as XIcon,
-  ChevronDown
-} from 'lucide-react';
-
-interface Invoice {
-  id: string;
-  customer_id: string;
-  customer_name: string;
-  amount: number;
-  description: string;
-  status: string;
-  invoice_date: string;
-}
+import { Plus, Search, DollarSign, Calendar, MoreVertical, X as XIcon, ChevronDown } from 'lucide-react';
+import { useCRMStore } from '../../store/useCRMStore';
+import { internalSdk } from '../../services/internalSdk';
 
 const CRMInvoices: React.FC = () => {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [customers, setCustomers] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { invoices, customers, fetchInvoices, fetchCustomers } = useCRMStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [formData, setFormData] = useState({ customer_id: '', amount: '', description: '', status: 'invoice_created' });
-
-  const fetchData = async () => {
-    try {
-      const [invRes, custRes] = await Promise.all([
-        fetch('/api/internal/crm_invoices'),
-        fetch('/api/internal/crm_customers')
-      ]);
-      if (invRes.ok) setInvoices(await invRes.ok ? await invRes.json() : []);
-      if (custRes.ok) setCustomers(await custRes.json());
-    } catch (err) {
-      console.error('Fetch failed:', err);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    customer_id: '',
+    amount: '',
+    description: '',
+    status: 'invoice_created'
+  });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchInvoices();
+    fetchCustomers();
+  }, [fetchInvoices, fetchCustomers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/internal/crm_invoices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setIsModalOpen(false);
-        setFormData({ customer_id: '', amount: '', description: '', status: 'invoice_created' });
-        fetchData();
-      }
+      await internalSdk.createInvoice(formData);
+      setIsModalOpen(false);
+      setFormData({ customer_id: '', amount: '', description: '', status: 'invoice_created' });
+      fetchInvoices();
     } catch (err) {
-      console.error('Create failed:', err);
+      console.error('Invoice creation failed:', err);
     }
   };
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'payment_received': return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
-      case 'sent': return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
-      default: return 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-500 border-zinc-200 dark:border-zinc-700';
+      case 'payment_received': return 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
+      case 'sent': return 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20';
+      case 'invoice_created': return 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 border-indigo-500/20';
+      default: return 'text-zinc-600 bg-zinc-500/10 border-zinc-500/20';
     }
   };
 
@@ -130,7 +98,7 @@ const CRMInvoices: React.FC = () => {
                   <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{inv.customer_name}</span>
                   <span className="text-[10px] text-zinc-400 uppercase font-bold">Identity-{inv.customer_id.slice(0, 4)}</span>
                 </div>
-                <span className="text-base font-black text-zinc-900 dark:text-white tracking-tighter">$${Number(inv.amount).toLocaleString()}</span>
+                <span className="text-base font-black text-zinc-900 dark:text-white tracking-tighter">${Number(inv.amount).toLocaleString()}</span>
                 <div>
                   <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${getStatusStyle(inv.status)}`}>
                     {inv.status.replace('_', ' ')}

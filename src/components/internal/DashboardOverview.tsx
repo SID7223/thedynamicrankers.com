@@ -1,88 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import {
-  TrendingUp,
-  MoreVertical,
-  Download,
-  Plus,
-  ArrowUpRight,
-  ArrowDownRight,
-  DollarSign,
-  Briefcase,
-  Activity
-} from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, PieChart, Pie, Cell
 } from 'recharts';
+import { DollarSign, Briefcase, Activity, TrendingUp, ArrowUpRight, ArrowDownRight, MoreVertical, Plus, Download } from 'lucide-react';
+import { internalSdk } from '../../services/internalSdk';
+
+const COLORS = ['#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'];
 
 const DashboardOverview: React.FC = () => {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/internal/analytics');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        if (json.error) throw new Error(json.error);
-        setData(json);
-      } catch (err: any) {
-        console.error('Fetch Analytics Failed:', err);
-        setError(err.message);
+        const result = await internalSdk.getAnalytics();
+        setData(result || {});
+      } catch (err) {
+        console.error('Analytics Fetch Error:', err);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
-    fetchAnalytics();
+    fetchData();
   }, []);
 
-  if (loading) return (
-    <div className="flex-1 flex items-center justify-center min-h-[400px]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] animate-pulse">Synchronizing Data Streams...</p>
-      </div>
-    </div>
-  );
+  const kpis = data.kpis || {};
 
-  if (error || !data || !data.kpis) return (
-    <div className="flex-1 p-10 flex flex-col items-center justify-center text-center space-y-4">
-      <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-4">
-        <Activity size={32} />
-      </div>
-      <h3 className="text-xl font-bold text-zinc-900 dark:text-white uppercase tracking-tighter">Analytics Stream Offline</h3>
-      <p className="text-zinc-500 text-sm max-w-md font-medium">The global analytics protocol could not be established. Please ensure the database is synchronized.</p>
-      {error && (
-        <div className="px-4 py-2 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-lg font-mono text-[10px] text-red-400 uppercase tracking-widest">
-           {error}
-        </div>
-      )}
-      <button
-        onClick={() => window.location.reload()}
-        className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-500 transition-all active:scale-95"
-      >
-        Retry Protocol
-      </button>
-    </div>
-  );
-
-  const kpis = data.kpis;
-  const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
-
-  const KPICard = ({ title, value, trend, icon: Icon, trendUp }: any) => (
-    <div className="bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 p-6 rounded-[2rem] shadow-sm relative overflow-hidden group hover:border-indigo-500/30 transition-all">
+  const KPICard = ({ title, value, trend, trendUp, icon: Icon }: any) => (
+    <div className="bg-white dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 p-6 rounded-[2.5rem] shadow-sm group hover:border-indigo-500/30 transition-all">
       <div className="flex justify-between items-start mb-4">
         <span className="text-xs font-bold text-zinc-500 dark:text-zinc-500 uppercase tracking-widest">{title}</span>
         <button className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><MoreVertical size={16} /></button>

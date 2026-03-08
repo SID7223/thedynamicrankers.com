@@ -6,51 +6,47 @@ import {
   Mail,
   Phone,
   MapPin,
-  FileText,
-  CheckCircle2
+  Clock,
+  TrendingUp,
+  CheckCircle2,
+  FileText
 } from 'lucide-react';
+import { useCRMStore } from '../../store/useCRMStore';
+import { internalSdk } from '../../services/internalSdk';
 
 const STAGES = ['Discovery', 'Trial', 'Presentation', 'Paperwork', 'Checkout', 'Closed'];
 
 interface CustomerProfileProps {
   customerId: string;
   onBack: () => void;
-  onUpdate: () => void;
+  onUpdate?: () => void;
 }
 
 const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, onUpdate }) => {
+  const { updateCustomer } = useCRMStore();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<any>(null);
 
   useEffect(() => {
-    const fetchCustomer = async () => {
+    const fetchProfile = async () => {
       try {
-        const res = await fetch(`/api/internal/crm_customers?id=${customerId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setFormData(data);
-        }
+        const data = await internalSdk.getCustomerProfile(customerId);
+        setFormData(data);
       } catch (err) {
-        console.error('Fetch Failed:', err);
+        console.error('Fetch failed:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchCustomer();
+    fetchProfile();
   }, [customerId]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`/api/internal/crm_customers?id=${customerId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        onUpdate();
-      }
+      await updateCustomer(customerId, formData);
+      if (onUpdate) onUpdate();
     } catch (err) {
       console.error('Save failed:', err);
     } finally {
@@ -59,15 +55,10 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
   };
 
   const handleStageChange = async (newStage: string) => {
-    const updated = { ...formData, sales_stage: newStage };
-    setFormData(updated);
+    setFormData((prev: any) => ({ ...prev, sales_stage: newStage }));
     try {
-      await fetch(`/api/internal/crm_customers?id=${customerId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sales_stage: newStage })
-      });
-      onUpdate();
+      await updateCustomer(customerId, { sales_stage: newStage });
+      if (onUpdate) onUpdate();
     } catch (err) {
       console.error('Stage update failed:', err);
     }
@@ -80,7 +71,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-[#0B101A] transition-colors duration-300">
-      {/* Header */}
       <div className="px-6 lg:px-10 py-6 border-b border-zinc-100 dark:border-zinc-800/50 flex items-center justify-between bg-white/80 dark:bg-[#0B101A]/80 backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-6 min-w-0">
           <button
@@ -106,8 +96,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
         <div className="max-w-4xl mx-auto space-y-16 pb-20">
-
-          {/* Sales Ladder */}
           <section className="overflow-x-auto lg:overflow-visible -mx-6 px-6 pb-6 lg:pb-0 lg:mx-0 lg:px-0 scrollbar-none">
             <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-10 font-sans">Sales Pipeline Ladder</h3>
             <div className="relative min-w-[600px] lg:min-w-0 px-4">
@@ -145,10 +133,8 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
           </section>
 
           <div className="grid lg:grid-cols-2 gap-10 pt-10">
-            {/* Contact Info */}
             <div className="space-y-10 bg-zinc-50 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 p-8 lg:p-10 rounded-[2.5rem] shadow-sm">
               <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-6 font-sans">Contact Intelligence</h3>
-
               <div className="space-y-8">
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-3">
@@ -160,7 +146,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
                     onChange={e => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
-
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-3">
                     <Mail size={14} className="text-indigo-600 dark:text-indigo-400" /> Email Uplink
@@ -171,7 +156,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
                     onChange={e => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
-
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-3">
                     <Phone size={14} className="text-indigo-600 dark:text-indigo-400" /> Comms Channel
@@ -182,7 +166,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
                     onChange={e => setFormData({...formData, phone: e.target.value})}
                   />
                 </div>
-
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold text-zinc-400 dark:text-zinc-600 uppercase tracking-widest flex items-center gap-3">
                     <MapPin size={14} className="text-indigo-600 dark:text-indigo-400" /> Physical Coordinates
@@ -195,8 +178,6 @@ const CustomerProfile: React.FC<CustomerProfileProps> = ({ customerId, onBack, o
                 </div>
               </div>
             </div>
-
-            {/* Notes Section */}
             <div className="bg-zinc-50 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 p-8 lg:p-10 rounded-[2.5rem] flex flex-col min-h-[400px] shadow-sm">
               <h3 className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-8 font-sans">Strategic Notes & Ledger</h3>
               <div className="flex-1 flex flex-col space-y-4">

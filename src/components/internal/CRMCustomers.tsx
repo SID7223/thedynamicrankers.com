@@ -1,63 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Users,
-  Search,
-  Plus,
-  ChevronRight,
-  Mail,
-  Phone,
-  MapPin,
-  TrendingUp,
-  Clock,
-  X as XIcon,
-  ChevronDown
-} from 'lucide-react';
+import { Plus, Search, Users, Mail, Phone, Clock, TrendingUp, ChevronRight, X as XIcon, ChevronDown } from 'lucide-react';
+import { useCRMStore } from '../../store/useCRMStore';
+import { internalSdk } from '../../services/internalSdk';
 
-interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  sales_stage: string;
-  notes: string;
-  created_at: string;
+interface CRMCustomersProps {
+  onSelectCustomer: (customer: any) => void;
 }
 
-const CRMCustomers: React.FC<{ onSelectCustomer: (c: Customer) => void }> = ({ onSelectCustomer }) => {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+const CRMCustomers: React.FC<CRMCustomersProps> = ({ onSelectCustomer }) => {
+  const { customers, fetchCustomers } = useCRMStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', notes: '', sales_stage: 'Discovery' });
-
-  const fetchCustomers = async () => {
-    try {
-      const res = await fetch('/api/internal/crm_customers');
-      if (res.ok) setCustomers(await res.json());
-    } catch (err) {
-      console.error('Fetch customers failed:', err);
-    }
-  };
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    sales_stage: 'Discovery',
+    notes: ''
+  });
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [fetchCustomers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/internal/crm_customers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setIsModalOpen(false);
-        setFormData({ name: '', email: '', phone: '', address: '', notes: '', sales_stage: 'Discovery' });
-        fetchCustomers();
-      }
+      await internalSdk.createCustomer(formData);
+      setIsModalOpen(false);
+      setFormData({ name: '', email: '', phone: '', sales_stage: 'Discovery', notes: '' });
+      fetchCustomers();
     } catch (err) {
-      console.error('Create failed:', err);
+      console.error('Registration failed:', err);
     }
   };
 

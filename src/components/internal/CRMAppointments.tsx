@@ -1,86 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Calendar,
-  Plus,
-  Search,
-  Clock,
-  CheckCircle2,
-  Trash2,
-  Mail,
-  Phone,
-  X as XIcon,
-  ChevronDown
-} from 'lucide-react';
-import Avatar from './Avatar';
-
-interface Appointment {
-  id: string;
-  customer_id: string;
-  customer_name: string;
-  email: string;
-  phone: string;
-  appointment_date: string;
-  appointment_time: string;
-  status: string;
-}
+import { Calendar, Clock, Plus, Trash2, CheckCircle2, X as XIcon, Mail, Phone } from 'lucide-react';
+import { useCRMStore } from '../../store/useCRMStore';
+import { internalSdk } from '../../services/internalSdk';
 
 const CRMAppointments: React.FC = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [customers, setCustomers] = useState<any[]>([]);
+  const { appointments, customers, fetchAppointments, fetchCustomers, updateAppointmentStatus } = useCRMStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ customer_id: '', customer_name: '', email: '', phone: '', appointment_date: '', appointment_time: '', status: 'scheduled' });
-
-  const fetchData = async () => {
-    try {
-      const [appRes, custRes] = await Promise.all([
-        fetch('/api/internal/crm_appointments'),
-        fetch('/api/internal/crm_customers')
-      ]);
-      if (appRes.ok) setAppointments(await appRes.json());
-      if (custRes.ok) setCustomers(await custRes.json());
-    } catch (err) {
-      console.error('Fetch failed:', err);
-    }
-  };
+  const [formData, setFormData] = useState({
+    customer_id: '',
+    customer_name: '',
+    email: '',
+    phone: '',
+    appointment_date: '',
+    appointment_time: ''
+  });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchAppointments();
+    fetchCustomers();
+  }, [fetchAppointments, fetchCustomers]);
 
   const handleCustomerSelect = (id: string) => {
-      const cust = customers.find(c => c.id === id);
-      if (cust) {
-          setFormData({ ...formData, customer_id: id, customer_name: cust.name, email: cust.email || '', phone: cust.phone || '' });
-      }
+    const customer = customers.find(c => c.id === id);
+    if (customer) {
+      setFormData({
+        ...formData,
+        customer_id: id,
+        customer_name: customer.name,
+        email: customer.email || '',
+        phone: customer.phone || ''
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/internal/crm_appointments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (res.ok) {
-        setIsModalOpen(false);
-        setFormData({ customer_id: '', customer_name: '', email: '', phone: '', appointment_date: '', appointment_time: '', status: 'scheduled' });
-        fetchData();
-      }
+      await internalSdk.createAppointment(formData);
+      setIsModalOpen(false);
+      setFormData({ customer_id: '', customer_name: '', email: '', phone: '', appointment_date: '', appointment_time: '' });
+      fetchAppointments();
     } catch (err) {
-      console.error('Create failed:', err);
+      console.error('Booking failed:', err);
     }
   };
 
   const toggleComplete = async (id: string, currentStatus: string) => {
-    const nextStatus = currentStatus === 'completed' ? 'scheduled' : 'completed';
+    const newStatus = currentStatus === 'completed' ? 'scheduled' : 'completed';
     try {
-      await fetch(`/api/internal/crm_appointments?id=${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: nextStatus })
-      });
-      fetchData();
+      await updateAppointmentStatus(id, newStatus);
     } catch (err) {
       console.error('Update failed:', err);
     }
@@ -89,8 +57,8 @@ const CRMAppointments: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!confirm('Permanently redact this engagement from the schedule?')) return;
     try {
-      await fetch(`/api/internal/crm_appointments?id=${id}`, { method: 'DELETE' });
-      fetchData();
+      await internalSdk.deleteAppointment(id);
+      fetchAppointments();
     } catch (err) {
       console.error('Delete failed:', err);
     }

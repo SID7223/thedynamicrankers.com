@@ -1,57 +1,50 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-interface Message {
-  id: number;
-  content: string;
-  sender: string;
-  timestamp: string;
-}
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useChatStore } from '../../store/useChatStore';
 
 interface ChatWindowProps {
-  taskId?: number;
+  taskId?: string;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ taskId }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { session: currentUser } = useAuthStore();
+  const { messages, fetchChatHistory, sendMessage, lastMessageTimestamp } = useChatStore();
   const [content, setContent] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
+  const currentMessages = useMemo(() => (taskId ? messages[taskId] || [] : []), [messages, taskId]);
+
   useEffect(() => {
-    // Scroll to bottom on new message
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [currentMessages]);
 
   useEffect(() => {
-    if (!taskId) return;
+    if (taskId && currentUser) {
+      fetchChatHistory(taskId, currentUser.id);
+    }
+  }, [taskId, currentUser, fetchChatHistory]);
 
-    // In production, we'd start an SSE connection:
-    // const eventSource = new EventSource(`/api/internal/chat?taskId=${taskId}`);
-    // eventSource.onmessage = (event) => {
-    //   const data = JSON.parse(event.data);
-    //   setMessages(prev => [...prev, data]);
-    // };
-    // return () => eventSource.close();
+  useEffect(() => {
+    if (taskId && currentUser && lastMessageTimestamp) {
+        fetchChatHistory(taskId, currentUser.id);
+    }
+  }, [lastMessageTimestamp, taskId, currentUser, fetchChatHistory]);
 
-    // For now, mock a few initial messages
-    setMessages([
-      { id: 1, content: 'Status report initiated.', sender: 'SID', timestamp: new Date().toISOString() },
-      { id: 2, content: 'Deployment finalized at edge.', sender: 'Eric', timestamp: new Date().toISOString() }
-    ]);
-  }, [taskId]);
-
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim() || !taskId) return;
+    if (!content.trim() || !taskId || !currentUser) return;
 
-    // In production, we'd POST to /api/internal/chat
-    const newMessage = {
-      id: Date.now(),
-      content: content.trim(),
-      sender: 'SID', // In production, we'd get from the current user session.
-      timestamp: new Date().toISOString()
-    };
-    setMessages(prev => [...prev, newMessage]);
-    setContent('');
+    try {
+      await sendMessage({
+        roomId: taskId,
+        senderId: currentUser.id,
+        content: content.trim()
+      });
+      setContent('');
+      fetchChatHistory(taskId, currentUser.id);
+    } catch (err) {
+      console.error('Send failed:', err);
+    }
   };
 
   if (!taskId) {
@@ -70,17 +63,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ taskId }) => {
   return (
     <div className="flex-1 flex flex-col h-full bg-zinc-950 font-mono text-zinc-400">
       <div className="p-4 border-b border-zinc-800 bg-zinc-900/50 flex justify-between items-center">
-        <h2 className="text-emerald-500 font-bold tracking-widest uppercase text-xs">COMMS / THREAD: {taskId.toString().padStart(3, '0')}</h2>
+        <h2 className="text-emerald-500 font-bold tracking-widest uppercase text-xs">COMMS / THREAD: {taskId.slice(0, 8)}</h2>
         <button className="text-[10px] px-2 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded hover:bg-emerald-500 hover:text-black transition-all uppercase tracking-tighter">
           Mark as Complete
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {messages.map((msg) => (
+        {currentMessages.map((msg) => (
           <div key={msg.id} className="flex flex-col space-y-1 group">
             <div className="flex items-center space-x-2">
-              <span className="text-emerald-500 font-bold text-[11px] tracking-widest">{msg.sender.toUpperCase()}</span>
+              <span className="text-emerald-500 font-bold text-[11px] tracking-widest">{msg.sender_name.toUpperCase()}</span>
               <span className="text-zinc-700 text-[9px]">{new Date(msg.timestamp).toLocaleTimeString()}</span>
             </div>
             <p className="text-zinc-300 text-sm leading-relaxed max-w-2xl bg-zinc-900/30 p-3 border border-zinc-900 group-hover:border-zinc-800 transition-colors">
