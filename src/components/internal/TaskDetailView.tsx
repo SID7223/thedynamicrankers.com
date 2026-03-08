@@ -160,7 +160,7 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
            </div>
            <div className="flex items-center gap-2">
              <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert('Link Copied'); }} className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Share Directive"><Share2 size={18} /></button>
-             <button onClick={() => { if(confirm('Archive directive?')) onDelete(task.id); }} className="p-2 text-zinc-400 hover:text-red-500 transition-colors" title="Archive Strategy"><Archive size={18} /></button>
+             <button onClick={() => { if(confirm('Archive directive?')) onUpdate(task.id, { is_archived: true }); }} className="p-2 text-zinc-400 hover:text-red-500 transition-colors" title="Archive Strategy"><Archive size={18} /></button>
              <button onClick={onClose} className="hidden lg:flex p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"><XIcon size={20} /></button>
            </div>
         </header>
@@ -232,14 +232,17 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                 <ChevronDown size={14} className={`transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
               </button>
               {isStatusOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                   {statusWorkflow.map((status) => (
-                     <button key={status.value} onClick={() => { onUpdate(task.id, { status: status.value }); setIsStatusOpen(false); }} className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}>
-                        <status.icon size={14} className={status.color} />
-                        <span className={`text-xs font-bold uppercase tracking-widest ${status.value === task.status ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}`}>{status.label}</span>
-                     </button>
-                   ))}
-                </div>
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsStatusOpen(false)} />
+                  <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                     {statusWorkflow.map((status) => (
+                       <button key={status.value} onClick={() => { onUpdate(task.id, { status: status.value }); setIsStatusOpen(false); }} className={`w-full px-4 py-3 text-left flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors ${status.value === task.status ? 'bg-indigo-50/50 dark:bg-indigo-500/10' : ''}`}>
+                          <status.icon size={14} className={status.color} />
+                          <span className={`text-xs font-bold uppercase tracking-widest ${status.value === task.status ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}`}>{status.label}</span>
+                       </button>
+                     ))}
+                  </div>
+                </>
               )}
            </div>
         </div>
@@ -279,17 +282,20 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                             <Plus size={12} className="text-zinc-400" />
                          </div>
                          {isAssigneeOpen && (
-                            <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                               {operatives.map(op => {
-                                  const isSelected = (task.assignees || []).some((a: any) => a.id === op.id);
-                                  return (
-                                     <button key={op.id} onClick={() => toggleAssignee(op.id)} className="w-full px-4 py-2.5 text-left text-xs font-bold flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                        <span className={isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}>{op.username}</span>
-                                        {isSelected && <Check size={14} className="text-indigo-600" />}
-                                     </button>
-                                  );
-                               })}
-                            </div>
+                            <>
+                              <div className="fixed inset-0 z-40" onClick={() => setIsAssigneeOpen(false)} />
+                              <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                                 {operatives.map(op => {
+                                    const isSelected = (task.assignees || []).some((a: any) => a.id === op.id);
+                                    return (
+                                       <button key={op.id} onClick={() => toggleAssignee(op.id)} className="w-full px-4 py-2.5 text-left text-xs font-bold flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                          <span className={isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-600 dark:text-zinc-400'}>{op.username}</span>
+                                          {isSelected && <Check size={14} className="text-indigo-600" />}
+                                       </button>
+                                    );
+                                 })}
+                              </div>
+                            </>
                          )}
                       </div>
                    </div>
@@ -303,13 +309,16 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({
                             <span className="text-sm">{task.priority}</span>
                          </div>
                          {isPriorityOpen && (
-                            <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
-                               {['High', 'Medium', 'Low'].map(p => (
-                                  <button key={p} onClick={() => { onUpdate(task.id, { priority: p }); setIsPriorityOpen(false); }} className="w-full px-4 py-2.5 text-left text-xs font-bold text-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                                     {p}
-                                  </button>
-                               ))}
-                            </div>
+                            <>
+                              <div className="fixed inset-0 z-40" onClick={() => setIsPriorityOpen(false)} />
+                              <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                                 {['High', 'Medium', 'Low'].map(p => (
+                                    <button key={p} onClick={() => { onUpdate(task.id, { priority: p }); setIsPriorityOpen(false); }} className="w-full px-4 py-2.5 text-left text-xs font-bold text-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                                       {p}
+                                    </button>
+                                 ))}
+                              </div>
+                            </>
                          )}
                       </div>
                    </div>

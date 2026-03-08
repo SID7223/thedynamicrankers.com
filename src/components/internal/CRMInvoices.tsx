@@ -123,16 +123,16 @@ const CRMInvoices: React.FC = () => {
 
           <div className="bg-white dark:bg-[#11161D] border-x border-b border-zinc-200 dark:border-zinc-800/50 rounded-b-2xl divide-y divide-zinc-100 dark:divide-zinc-800/30">
             {invoices.filter(i => i.customer_name?.toLowerCase().includes(searchTerm.toLowerCase())).map((inv, idx) => (
-              <div key={inv.id} className={`grid grid-cols-[80px_1fr_180px_180px_180px_140px_60px] gap-6 px-6 py-6 hover:bg-zinc-50 dark:hover:bg-white/5 transition-all items-center ${getRowStyle(inv.status)}`}>
-                <span className="text-[10px] font-black text-zinc-400 tracking-tighter">#INV-{1000 + idx}</span>
+              <div key={inv.id} className={\`grid grid-cols-[80px_1fr_180px_180px_180px_140px_60px] gap-6 px-6 py-6 hover:bg-zinc-50 dark:hover:bg-white/5 transition-all items-center \${getRowStyle(inv.status)}\`}>
+                <span className="text-[10px] font-black text-zinc-400 tracking-tighter">#INV-\${1000 + idx}</span>
                 <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300 truncate">{inv.description}</span>
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">{inv.customer_name}</span>
-                  <span className="text-[10px] text-zinc-400 uppercase font-bold">Identity-{inv.customer_id.slice(0, 4)}</span>
+                  <span className="text-[10px] text-zinc-400 uppercase font-bold">Identity-\${inv.customer_id.slice(0, 4)}</span>
                 </div>
-                <span className="text-base font-black text-zinc-900 dark:text-white tracking-tighter">$${Number(inv.amount).toLocaleString()}</span>
+                <span className="text-base font-black text-zinc-900 dark:text-white tracking-tighter">$ \${Number(inv.amount).toLocaleString()}</span>
                 <div>
-                  <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${getStatusStyle(inv.status)}`}>
+                  <span className={\`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border \${getStatusStyle(inv.status)}\`}>
                     {inv.status.replace('_', ' ')}
                   </span>
                 </div>

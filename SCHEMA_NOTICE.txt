@@ -45,3 +45,7 @@ CREATE TABLE IF NOT EXISTS message_edits (
 Your screenshot shows several tables. Ensure all 'id' columns are 'TEXT' (to support UUIDs) and not 'INTEGER' as Cloudflare D1 defaults sometimes differ.
 
 By running these commands, the '500' errors will be resolved.
+
+ARCHIVE SYSTEM MIGRATION (TASK RECOVERY)
+1. ADD ARCHIVE COLUMN TO TASKS:
+ALTER TABLE tasks ADD COLUMN is_archived BOOLEAN DEFAULT FALSE;
