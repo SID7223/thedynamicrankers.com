@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     due_date DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_archived BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (created_by) REFERENCES users(id),
     FOREIGN KEY (assigned_to) REFERENCES users(id)
 );
@@ -66,6 +67,7 @@ CREATE TABLE IF NOT EXISTS messages (
     edited BOOLEAN DEFAULT FALSE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_archived BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (parent_message_id) REFERENCES messages(id) ON DELETE CASCADE
@@ -172,6 +174,7 @@ CREATE TABLE IF NOT EXISTS crm_invoices (
     invoice_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_archived BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (customer_id) REFERENCES crm_customers(id) ON DELETE CASCADE
 );
 
@@ -187,6 +190,7 @@ CREATE TABLE IF NOT EXISTS crm_appointments (
     status TEXT CHECK(status IN ('scheduled', 'completed')) DEFAULT 'scheduled',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_archived BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (customer_id) REFERENCES crm_customers(id) ON DELETE CASCADE
 );
 

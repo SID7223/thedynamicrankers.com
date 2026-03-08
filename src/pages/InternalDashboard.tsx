@@ -41,6 +41,7 @@ const InternalDashboard: React.FC = () => {
   const [lastMessageTimestamp, setLastMessageTimestamp] = useState<number>(0);
   const [unreads, setUnreads] = useState<Record<string, boolean>>({});
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showArchived, setShowArchived] = useState(false);
 
   // Login form state
   const [email, setEmail] = useState('');
@@ -89,7 +90,7 @@ const InternalDashboard: React.FC = () => {
     if (!session) return;
     try {
       const [tasksRes, usersRes] = await Promise.all([
-        fetch(`/api/internal/tasks?userId=${session.id}`),
+        fetch(`/api/internal/tasks?userId=${session.id}&archived=${showArchived}`),
         fetch('/api/internal/users')
       ]);
       const tasksData = await tasksRes.json();
@@ -99,7 +100,7 @@ const InternalDashboard: React.FC = () => {
     } catch (err) {
       console.error('Data Fetch Failed:', err);
     }
-  }, [session]);
+  }, [session, showArchived]);
 
   useEffect(() => {
     const savedSession = sessionStorage.getItem('dr_internal_session');
@@ -364,7 +365,7 @@ const InternalDashboard: React.FC = () => {
         <div className="flex-1 h-full overflow-hidden flex flex-col pt-24 lg:pt-0">
           {activeView === 'dashboard' && <DashboardOverview />}
           {activeView === 'global-chat' && <GlobalChatView currentUser={session} operatives={operatives} onClose={() => setActiveView('dashboard')} lastMessageTimestamp={lastMessageTimestamp} />}
-          {activeView === 'tasks' && (activeTask ? <TaskDetailView task={activeTask} operatives={operatives} currentUser={session} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onClose={() => setActiveTaskId(null)} lastMessageTimestamp={lastMessageTimestamp} /> : <TaskListView tasks={tasks} operatives={operatives} onSelectTask={setActiveTaskId} onCreateTask={() => setIsNewTaskModalOpen(true)} />)}
+          {activeView === 'tasks' && (activeTask ? <TaskDetailView task={activeTask} operatives={operatives} currentUser={session} onUpdate={handleUpdateTask} onDelete={handleDeleteTask} onClose={() => setActiveTaskId(null)} lastMessageTimestamp={lastMessageTimestamp} /> : <TaskListView tasks={tasks} operatives={operatives} onSelectTask={setActiveTaskId} onCreateTask={() => setIsNewTaskModalOpen(true)} isArchivedView={showArchived} onToggleArchived={() => setShowArchived(!showArchived)} onUpdateTask={handleUpdateTask} onDeleteTask={handleDeleteTask} />)}
           {activeView === 'customers' && (selectedCustomerId ? <CustomerProfile customerId={selectedCustomerId} onBack={() => setSelectedCustomerId(null)} onUpdate={fetchInitialData} /> : <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMCustomers onSelectCustomer={(c) => setSelectedCustomerId(c.id.toString())} /></div>)}
           {activeView === 'invoices' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMInvoices /></div>}
           {activeView === 'appointments' && <div className="flex-1 overflow-y-auto custom-scrollbar h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10"><CRMAppointments /></div>}

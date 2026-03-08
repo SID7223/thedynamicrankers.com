@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Clock, Info, X as XIcon } from 'lucide-react';
+import { Plus, Search, Filter, Clock, Info, X as XIcon, Archive, ArchiveRestore, Trash2 } from 'lucide-react';
 import Avatar from './Avatar';
 
 interface Task {
@@ -13,6 +13,7 @@ interface Task {
   due_date: string | null;
   created_at: string;
   hasUnread?: boolean;
+  is_archived?: boolean;
 }
 
 interface User {
@@ -25,9 +26,21 @@ interface TaskListViewProps {
   operatives: User[];
   onSelectTask: (id: string) => void;
   onCreateTask: () => void;
+  isArchivedView?: boolean;
+  onToggleArchived?: () => void;
+  onUpdateTask?: (id: string, updates: any) => void;
+  onDeleteTask?: (id: string) => void;
 }
 
-const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCreateTask }) => {
+const TaskListView: React.FC<TaskListViewProps> = ({
+  tasks,
+  onSelectTask,
+  onCreateTask,
+  isArchivedView,
+  onToggleArchived,
+  onUpdateTask,
+  onDeleteTask
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showTips, setShowTips] = useState(true);
 
@@ -63,16 +76,22 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
     <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#0B101A] p-6 lg:p-10 overflow-hidden transition-colors duration-300">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10">
         <div>
-          <h2 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2 font-sans tracking-tight">Operations Hub</h2>
-          <p className="text-zinc-500 dark:text-zinc-500 text-sm font-sans">Strategic command and control for all active directives.</p>
+          <h2 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2 font-sans tracking-tight">
+            {isArchivedView ? 'Strategy Archive' : 'Operations Hub'}
+          </h2>
+          <p className="text-zinc-500 dark:text-zinc-500 text-sm font-sans">
+            {isArchivedView ? 'Reviewing inactive and historical directives.' : 'Strategic command and control for all active directives.'}
+          </p>
         </div>
-        <button
-          onClick={onCreateTask}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-2xl font-bold text-sm transition-all flex items-center gap-3 shadow-2xl shadow-indigo-600/20 active:scale-95"
-        >
-          <Plus size={20} />
-          Initialize New Directive
-        </button>
+        {!isArchivedView && (
+          <button
+            onClick={onCreateTask}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-2xl font-bold text-sm transition-all flex items-center gap-3 shadow-2xl shadow-indigo-600/20 active:scale-95"
+          >
+            <Plus size={20} />
+            Initialize New Directive
+          </button>
+        )}
       </div>
 
       {showTips && (
@@ -96,34 +115,49 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        <button
+          onClick={onToggleArchived}
+          className={`flex items-center gap-2 px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all border ${
+            isArchivedView
+              ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20'
+              : 'bg-zinc-50 dark:bg-[#161B22] border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+          }`}
+          title={isArchivedView ? "Back to Operations Hub" : "View Strategy Archive"}
+        >
+          {isArchivedView ? <ArchiveRestore size={18} /> : <Archive size={18} />}
+          <span className="hidden sm:inline">{isArchivedView ? 'Active Hub' : 'Archives'}</span>
+        </button>
         <button className="p-4 bg-zinc-50 dark:bg-[#161B22] border border-zinc-200 dark:border-zinc-800 rounded-2xl text-zinc-400 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
           <Filter size={20} />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0">
-        <div className="min-w-[800px]">
+        <div className="min-w-[900px]">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_180px_140px_160px_140px] gap-6 px-6 py-4 bg-zinc-50 dark:bg-[#161B22] rounded-t-2xl border-x border-t border-zinc-200 dark:border-zinc-800/50 transition-colors duration-300">
+          <div className={`grid ${isArchivedView ? 'grid-cols-[1fr_180px_140px_160px_140px_120px]' : 'grid-cols-[1fr_180px_140px_160px_140px]'} gap-6 px-6 py-4 bg-zinc-50 dark:bg-[#161B22] rounded-t-2xl border-x border-t border-zinc-200 dark:border-zinc-800/50 transition-colors duration-300`}>
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Directive</span>
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Operative</span>
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Priority</span>
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Status</span>
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Target Date</span>
+            {isArchivedView && <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 dark:text-zinc-500 font-sans">Actions</span>}
           </div>
 
           {/* List */}
           <div className="bg-white dark:bg-[#11161D] border-x border-b border-zinc-200 dark:border-zinc-800/50 rounded-b-2xl divide-y divide-zinc-100 dark:divide-zinc-800/30 transition-colors duration-300">
             {filteredTasks.length === 0 ? (
               <div className="py-20 text-center">
-                <p className="text-zinc-400 dark:text-zinc-600 font-bold uppercase tracking-widest text-xs">No active directives found in this sector.</p>
+                <p className="text-zinc-400 dark:text-zinc-600 font-bold uppercase tracking-widest text-xs">
+                  {isArchivedView ? 'No archived directives found.' : 'No active directives found in this sector.'}
+                </p>
               </div>
             ) : (
               filteredTasks.map(task => (
                 <div
                   key={task.id}
                   onClick={() => onSelectTask(task.id)}
-                  className="grid grid-cols-[1fr_180px_140px_160px_140px] gap-6 px-6 py-5 hover:bg-zinc-50 dark:hover:bg-white/5 dark:bg-transparent transition-all cursor-pointer group items-center"
+                  className={`grid ${isArchivedView ? 'grid-cols-[1fr_180px_140px_160px_140px_120px]' : 'grid-cols-[1fr_180px_140px_160px_140px]'} gap-6 px-6 py-5 hover:bg-zinc-50 dark:hover:bg-white/5 dark:bg-transparent transition-all cursor-pointer group items-center`}
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="relative">
@@ -160,6 +194,25 @@ const TaskListView: React.FC<TaskListViewProps> = ({ tasks, onSelectTask, onCrea
                     <Clock size={14} />
                     <span className="text-xs font-medium">{task.due_date ? new Date(task.due_date).toLocaleDateString() : 'TBD'}</span>
                   </div>
+
+                  {isArchivedView && (
+                    <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                       <button
+                         onClick={() => onUpdateTask?.(task.id, { is_archived: false })}
+                         className="p-2 text-zinc-400 hover:text-indigo-600 transition-colors"
+                         title="Restore Directive"
+                       >
+                         <ArchiveRestore size={18} />
+                       </button>
+                       <button
+                         onClick={() => { if(confirm('Permanently delete this directive? This action cannot be undone.')) onDeleteTask?.(task.id); }}
+                         className="p-2 text-zinc-400 hover:text-red-600 transition-colors"
+                         title="Delete Permanently"
+                       >
+                         <Trash2 size={18} />
+                       </button>
+                    </div>
+                  )}
                 </div>
               ))
             )}

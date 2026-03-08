@@ -6,6 +6,8 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
   const { request, env } = context;
   const url = new URL(request.url);
   const userId = url.searchParams.get('userId');
+  const archivedParam = url.searchParams.get('archived');
+  const isArchived = archivedParam === 'true';
 
   if (!env.DB) return new Response('DB binding missing', { status: 503 });
 
@@ -26,13 +28,15 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
         FROM tasks t
         LEFT JOIN users u ON t.assigned_to = u.id
         LEFT JOIN users creator ON t.created_by = creator.id
+        WHERE t.is_archived = ?
         ORDER BY t.created_at DESC
-      `).bind(userId || '').all();
+      `).bind(userId || '', isArchived ? 1 : 0).all();
 
       const processedResults = (results || []).map((r: any) => ({
         ...r,
         assignees: JSON.parse(r.assignees || '[]'),
-        hasUnread: !!r.hasUnread
+        hasUnread: !!r.hasUnread,
+        is_archived: !!r.is_archived
       }));
 
       return new Response(JSON.stringify(processedResults), {
@@ -57,7 +61,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const taskNumber = `TASK-${nextNum}`;
 
       await env.DB.prepare(
-        'INSERT INTO tasks (id, task_number, title, description, assigned_to, due_date, priority, status, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO tasks (id, task_number, title, description, assigned_to, due_date, priority, status, created_by, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)'
       ).bind(
         taskId,
         taskNumber,
@@ -102,6 +106,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       if (body.title !== undefined) { updates.push('title = ?'); values.push(body.title); }
       if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
       if (body.due_date !== undefined) { updates.push('due_date = ?'); values.push(body.due_date); }
+      if (body.is_archived !== undefined) { updates.push('is_archived = ?'); values.push(body.is_archived ? 1 : 0); }
 
       if (updates.length > 0) {
         updates.push('updated_at = CURRENT_TIMESTAMP');
