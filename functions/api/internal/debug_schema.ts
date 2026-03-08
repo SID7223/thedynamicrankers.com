@@ -6,22 +6,36 @@ export const onRequestGet = async (context: { env: Env }) => {
   const { env } = context;
   if (!env.DB) return new Response(JSON.stringify({ error: 'DB binding missing' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
 
-  try {
-    const { results: tables } = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
-    const schema: Record<string, any> = {};
+  const tablesToCheck = [
+    'users', 'tasks', 'task_permissions', 'chat_rooms', 'messages',
+    'message_attachments', 'message_edits', 'chat_room_members',
+    'message_mentions', 'message_task_mentions', 'notifications',
+    'task_access_requests', 'crm_customers', 'crm_invoices',
+    'crm_appointments', 'task_assignees', 'task_attachments',
+    'message_reactions', 'user_favorite_emojis', 'message_read_receipts'
+  ];
 
-    for (const table of (tables || []) as any[]) {
-      const { results: columns } = await env.DB.prepare(`PRAGMA table_info(${table.name})`).all();
-      schema[table.name] = columns;
+  const report: Record<string, any> = {
+    status: 'checking_tables',
+    tables: {}
+  };
+
+  for (const table of tablesToCheck) {
+    try {
+      const result = await env.DB.prepare(`SELECT count(*) as count FROM ${table}`).first();
+      report.tables[table] = { exists: true, count: result?.count };
+    } catch (err: any) {
+      report.tables[table] = { exists: false, error: err.message };
     }
-
-    return new Response(JSON.stringify(schema, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
   }
+
+  // Also try to get SQLite version or other info if allowed
+  try {
+      const version = await env.DB.prepare('SELECT sqlite_version()').first();
+      report.sqlite_version = version;
+  } catch (e) {}
+
+  return new Response(JSON.stringify(report, null, 2), {
+    headers: { 'Content-Type': 'application/json' }
+  });
 };
