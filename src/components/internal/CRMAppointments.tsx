@@ -75,7 +75,7 @@ const CRMAppointments: React.FC = () => {
   const toggleComplete = async (id: string, currentStatus: string) => {
     const nextStatus = currentStatus === 'completed' ? 'scheduled' : 'completed';
     try {
-      await fetch(\`/api/internal/crm_appointments?id=\${id}\`, {
+      await fetch(`/api/internal/crm_appointments?id=${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: nextStatus })
@@ -89,7 +89,7 @@ const CRMAppointments: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!confirm('Permanently redact this engagement from the schedule?')) return;
     try {
-      await fetch(\`/api/internal/crm_appointments?id=\${id}\`, { method: 'DELETE' });
+      await fetch(`/api/internal/crm_appointments?id=${id}`, { method: 'DELETE' });
       fetchData();
     } catch (err) {
       console.error('Delete failed:', err);
@@ -117,22 +117,22 @@ const CRMAppointments: React.FC = () => {
           {appointments.map(app => (
             <div
               key={app.id}
-              className={\`relative bg-zinc-50 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 rounded-3xl p-6 transition-all shadow-sm \${
+              className={`relative bg-zinc-50 dark:bg-[#11161D] border border-zinc-200 dark:border-zinc-800/50 rounded-3xl p-6 transition-all shadow-sm ${
                 app.status === 'completed' ? 'opacity-40 grayscale' : 'hover:border-indigo-600 dark:hover:border-indigo-500/30'
-              }\`}
+              }`}
             >
               <div className="flex justify-between items-start mb-6">
-                <div className={\`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm border \${
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm border ${
                   app.status === 'completed' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-600 border-zinc-300 dark:border-zinc-700' : 'bg-white dark:bg-[#0B101A] text-indigo-600 dark:text-indigo-400 border-zinc-200 dark:border-zinc-800'
-                }\`}>
+                }`}>
                   <Calendar size={20} />
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => toggleComplete(app.id, app.status)}
-                    className={\`p-2.5 rounded-xl transition-all border \${
+                    className={`p-2.5 rounded-xl transition-all border ${
                       app.status === 'completed' ? 'text-indigo-600 dark:text-indigo-400 bg-white dark:bg-zinc-800 border-indigo-100 dark:border-indigo-900' : 'text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-[#0B101A] border-transparent hover:border-zinc-200 dark:hover:border-zinc-800'
-                    }\`}
+                    }`}
                   >
                     <CheckCircle2 size={18} />
                   </button>
@@ -145,7 +145,7 @@ const CRMAppointments: React.FC = () => {
                 </div>
               </div>
 
-              <div className={\`space-y-4 \${app.status === 'completed' ? 'line-through decoration-zinc-400 dark:decoration-zinc-500' : ''}\`}>
+              <div className={`space-y-4 ${app.status === 'completed' ? 'line-through decoration-zinc-400 dark:decoration-zinc-500' : ''}`}>
                 <div>
                   <h3 className="font-bold text-zinc-900 dark:text-white text-lg truncate tracking-tight">{app.customer_name}</h3>
                   <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-2">
