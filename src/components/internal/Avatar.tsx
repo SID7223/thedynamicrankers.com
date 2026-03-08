@@ -6,8 +6,9 @@ interface AvatarProps {
   isOnline?: boolean;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ name = '?', size = 'md', isOnline }) => {
-  const initial = name[0]?.toUpperCase() || '?';
+const Avatar: React.FC<AvatarProps> = ({ name, size = 'md', isOnline }) => {
+  const initial = (typeof name === 'string' && name.length > 0) ? name[0].toUpperCase() : '?';
+
   const sizeClasses = {
     xs: 'w-6 h-6 text-[8px]',
     sm: 'w-8 h-8 text-[10px]',

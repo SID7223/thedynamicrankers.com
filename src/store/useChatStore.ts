@@ -4,6 +4,7 @@ import { internalSdk } from '../services/internalSdk';
 interface ChatState {
   messages: Record<string, any[]>;
   roomMembers: Record<string, any[]>;
+  unreads: Record<string, boolean>;
   favorites: string[];
   lastMessageTimestamp: number;
   fetchChatHistory: (taskId: string, userId: string) => Promise<void>;
@@ -11,6 +12,7 @@ interface ChatState {
   fetchFavorites: (userId: string) => Promise<void>;
   sendMessage: (messageData: any) => Promise<void>;
   addMessage: (roomId: string, message: any) => void;
+  setUnread: (roomId: string, hasUnread: boolean) => void;
   setLastMessageTimestamp: (ts: number) => void;
   toggleReaction: (messageId: string, emoji: string) => Promise<void>;
   editMessage: (messageId: string, content: string) => Promise<void>;
@@ -21,6 +23,7 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: {},
   roomMembers: {},
+  unreads: {},
   favorites: [],
   lastMessageTimestamp: 0,
   fetchChatHistory: async (taskId, userId) => {
@@ -49,6 +52,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
         [roomId]: [...(state.messages[roomId] || []), message],
       },
       lastMessageTimestamp: Date.now(),
+    }));
+  },
+  setUnread: (roomId, hasUnread) => {
+    set((state) => ({
+      unreads: { ...state.unreads, [roomId]: hasUnread },
     }));
   },
   setLastMessageTimestamp: (ts) => set({ lastMessageTimestamp: ts }),
