@@ -14,10 +14,10 @@ interface ChatState {
   addMessage: (roomId: string, message: any) => void;
   setUnread: (roomId: string, hasUnread: boolean) => void;
   setLastMessageTimestamp: (ts: number) => void;
-  toggleReaction: (messageId: string, emoji: string) => Promise<void>;
-  editMessage: (messageId: string, content: string) => Promise<void>;
+  toggleReaction: (messageId: string, emoji: string, userId: string) => Promise<void>;
+  editMessage: (messageId: string, content: string, userId: string) => Promise<void>;
   deleteMessage: (messageId: string, userId: string) => Promise<void>;
-  updateReadReceipt: (taskId: string) => Promise<void>;
+  updateReadReceipt: (taskId: string, userId: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -29,7 +29,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   fetchChatHistory: async (taskId, userId) => {
     const history = await internalSdk.getChatHistory(taskId, userId);
     set((state) => ({
-      messages: { ...state.messages, [taskId]: history },
+      messages: { ...state.messages, [taskId]: history.messages || [] },
     }));
   },
   fetchRoomMembers: async (roomId) => {
@@ -60,16 +60,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }));
   },
   setLastMessageTimestamp: (ts) => set({ lastMessageTimestamp: ts }),
-  toggleReaction: async (messageId, emoji) => {
-    await internalSdk.toggleReaction(messageId, emoji);
+  toggleReaction: async (messageId, emoji, userId) => {
+    await internalSdk.toggleReaction(messageId, emoji, userId);
   },
-  editMessage: async (messageId, content) => {
+  editMessage: async (messageId, content, userId) => {
     await internalSdk.editMessage(messageId, content);
   },
   deleteMessage: async (messageId, userId) => {
     await internalSdk.deleteMessage(messageId, userId);
   },
-  updateReadReceipt: async (taskId) => {
-    await internalSdk.updateReadReceipt(taskId);
+  updateReadReceipt: async (taskId, userId) => {
+    await internalSdk.updateReadReceipt(taskId, userId);
   }
 }));

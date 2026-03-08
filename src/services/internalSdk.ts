@@ -106,10 +106,10 @@ class InternalSdk {
     return this.fetchJson(`/api/internal/reactions?userId=${userId}`);
   }
 
-  async toggleReaction(messageId: string, emoji: string) {
+  async toggleReaction(messageId: string, emoji: string, userId: string) {
     return this.fetchJson('/api/internal/reactions', {
       method: 'POST',
-      body: JSON.stringify({ messageId, emoji }),
+      body: JSON.stringify({ messageId, emoji, userId }),
     });
   }
 
@@ -195,17 +195,17 @@ class InternalSdk {
   }
 
   // Presence/Typing
-  async updateTypingStatus(taskId: string, isTyping: boolean) {
+  async updateTypingStatus(taskId: string, userId: string, username: string, isTyping: boolean) {
     return this.fetchJson('/api/internal/typing', {
       method: 'POST',
-      body: JSON.stringify({ taskId, isTyping }),
+      body: JSON.stringify({ roomId: taskId, userId, username, isTyping }),
     });
   }
 
-  async updateReadReceipt(taskId: string) {
+  async updateReadReceipt(taskId: string, userId: string) {
     return this.fetchJson('/api/internal/read_receipts', {
       method: 'POST',
-      body: JSON.stringify({ taskId }),
+      body: JSON.stringify({ taskId, userId }),
     });
   }
 }

@@ -20,7 +20,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   isLoading: false,
   error: null,
   fetchTasksAndOperatives: async (userId) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const [tasks, users] = await Promise.all([
         internalSdk.getTasks(userId),
@@ -32,12 +32,11 @@ export const useTaskStore = create<TaskState>((set) => ({
         isLoading: false
       });
     } catch (err: any) {
-      set({ error: err.message, isLoading: false });
+      set({ error: err.message, isLoading: false, tasks: [], operatives: [] });
     }
   },
   createTask: async (taskData) => {
     await internalSdk.createTask(taskData);
-    // Refresh will be handled by SSE or manual call
   },
   updateTask: async (id, taskData) => {
     await internalSdk.updateTask(id, taskData);

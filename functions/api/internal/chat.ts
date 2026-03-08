@@ -33,21 +33,30 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
       const { results } = await env.DB.prepare(`
         SELECT m.*, m.message_content as content, m.created_at as timestamp, u.name as sender_name,
         (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('id', ma.id, 'name', ma.file_name, 'type', ma.file_type, 'url', ma.file_url)) FROM message_attachments ma WHERE ma.message_id = m.id) as attachments,
-        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('emoji', mr.emoji, 'count', (SELECT COUNT(*) FROM message_reactions mr2 WHERE mr2.message_id = m.id AND mr2.emoji = mr.emoji), 'me', (SELECT COUNT(*) FROM message_reactions mr3 WHERE mr3.message_id = m.id AND mr3.emoji = mr.emoji AND mr3.user_id = ?))) FROM (SELECT DISTINCT emoji FROM message_reactions WHERE message_id = m.id) mr) as reactions
+        (SELECT JSON_GROUP_ARRAY(JSON_OBJECT('emoji', mr.emoji, 'user_id', mr.user_id)) FROM message_reactions mr WHERE mr.message_id = m.id) as reactions
         FROM messages m
         JOIN users u ON m.sender_id = u.id
         WHERE m.room_id = ?
         ORDER BY m.created_at ASC
-      `).bind(userId || '', finalRoomId).all();
+      `).bind(finalRoomId).all();
 
       const lastRead = await env.DB.prepare('SELECT last_read_at FROM message_read_receipts WHERE user_id = ? AND room_id = ?').bind(userId || '', finalRoomId).first() as { last_read_at: string } | null;
 
-      const processedResults = (results || []).map((r: any) => ({
-        ...r,
-        attachments: JSON.parse(r.attachments || '[]'),
-        reactions: JSON.parse(r.reactions || '[]'),
-        is_edited: !!r.edited
-      }));
+      const processedResults = (results || []).map((r: any) => {
+        const rawReactions = JSON.parse(r.reactions || '[]');
+        const reactionsMap: Record<string, string[]> = {};
+        rawReactions.forEach((rr: any) => {
+          if (!reactionsMap[rr.emoji]) reactionsMap[rr.emoji] = [];
+          reactionsMap[rr.emoji].push(rr.user_id);
+        });
+
+        return {
+          ...r,
+          attachments: JSON.parse(r.attachments || '[]'),
+          reactions: reactionsMap,
+          is_edited: !!r.edited
+        };
+      });
 
       return jsonResponse({ messages: processedResults, lastReadAt: lastRead?.last_read_at || null });
     }
@@ -79,7 +88,7 @@ export const onRequest = async (context: { request: Request; env: Env }) => {
             body.messageType || 'text'
         ).run();
       } catch (sqlErr: any) {
-        return jsonResponse({ error: 'SQL_INSERT_FAILED', message: sqlErr.message, detail: 'Check if parent_message_id, message_type, and edited columns exist.' }, 500);
+        return jsonResponse({ error: 'SQL_INSERT_FAILED', message: sqlErr.message }, 500);
       }
 
       if (body.attachments && Array.isArray(body.attachments)) {

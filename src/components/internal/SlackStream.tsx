@@ -69,8 +69,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
   }, [externalTs, storeTs, apiTaskId, currentUser, fetchChatHistory]);
 
   useEffect(() => {
-    updateReadReceipt(apiTaskId);
-  }, [apiTaskId, currentMessages.length, updateReadReceipt]);
+    if (currentUser) {
+      updateReadReceipt(apiTaskId, currentUser.id);
+    }
+  }, [apiTaskId, currentMessages.length, updateReadReceipt, currentUser]);
 
   const jumpToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -97,7 +99,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
 
     try {
       await sendMessage({
-        roomId: apiTaskId,
+        taskId: apiTaskId,
         senderId: currentUser.id,
         content: newMessage,
         parentMessageId: replyTo?.id,
@@ -106,7 +108,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
       setNewMessage('');
       setAttachments([]);
       setReplyTo(null);
-      updateMyTypingStatus(apiTaskId, false);
+      updateMyTypingStatus(apiTaskId, currentUser.id, currentUser.username, false);
       fetchChatHistory(apiTaskId, currentUser.id);
     } catch (err) {
       console.error('Send failed:', err);
@@ -115,7 +117,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
 
   const handleUpdateMessage = async (id: string) => {
     try {
-      await editMessage(id, editContent);
+      await editMessage(id, editContent, currentUser.id);
       setEditingMessage(null);
       fetchChatHistory(apiTaskId, currentUser.id);
     } catch (err) {
@@ -193,7 +195,7 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
                       {msg.reactions && Object.keys(msg.reactions).length > 0 && (
                           <div className="flex flex-wrap gap-2 mt-3">
                               {Object.entries(msg.reactions).map(([emoji, users]) => (
-                                  <button key={emoji} onClick={() => toggleReaction(msg.id, emoji).then(() => fetchChatHistory(apiTaskId, currentUser.id))} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs transition-all ${users.includes(currentUser.id) ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-600' : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-800 text-zinc-500'}`}>
+                                  <button key={emoji} onClick={() => toggleReaction(msg.id, emoji, currentUser.id).then(() => fetchChatHistory(apiTaskId, currentUser.id))} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs transition-all ${users.includes(currentUser.id) ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-600' : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-800 text-zinc-500'}`}>
                                       <span>{emoji}</span>
                                       <span className="font-bold">{users.length}</span>
                                   </button>
@@ -223,10 +225,10 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
 
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     if (val.length > 0) {
-        updateMyTypingStatus(apiTaskId, true);
-        typingTimeoutRef.current = setTimeout(() => updateMyTypingStatus(apiTaskId, false), 3000);
+        updateMyTypingStatus(apiTaskId, currentUser.id, currentUser.username, true);
+        typingTimeoutRef.current = setTimeout(() => updateMyTypingStatus(apiTaskId, currentUser.id, currentUser.username, false), 3000);
     } else {
-        updateMyTypingStatus(apiTaskId, false);
+        updateMyTypingStatus(apiTaskId, currentUser.id, currentUser.username, false);
     }
   };
 
@@ -249,14 +251,14 @@ const SlackStream: React.FC<SlackStreamProps> = ({ taskId, lastMessageTimestamp:
                  <div className="mb-6">
                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] block mb-4">Quick Linkage</span>
                      <div className="flex flex-wrap gap-3">
-                        {['👍', '🔥', '🚀', '✅', '👀', '💯'].map(f => <button key={f} onClick={() => { if (activeMessageId) toggleReaction(activeMessageId, f).then(() => fetchChatHistory(apiTaskId, currentUser.id)); else setNewMessage(prev => prev + f); setIsEmojiPickerOpen(false); }} className="text-2xl hover:scale-125 transition-transform p-2 bg-zinc-50 dark:bg-zinc-800 rounded-2xl">{f}</button>)}
+                        {['👍', '🔥', '🚀', '✅', '👀', '💯'].map(f => <button key={f} onClick={() => { if (activeMessageId) toggleReaction(activeMessageId, f, currentUser.id).then(() => fetchChatHistory(apiTaskId, currentUser.id)); else setNewMessage(prev => prev + f); setIsEmojiPickerOpen(false); }} className="text-2xl hover:scale-125 transition-transform p-2 bg-zinc-50 dark:bg-zinc-800 rounded-2xl">{f}</button>)}
                      </div>
                  </div>
                  <div className="h-[350px] overflow-hidden rounded-2xl border border-zinc-100 dark:border-zinc-800">
                     <EmojiPicker
                       width="100%" height="100%"
                       onEmojiClick={(e) => {
-                          if (activeMessageId) { toggleReaction(activeMessageId, e.emoji).then(() => fetchChatHistory(apiTaskId, currentUser.id)); }
+                          if (activeMessageId) { toggleReaction(activeMessageId, e.emoji, currentUser.id).then(() => fetchChatHistory(apiTaskId, currentUser.id)); }
                           else { setNewMessage(prev => prev + e.emoji); }
                           setIsEmojiPickerOpen(false);
                       }}

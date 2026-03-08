@@ -123,7 +123,7 @@ const InternalDashboard: React.FC = () => {
             }
         }
         if (data.type === 'TYPING_STATUS') {
-          setTypingStatus(data.room, data.userId, data.message ? data.userId : null);
+          setTypingStatus(data.room, data.userId, (data.message && data.message !== 'STOP') ? data.message.replace(' is typing...', '') : null);
         }
       };
       return () => eventSource.close();
